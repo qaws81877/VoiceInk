@@ -10,8 +10,6 @@ struct ModelUsagePanel: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } header: {
             ModelInsightPanelHeader(title: "AI Model Usage", onClose: onClose)
-        } footer: {
-            RecommendedModelsFooter()
         }
         .background(AppTheme.Insights.page)
     }

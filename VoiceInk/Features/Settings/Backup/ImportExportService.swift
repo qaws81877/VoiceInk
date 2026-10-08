@@ -212,7 +212,7 @@ class ImportExportService {
 
             let savePanel = NSSavePanel()
             savePanel.allowedContentTypes = [UTType.json]
-            savePanel.nameFieldStringValue = "VoiceInk_Settings_Backup.json"
+            savePanel.nameFieldStringValue = "Sulsul_Settings_Backup.json"
             savePanel.title = String(localized: "Export VoiceInk Settings")
             savePanel.message = String(localized: "Choose a location to save your settings.")
 

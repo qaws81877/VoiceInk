@@ -2,16 +2,19 @@ import AppKit
 import SwiftUI
 
 struct OnboardingTranscriptionSetupCard: View {
-    let localModel: FluidAudioModel?
+    let whisperModels: [WhisperModel]
+    let selectedWhisperModelName: String
     let setupKind: OnboardingTranscriptionSetupKind
     let providerOptions: [any CloudProvider]
     @Binding var selectedProviderKey: String
     let isLocalDownloaded: Bool
     let isLocalDownloading: Bool
-    let localDownloadStatus: FluidAudioDownloadStatus?
+    let localDownloadProgress: Double?
+    let onSelectWhisperModel: (String) -> Void
     let onSelectSetupKind: (OnboardingTranscriptionSetupKind) -> Void
-    let onDownloadLocalModel: (FluidAudioModel) -> Void
-    let onCancelLocalModelDownload: (FluidAudioModel) -> Void
+    let onDownload: () -> Void
+    let onCancelDownload: () -> Void
+    let onSkip: () -> Void
     let onVerificationChanged: () -> Void
 
     @EnvironmentObject private var transcriptionModelManager: TranscriptionModelManager
@@ -110,37 +113,58 @@ struct OnboardingTranscriptionSetupCard: View {
         .buttonStyle(.plain)
     }
 
-    @ViewBuilder
     private var localSetup: some View {
-        if let localModel {
-            TranscriptionModelDownloadCard(
-                model: localModel,
-                isDownloaded: isLocalDownloaded,
-                isDownloading: isLocalDownloading,
-                status: localDownloadStatus,
-                onDownload: {
-                    onDownloadLocalModel(localModel)
-                },
-                onCancel: {
-                    onCancelLocalModelDownload(localModel)
-                }
+        VStack(alignment: .leading, spacing: 12) {
+            Text(
+                "Parakeet does not support Korean. Pick a Whisper model to download, or skip and choose one later in AI Models."
             )
-        } else {
-            missingModelPanel
-        }
-    }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundColor(AppTheme.Text.secondary)
+            .fixedSize(horizontal: false, vertical: true)
 
-    private var missingModelPanel: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(AppTheme.Status.error)
+            if whisperModels.isEmpty {
+                Text("No Whisper models are available.")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(AppTheme.Status.error)
+            } else {
+                Picker(
+                    "Whisper model",
+                    selection: Binding(
+                        get: { selectedWhisperModelName },
+                        set: onSelectWhisperModel
+                    )
+                ) {
+                    ForEach(whisperModels, id: \.name) { model in
+                        Text("\(model.displayName) · \(model.size)")
+                            .tag(model.name)
+                    }
+                }
+                .labelsHidden()
+                .disabled(isLocalDownloading)
 
-            Text("Parakeet V3 is not available.")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(AppTheme.Text.secondary)
+                HStack(spacing: 10) {
+                    if isLocalDownloaded {
+                        Label("Downloaded", systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(AppTheme.Text.secondary)
+                    } else if isLocalDownloading {
+                        ProgressView(value: localDownloadProgress ?? 0)
+                            .frame(maxWidth: 160)
+                        Button("Cancel", action: onCancelDownload)
+                            .buttonStyle(.borderless)
+                    } else {
+                        Button("Download", action: onDownload)
+                            .buttonStyle(.borderedProminent)
+                    }
 
-            Spacer(minLength: 0)
+                    Spacer(minLength: 0)
+
+                    if !isLocalDownloaded {
+                        Button("Skip for now", action: onSkip)
+                            .buttonStyle(.borderless)
+                    }
+                }
+            }
         }
         .padding(16)
         .background(AppMaterialCardBackground(cornerRadius: 12))

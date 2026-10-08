@@ -154,13 +154,10 @@ enum ModeRuntimeResolver {
             providerName: mode?.selectedAIProvider,
             aiService: aiService
         )
-        let prompt =
-            provider == .voiceInkRefine
-            ? nil
-            : resolvedPrompt(
-                promptId: mode?.selectedPrompt,
-                enhancementService: enhancementService
-            )
+        let prompt = resolvedPrompt(
+            promptId: mode?.selectedPrompt,
+            enhancementService: enhancementService
+        )
         let modelName = resolvedEnhancementModelName(
             provider: provider,
             configuredModelName: mode?.selectedAIModel,
@@ -173,9 +170,9 @@ enum ModeRuntimeResolver {
             prompt: prompt,
             provider: provider,
             modelName: modelName,
-            useClipboardContext: provider == .voiceInkRefine ? false : mode?.useClipboardContext ?? false,
-            useSelectedTextContext: provider == .voiceInkRefine ? false : mode?.useSelectedTextContext ?? true,
-            useScreenCaptureContext: provider == .voiceInkRefine ? false : mode?.useScreenCapture ?? false
+            useClipboardContext: mode?.useClipboardContext ?? false,
+            useSelectedTextContext: mode?.useSelectedTextContext ?? true,
+            useScreenCaptureContext: mode?.useScreenCapture ?? false
         )
     }
 
@@ -225,10 +222,6 @@ enum ModeRuntimeResolver {
 
         if provider == .localCLI {
             return nil
-        }
-
-        if provider == .voiceInkRefine {
-            return provider.defaultModel
         }
 
         let models = aiService.availableModels(for: provider)

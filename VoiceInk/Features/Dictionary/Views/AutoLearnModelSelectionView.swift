@@ -5,8 +5,7 @@ struct AutoLearnSectionHeader: View {
         HStack(spacing: 4) {
             Text("Auto Learn")
             InfoTip(
-                "Automatically learns corrections you make after dictation.",
-                learnMoreURL: "https://tryvoiceink.com/docs/auto-learn-dictionary"
+                "Automatically learns corrections you make after dictation."
             )
             .accessibilityLabel("Learn about Dictionary Auto Learn")
         }

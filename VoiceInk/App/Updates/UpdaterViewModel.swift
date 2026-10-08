@@ -19,11 +19,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
 
     private let defaults: UserDefaults
     private var isUserInitiatedUpdateCheck = false
-    private lazy var updaterController = SPUStandardUpdaterController(
-        startingUpdater: false,
-        updaterDelegate: self,
-        userDriverDelegate: nil
-    )
+    private var updaterController: SPUStandardUpdaterController?
 
     @Published var canCheckForUpdates = false
     @Published private(set) var checksForUpdatesWhenDashboardAppears = false
@@ -35,6 +31,19 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
         checksForUpdatesWhenDashboardAppears = Self.initialAutomaticCheckPreference(in: defaults)
         super.init()
 
+        // TODO: Updates stay off until SUPublicEDKey is replaced with this fork's Sparkle key.
+        // The feed URL already points at https://github.com/qaws81877/VoiceInk/releases.
+        guard Self.isSparkleConfigured else {
+            canCheckForUpdates = false
+            return
+        }
+
+        let updaterController = SPUStandardUpdaterController(
+            startingUpdater: false,
+            updaterDelegate: self,
+            userDriverDelegate: nil
+        )
+        self.updaterController = updaterController
         let updater = updaterController.updater
 
         // VoiceInk owns automatic discovery through Sparkle's non-presenting probe.
@@ -62,9 +71,8 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     }
 
     func checkForUpdatesIfDue() {
+        guard let updater = updaterController?.updater else { return }
         guard checksForUpdatesWhenDashboardAppears else { return }
-
-        let updater = updaterController.updater
         guard !updater.sessionInProgress else { return }
 
         if let lastCheckDate = updater.lastUpdateCheckDate {
@@ -76,6 +84,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     }
 
     func checkForUpdates() {
+        guard let updaterController else { return }
         guard canCheckForUpdates else { return }
 
         // Any explicit check is interaction with the currently advertised update.
@@ -121,7 +130,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     }
 
     private func checkForUpdateInformationIfPossible() {
-        let updater = updaterController.updater
+        guard let updater = updaterController?.updater else { return }
         guard !updater.sessionInProgress else { return }
         updater.checkForUpdateInformation()
     }
@@ -136,6 +145,13 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
         guard !versions.contains(versionIdentifier) else { return }
         versions.append(versionIdentifier)
         defaults.set(versions, forKey: DefaultsKey.interactedUpdateVersions)
+    }
+
+    private static var isSparkleConfigured: Bool {
+        guard let key = Bundle.main.object(forInfoDictionaryKey: "SUPublicEDKey") as? String else {
+            return false
+        }
+        return !key.isEmpty && key != AppIdentity.sparklePublicKeyPlaceholder
     }
 
     private static func initialAutomaticCheckPreference(in defaults: UserDefaults) -> Bool {

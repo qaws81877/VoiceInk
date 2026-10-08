@@ -1,0 +1,15 @@
+// Signing.xcconfig
+// The only place to set the Apple Developer Team ID for 술술 (Sulsul).
+//
+// 1. Open https://developer.apple.com/account → Membership details.
+// 2. Copy the 10-character Team ID.
+// 3. Set it below, with no quotes:
+//
+//    DEVELOPMENT_TEAM = ABCDE12345
+//
+// `make local` overrides this with an empty team and ad-hoc or Apple Development
+// signing, so a local build does not need a Team ID.
+// `make release` and Xcode archives read this value. Do not put another person's
+// Team ID here.
+
+DEVELOPMENT_TEAM =

@@ -2,17 +2,20 @@ import SwiftUI
 
 struct OnboardingModelScreen: View {
     let contentMaxWidth: CGFloat
-    let localModel: FluidAudioModel?
+    let whisperModels: [WhisperModel]
+    let selectedWhisperModelName: String
     let setupKind: OnboardingTranscriptionSetupKind
     let providerOptions: [any CloudProvider]
     @Binding var selectedProviderKey: String
     let isLocalDownloaded: Bool
     let isLocalDownloading: Bool
-    let localDownloadStatus: FluidAudioDownloadStatus?
+    let localDownloadProgress: Double?
     let isSetupReady: Bool
+    let onSelectWhisperModel: (String) -> Void
     let onSelectSetupKind: (OnboardingTranscriptionSetupKind) -> Void
-    let onDownload: (FluidAudioModel) -> Void
-    let onCancelDownload: (FluidAudioModel) -> Void
+    let onDownload: () -> Void
+    let onCancelDownload: () -> Void
+    let onSkip: () -> Void
     let onVerificationChanged: () -> Void
     let onBack: () -> Void
     let onContinue: () -> Void
@@ -23,16 +26,19 @@ struct OnboardingModelScreen: View {
             contentMaxWidth: contentMaxWidth
         ) {
             OnboardingTranscriptionSetupCard(
-                localModel: localModel,
+                whisperModels: whisperModels,
+                selectedWhisperModelName: selectedWhisperModelName,
                 setupKind: setupKind,
                 providerOptions: providerOptions,
                 selectedProviderKey: $selectedProviderKey,
                 isLocalDownloaded: isLocalDownloaded,
                 isLocalDownloading: isLocalDownloading,
-                localDownloadStatus: localDownloadStatus,
+                localDownloadProgress: localDownloadProgress,
+                onSelectWhisperModel: onSelectWhisperModel,
                 onSelectSetupKind: onSelectSetupKind,
-                onDownloadLocalModel: onDownload,
-                onCancelLocalModelDownload: onCancelDownload,
+                onDownload: onDownload,
+                onCancelDownload: onCancelDownload,
+                onSkip: onSkip,
                 onVerificationChanged: onVerificationChanged
             )
         } bottomBar: {

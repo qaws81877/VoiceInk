@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 
 enum StarterModeFactory {
-    static let defaultTranscriptionModelName = "parakeet-tdt-0.6b-v3"
+    static let defaultTranscriptionModelName = "ggml-large-v3-turbo"
 
     static func install(
         kinds: [StarterModeKind],

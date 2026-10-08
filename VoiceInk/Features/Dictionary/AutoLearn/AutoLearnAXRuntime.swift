@@ -12,9 +12,9 @@ final class AutoLearnAXRuntime: @unchecked Sendable {
         let pastedText: String
     }
 
-    private let queue = DispatchQueue(label: "com.prakashjoshipax.voiceink.auto-learn.accessibility")
+    private let queue = DispatchQueue(label: "com.qaws81877.sulsul.auto-learn.accessibility")
     private let logger = Logger(
-        subsystem: "com.prakashjoshipax.voiceink",
+        subsystem: "com.qaws81877.sulsul",
         category: "AutoLearnCapture"
     )
     private let textReader = AutoLearnAXTextReader()

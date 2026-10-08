@@ -83,43 +83,6 @@ struct InsightPeriodPicker: View {
     }
 }
 
-enum ModelLinks {
-    static func openRecommendedModels() {
-        if let url = URL(string: "https://tryvoiceink.com/docs/recommended-models") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-}
-
-struct ModelActionLabel: View {
-    let title: LocalizedStringKey
-    let icon: String
-    let isPrimary: Bool
-
-    var body: some View {
-        HStack(spacing: 7) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .semibold))
-
-            Text(title)
-                .lineLimit(1)
-        }
-        .font(.system(size: 12, weight: .semibold))
-        .foregroundStyle(isPrimary ? Color.white : AppTheme.Text.primary)
-        .padding(.horizontal, isPrimary ? 14 : 12)
-        .frame(height: 34)
-        .background(isPrimary ? AppTheme.Insights.productivity : AppTheme.Insights.card)
-        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(
-                    isPrimary ? Color.clear : AppTheme.Insights.border,
-                    lineWidth: 1
-                )
-        }
-    }
-}
-
 struct InsightEmptyState: View {
     let title: LocalizedStringKey
     let icon: String

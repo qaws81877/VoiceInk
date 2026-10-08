@@ -1,0 +1,18 @@
+술술 (Sulsul) is a modified fork of VoiceInk.
+
+Original work: VoiceInk by Prakash Joshi (Pax)
+Upstream: https://github.com/Beingpax/VoiceInk
+License: GNU General Public License v3.0 (see LICENSE). Copyright notices in the
+source are kept. This fork does not grant any trademark rights in the VoiceInk name.
+
+Modified by the maintainer of https://github.com/qaws81877/VoiceInk (2026).
+
+Changes in this fork include:
+- Rebranded the app as 술술 (product name Sulsul) with its own bundle ID, data folder, and Keychain service so it does not share data with VoiceInk.
+- Removed the license, trial, and purchase system, including Polar.
+- Stopped contacting the original author's servers (announcements, Sparkle appcast, GitHub star prompt, and related links).
+- Removed the VoiceInk Refine local model and its XPC service. That model's license does not allow redistribution.
+- Turned off iCloud dictionary sync that depended on the original iCloud container.
+- Onboarding can skip the transcription-model download or use a Whisper model instead of requiring Parakeet.
+
+Each person enters their own API keys. No API keys are bundled.

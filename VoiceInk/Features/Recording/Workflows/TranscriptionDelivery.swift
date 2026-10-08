@@ -3,7 +3,7 @@ import os
 
 @MainActor
 final class TranscriptionDelivery {
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "TranscriptionDelivery")
+    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "TranscriptionDelivery")
 
     struct Request {
         let transcription: Transcription
@@ -187,14 +187,6 @@ final class TranscriptionDelivery {
     }
 
     private func deliverableText(from text: String) -> String {
-        var textToDeliver = text
-        if let restrictionMessage = LicenseViewModel.shared.usageRestrictionMessage {
-            textToDeliver = """
-                \(restrictionMessage)
-                \n\(textToDeliver)
-                """
-        }
-
-        return textToDeliver
+        text
     }
 }

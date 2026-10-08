@@ -2,8 +2,7 @@ import SwiftUI
 
 @MainActor
 final class OnboardingCoordinator: ObservableObject {
-    let licenseViewModel = LicenseViewModel.shared
-    @Published var licenseKeyDraft = ""
+    static let suggestedWhisperModelName = "ggml-large-v3-turbo"
 
     @Published var storedStage: String {
         didSet {
@@ -53,6 +52,18 @@ final class OnboardingCoordinator: ObservableObject {
         }
     }
 
+    @Published var storedLocalWhisperModelName: String {
+        didSet {
+            defaults.set(storedLocalWhisperModelName, forKey: OnboardingStorageKeys.localWhisperModel)
+        }
+    }
+
+    @Published var hasSkippedLocalTranscriptionModel: Bool {
+        didSet {
+            defaults.set(hasSkippedLocalTranscriptionModel, forKey: OnboardingStorageKeys.skippedLocalModel)
+        }
+    }
+
     @Published var permissionStatuses: [OnboardingPermissionKind: OnboardingPermissionStatus] = [:]
     @Published var isSelectedTranscriptionProviderVerified = false
     @Published var isSelectedAPIProviderVerified = false
@@ -87,6 +98,9 @@ final class OnboardingCoordinator: ObservableObject {
                 forKey: OnboardingStorageKeys.transcriptionProvider
             ) ?? ""
         self.hasSkippedAPISetup = defaults.bool(forKey: OnboardingStorageKeys.skippedAPISetup)
+        self.storedLocalWhisperModelName =
+            defaults.string(forKey: OnboardingStorageKeys.localWhisperModel) ?? Self.suggestedWhisperModelName
+        self.hasSkippedLocalTranscriptionModel = defaults.bool(forKey: OnboardingStorageKeys.skippedLocalModel)
     }
 
     deinit {
@@ -94,11 +108,9 @@ final class OnboardingCoordinator: ObservableObject {
     }
 
     var stage: OnboardingStage {
-        #if LOCAL_BUILD
-            if storedStage == OnboardingStage.license.rawValue {
-                return .trust
-            }
-        #endif
+        if storedStage == "license" {
+            return .trust
+        }
 
         if let stage = OnboardingStage(rawValue: storedStage) {
             return stage
@@ -136,19 +148,11 @@ final class OnboardingCoordinator: ObservableObject {
             return OnboardingStage.baseStepCount + activeExperienceSteps.count + contextAwarenessStepCount + 1
         }
 
-        if stage == .license {
-            return OnboardingStage.baseStepCount + activeExperienceSteps.count + contextAwarenessStepCount + 2
-        }
-
         return stage.stepNumber
     }
 
     var totalStepCount: Int {
-        #if LOCAL_BUILD
-            OnboardingStage.baseStepCount + activeExperienceSteps.count + contextAwarenessStepCount + 1
-        #else
-            OnboardingStage.baseStepCount + activeExperienceSteps.count + contextAwarenessStepCount + 2
-        #endif
+        OnboardingStage.baseStepCount + activeExperienceSteps.count + contextAwarenessStepCount + 1
     }
 
     var experienceStep: OnboardingExperienceStep {
@@ -290,7 +294,7 @@ final class OnboardingCoordinator: ObservableObject {
     var selectedOnboardingTranscriptionModel: (any TranscriptionModel)? {
         switch transcriptionSetupKind {
         case .local:
-            return requiredTranscriptionModel
+            return selectedWhisperModel
         case .cloud:
             guard let provider = selectedOnboardingTranscriptionProvider else { return nil }
             return selectedTranscriptionModel(for: provider)
@@ -366,10 +370,21 @@ final class OnboardingCoordinator: ObservableObject {
         return onboardingProviderOptions.first ?? .groq
     }
 
-    var requiredTranscriptionModel: FluidAudioModel? {
+    var whisperModelChoices: [WhisperModel] {
         TranscriptionModelRegistry.models
-            .compactMap { $0 as? FluidAudioModel }
-            .first { $0.name == "parakeet-tdt-0.6b-v3" }
+            .compactMap { $0 as? WhisperModel }
+            .sorted { lhs, rhs in
+                if lhs.isMultilingualModel != rhs.isMultilingualModel {
+                    return lhs.isMultilingualModel && !rhs.isMultilingualModel
+                }
+                return lhs.displayName.localizedStandardCompare(rhs.displayName) == .orderedAscending
+            }
+    }
+
+    var selectedWhisperModel: WhisperModel? {
+        whisperModelChoices.first { $0.name == storedLocalWhisperModelName }
+            ?? whisperModelChoices.first { $0.name == Self.suggestedWhisperModelName }
+            ?? whisperModelChoices.first
     }
 
     func selectedOnboardingTranscriptionProviderKeyBinding() -> Binding<String> {
@@ -398,15 +413,14 @@ final class OnboardingCoordinator: ObservableObject {
         )
     }
 
-    func isTranscriptionModelDownloaded(using modelManager: FluidAudioModelManager) -> Bool {
-        guard let requiredTranscriptionModel else { return false }
-        return modelManager.isFluidAudioModelDownloaded(requiredTranscriptionModel)
+    func isWhisperModelDownloaded(_ model: WhisperModel, using modelManager: WhisperModelManager) -> Bool {
+        modelManager.availableModels.contains { $0.name == model.name }
     }
 
     func isTranscriptionSetupReady(isTranscriptionModelDownloaded: Bool) -> Bool {
         switch transcriptionSetupKind {
         case .local:
-            return isTranscriptionModelDownloaded
+            return hasSkippedLocalTranscriptionModel || isTranscriptionModelDownloaded
         case .cloud:
             guard selectedOnboardingTranscriptionModel != nil else { return false }
             return isSelectedTranscriptionProviderVerified
@@ -434,6 +448,8 @@ enum OnboardingStorageKeys {
     static let transcriptionSetupKind = "onboardingTranscriptionSetupKind"
     static let transcriptionProvider = "onboardingTranscriptionProvider"
     static let skippedAPISetup = "onboardingSkippedAPISetup"
+    static let localWhisperModel = "onboardingLocalWhisperModel"
+    static let skippedLocalModel = "onboardingSkippedLocalModel"
 
     static let onboardingKeys = [
         stage,
@@ -443,6 +459,8 @@ enum OnboardingStorageKeys {
         transcriptionSetupKind,
         transcriptionProvider,
         skippedAPISetup,
+        localWhisperModel,
+        skippedLocalModel,
         experienceIndex,
         "onboardingStarterModeIndex",
     ]

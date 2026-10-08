@@ -10,8 +10,6 @@ struct ModelPerformancePanel: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } header: {
             ModelInsightPanelHeader(title: "AI Model Performance", onClose: onClose)
-        } footer: {
-            RecommendedModelsFooter()
         }
         .background(AppTheme.Insights.page)
     }

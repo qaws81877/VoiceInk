@@ -104,7 +104,6 @@ class VoiceInkEngine: NSObject, ObservableObject {
     private var activePipelineUseCase: RecordingUseCase = .newSession
     private var activeRecordingContextStore: RecordingContextSnapshotStore?
     private var activeRecordingContextTasks: [Task<Void, Never>] = []
-    private var voiceInkRefinePreparationTask: Task<Void, Never>?
 
     let recorder = Recorder()
     var recordedFile: URL? = nil
@@ -122,7 +121,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     let assistantChat: AssistantChatService?
     private let pipeline: TranscriptionPipeline
 
-    let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "VoiceInkEngine")
+    let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "VoiceInkEngine")
 
     init(
         modelContext: ModelContext,
@@ -143,9 +142,8 @@ class VoiceInkEngine: NSObject, ObservableObject {
             self.assistantChat = nil
         }
 
-        let appSupportDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk")
-        self.recordingsDirectory = appSupportDirectory.appendingPathComponent("Recordings")
+        self.recordingsDirectory = AppIdentity.applicationSupportDirectory()
+            .appendingPathComponent("Recordings")
 
         self.serviceRegistry = TranscriptionServiceRegistry(
             modelProvider: whisperModelManager,
@@ -360,8 +358,6 @@ class VoiceInkEngine: NSObject, ObservableObject {
                                 self.recorder.onAudioChunk = nil
                                 _ = realtimeAudioGate.reset()
                             }
-
-                            self.scheduleVoiceInkRefinePreparation(for: startID)
 
                             Task { @MainActor [weak self] in
                                 guard let self else { return }
@@ -775,59 +771,6 @@ class VoiceInkEngine: NSObject, ObservableObject {
         return (mode.name, mode.icon.value)
     }
 
-    private func scheduleVoiceInkRefinePreparation(for recordingStartID: UUID) {
-        voiceInkRefinePreparationTask?.cancel()
-
-        voiceInkRefinePreparationTask = Task { @MainActor [weak self] in
-            guard let self,
-                self.recordingState == .recording,
-                self.activeRecordingStartID == recordingStartID,
-                !self.shouldCancelRecording,
-                let enhancementService = self.enhancementService,
-                let aiService = enhancementService.getAIService()
-            else {
-                return
-            }
-
-            let initialConfiguration = ModeRuntimeResolver.currentEnhancementConfiguration(
-                enhancementService: enhancementService,
-                aiService: aiService
-            )
-            guard initialConfiguration.isEnabled,
-                initialConfiguration.provider == .voiceInkRefine
-            else {
-                return
-            }
-
-            // Preserve an already-warm XPC model immediately, while retaining the
-            // debounce below before any new model preparation begins.
-            await aiService.voiceInkRefineService.keepPreparedModelWarmForRecording()
-
-            do {
-                try await Task.sleep(for: .milliseconds(450))
-            } catch {
-                return
-            }
-
-            guard self.recordingState == .recording,
-                self.activeRecordingStartID == recordingStartID,
-                !self.shouldCancelRecording
-            else {
-                return
-            }
-
-            let configuration = ModeRuntimeResolver.currentEnhancementConfiguration(
-                enhancementService: enhancementService,
-                aiService: aiService
-            )
-            guard configuration.isEnabled, configuration.provider == .voiceInkRefine else {
-                return
-            }
-
-            await aiService.voiceInkRefineService.prepareForRecording()
-        }
-    }
-
     // MARK: - Resource Cleanup
 
     private func cancelPipelineSession(transcriptionID: UUID, session: TranscriptionSession?) {
@@ -849,16 +792,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     }
 
     private func finishRecorderSession() async {
-        let preparationTask = voiceInkRefinePreparationTask
-        voiceInkRefinePreparationTask = nil
-        preparationTask?.cancel()
-        await preparationTask?.value
-
         enhancementService?.clearCapturedContexts()
-        await enhancementService?
-            .getAIService()?
-            .voiceInkRefineService
-            .unloadPreparedModelIfNeeded()
     }
 
     func cleanupResources() async {

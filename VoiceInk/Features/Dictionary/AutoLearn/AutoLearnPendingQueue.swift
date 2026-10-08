@@ -87,12 +87,8 @@ actor AutoLearnPendingQueue {
 
     init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        let applicationSupport = fileManager.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        )[0]
-        queueFileURL = applicationSupport
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk", isDirectory: true)
+        queueFileURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(AppIdentity.supportDirectoryName, isDirectory: true)
             .appendingPathComponent("auto-learn-pending-corrections.json")
     }
 

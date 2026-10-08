@@ -8,12 +8,8 @@ actor AutoLearnReviewProposalStore {
 
     init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
-        let applicationSupport = fileManager.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        )[0]
-        fileURL = applicationSupport
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk", isDirectory: true)
+        fileURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(AppIdentity.supportDirectoryName, isDirectory: true)
             .appendingPathComponent("auto-learn-review-proposals.json")
     }
 

@@ -3155,19 +3155,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein genauerer Blick auf deine VoiceInk-Nutzung."
+            "value" : "Ein genauerer Blick auf deine 술술-Nutzung."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examinez de plus près votre utilisation de VoiceInk."
+            "value" : "Examinez de plus près votre utilisation de 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "更详细地查看你的 VoiceInk 使用情况。"
+            "value" : "更详细地查看你的 술술 使用情况。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A closer look at your 술술 usage."
           }
         }
       }
@@ -3445,19 +3451,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktiviere eine Lizenz, um VoiceInk weiter zu verwenden."
+            "value" : "Aktiviere eine Lizenz, um 술술 weiter zu verwenden."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activez une licence pour continuer à utiliser VoiceInk."
+            "value" : "Activez une licence pour continuer à utiliser 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "激活许可证以继续使用 VoiceInk。"
+            "value" : "激活许可证以继续使用 술술。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activate a license to continue using 술술."
           }
         }
       }
@@ -3636,19 +3648,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein eigenes, feinjustiertes Whisper-Modell für VoiceInk hinzufügen. Wähle die heruntergeladene .bin-Datei aus."
+            "value" : "Ein eigenes, feinjustiertes Whisper-Modell für 술술 hinzufügen. Wähle die heruntergeladene .bin-Datei aus."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoutez un modèle Whisper personnalisé et affiné à utiliser avec VoiceInk. Sélectionnez le fichier .bin téléchargé."
+            "value" : "Ajoutez un modèle Whisper personnalisé et affiné à utiliser avec 술술. Sélectionnez le fichier .bin téléchargé."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "添加自定微调的 whisper 模型以在 VoiceInk 中使用。请选择已下载的 .bin 文件。"
+            "value" : "添加自定微调的 whisper 模型以在 술술 中使用。请选择已下载的 .bin 文件。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a custom fine-tuned whisper model to use with 술술. Select the downloaded .bin file."
           }
         }
       }
@@ -3924,19 +3942,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofone in der Reihenfolge hinzufügen, in der VoiceInk sie verwenden soll."
+            "value" : "Mikrofone in der Reihenfolge hinzufügen, in der 술술 sie verwenden soll."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoutez des microphones dans l’ordre dans lequel VoiceInk devrait les essayer."
+            "value" : "Ajoutez des microphones dans l’ordre dans lequel 술술 devrait les essayer."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按 VoiceInk 应依次尝试的顺序添加麦克风。"
+            "value" : "按 술술 应依次尝试的顺序添加麦克风。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add microphones in the order 술술 should try them."
           }
         }
       }
@@ -4819,19 +4843,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erlaube VoiceInk, in all deinen Apps zu funktionieren."
+            "value" : "Erlaube 술술, in all deinen Apps zu funktionieren."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorisez VoiceInk à fonctionner sur toutes vos applications."
+            "value" : "Autorisez 술술 à fonctionner sur toutes vos applications."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "允许 VoiceInk 在你的所有 App 中工作。"
+            "value" : "允许 술술 在你的所有 App 中工作。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow 술술 to work across all your apps."
           }
         }
       }
@@ -6544,19 +6574,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Lizenz kaufen"
+            "value" : "술술-Lizenz kaufen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acheter une licence VoiceInk"
+            "value" : "Acheter une licence 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "购买 VoiceInk 许可证"
+            "value" : "购买 술술 许可证"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buy 술술 License"
           }
         }
       }
@@ -6989,19 +7025,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle eine VoiceInk-Wörterbuchdatei im JSON-Format."
+            "value" : "Wähle eine 술술-Wörterbuchdatei im JSON-Format."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez un fichier JSON de dictionnaire VoiceInk."
+            "value" : "Choisissez un fichier JSON de dictionnaire 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择一个 VoiceInk 词典 JSON 文件。"
+            "value" : "选择一个 술술 词典 JSON 文件。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a 술술 dictionary JSON file."
           }
         }
       }
@@ -7350,7 +7392,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "„Neu in VoiceInk“ schließen"
+            "value" : "„Neu in 술술“ schließen"
           }
         },
         "fr" : {
@@ -7842,19 +7884,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nutze VoiceInk weiter, um Spitzenzeiten freizuschalten."
+            "value" : "Nutze 술술 weiter, um Spitzenzeiten freizuschalten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuez à utiliser VoiceInk pour débloquer les heures de pointe."
+            "value" : "Continuez à utiliser 술술 pour débloquer les heures de pointe."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "继续使用 VoiceInk 以解锁高峰时段。"
+            "value" : "继续使用 술술 以解锁高峰时段。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue using 술술 to unlock peak hours."
           }
         }
       }
@@ -7866,19 +7914,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nutze VoiceInk weiter, um Statistiken und Einblicke freizuschalten."
+            "value" : "Nutze 술술 weiter, um Statistiken und Einblicke freizuschalten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuez à utiliser VoiceInk pour débloquer des statistiques et des informations."
+            "value" : "Continuez à utiliser 술술 pour débloquer des statistiques et des informations."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "继续使用 VoiceInk 以解锁统计和洞察。"
+            "value" : "继续使用 술술 以解锁统计和洞察。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue using 술술 to unlock stats and insights."
           }
         }
       }
@@ -7890,19 +7944,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nutze VoiceInk weiter, um diese Statistiken freizuschalten."
+            "value" : "Nutze 술술 weiter, um diese Statistiken freizuschalten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuez à utiliser VoiceInk pour débloquer ces statistiques."
+            "value" : "Continuez à utiliser 술술 pour débloquer ces statistiques."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "继续使用 VoiceInk 以解锁这些统计数据。"
+            "value" : "继续使用 술술 以解锁这些统计数据。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue using 술술 to unlock these stats."
           }
         }
       }
@@ -8209,19 +8269,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Kommunikation mit VoiceInk Refine ist fehlgeschlagen."
+            "value" : "Die Kommunikation mit 술술 Refine ist fehlgeschlagen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de communiquer avec VoiceInk Refine."
+            "value" : "Impossible de communiquer avec 술술 Refine."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无法与 VoiceInk Refine 通信。"
+            "value" : "无法与 술술 Refine 通信。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not communicate with 술술 Refine."
           }
         }
       }
@@ -8833,19 +8899,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eigene Prompts sind mit VoiceInk Refine nicht verfügbar. Wähle einen Modus mit einem anderen KI-Anbieter."
+            "value" : "Eigene Prompts sind mit 술술 Refine nicht verfügbar. Wähle einen Modus mit einem anderen KI-Anbieter."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les invites personnalisées ne sont pas disponibles avec VoiceInk Refine. Sélectionnez un mode qui utilise un autre fournisseur d'IA."
+            "value" : "Les invites personnalisées ne sont pas disponibles avec 술술 Refine. Sélectionnez un mode qui utilise un autre fournisseur d'IA."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 不支持自定义提示词。请选择使用其他 AI 提供商的模式。"
+            "value" : "술술 Refine 不支持自定义提示词。请选择使用其他 AI 提供商的模式。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom prompts aren't available with 술술 Refine. Select a Mode that uses another AI provider."
           }
         }
       }
@@ -8857,19 +8929,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Benutzerdefinierte Prompts sind mit VoiceInk Refine nicht verfügbar. Wähle zuerst einen anderen Modus."
+            "value" : "Benutzerdefinierte Prompts sind mit 술술 Refine nicht verfügbar. Wähle zuerst einen anderen Modus."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les invites personnalisées ne sont pas disponibles avec VoiceInk Refine. Sélectionnez d'abord un autre mode."
+            "value" : "Les invites personnalisées ne sont pas disponibles avec 술술 Refine. Sélectionnez d'abord un autre mode."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 不支持自定义提示词。请先选择其他模式。"
+            "value" : "술술 Refine 不支持自定义提示词。请先选择其他模式。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom prompts aren't available with 술술 Refine. Select another mode first."
           }
         }
       }
@@ -10169,19 +10247,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme schließen und aktive Aufnahme abbrechen."
+            "value" : "술술-Aufnahme schließen und aktive Aufnahme abbrechen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fermez l’enregistreur VoiceInk et annulez tout enregistrement actif."
+            "value" : "Fermez l’enregistreur 술술 et annulez tout enregistrement actif."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭 VoiceInk 录音器，并取消所有正在进行的录音。"
+            "value" : "关闭 술술 录音器，并取消所有正在进行的录音。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss the 술술 recorder and cancel any active recording."
           }
         }
       }
@@ -10191,19 +10275,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme schließen"
+            "value" : "술술-Aufnahme schließen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ignorer l'enregistreur VoiceInk"
+            "value" : "Ignorer l'enregistreur 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关闭 VoiceInk 录音器"
+            "value" : "关闭 술술 录音器"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss 술술 Recorder"
           }
         }
       }
@@ -10743,19 +10833,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "z. B. Prakash, VoiceInk"
+            "value" : "z. B. Prakash, 술술"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "par ex. Prakash, VoiceInk"
+            "value" : "par ex. Prakash, 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "例如：Prakash, VoiceInk"
+            "value" : "例如：Prakash, 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Prakash, 술술"
           }
         }
       }
@@ -11913,19 +12009,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk erleben"
+            "value" : "술술 erleben"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Découvrez VoiceInk"
+            "value" : "Découvrez 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "体验 VoiceInk"
+            "value" : "体验 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experience 술술"
           }
         }
       }
@@ -12155,19 +12257,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Einstellungen exportieren"
+            "value" : "술술-Einstellungen exportieren"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exporter les paramètres VoiceInk"
+            "value" : "Exporter les paramètres 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导出 VoiceInk 设置"
+            "value" : "导出 술술 设置"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export 술술 Settings"
           }
         }
       }
@@ -13404,19 +13512,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hast du Feedback, einen Fehlerbericht oder stimmt etwas nicht? Sende eine E-Mail mit Systeminformationen oder tritt dem Discord bei. Jeder Bericht hilft, VoiceInk zuverlässiger und einfacher nutzbar zu machen."
+            "value" : "Hast du Feedback, einen Fehlerbericht oder stimmt etwas nicht? Sende eine E-Mail mit Systeminformationen oder tritt dem Discord bei. Jeder Bericht hilft, 술술 zuverlässiger und einfacher nutzbar zu machen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vous avez des commentaires, un rapport de bug ou quelque chose qui ne va pas ? Envoyez une note contenant des informations système par e-mail ou rejoignez Discord pour une discussion communautaire. Chaque rapport contribue à rendre VoiceInk plus fiable et plus facile à utiliser."
+            "value" : "Vous avez des commentaires, un rapport de bug ou quelque chose qui ne va pas ? Envoyez une note contenant des informations système par e-mail ou rejoignez Discord pour une discussion communautaire. Chaque rapport contribue à rendre 술술 plus fiable et plus facile à utiliser."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有反馈、错误报告，或觉得哪里不对劲？可以通过电子邮件发送附带系统信息的留言，或加入 Discord 参与社区讨论。每一条报告都会让 VoiceInk 更可靠、更易用。"
+            "value" : "有反馈、错误报告，或觉得哪里不对劲？可以通过电子邮件发送附带系统信息的留言，或加入 Discord 参与社区讨论。每一条报告都会让 술술 更可靠、更易用。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Have feedback, a bug report, or something that feels off? Send a note with system information by email, or join Discord for community discussion. Every report helps make 술술 more reliable and easier to use."
           }
         }
       }
@@ -13426,19 +13540,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hilf anderen, VoiceInk zu entdecken"
+            "value" : "Hilf anderen, 술술 zu entdecken"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aidez les gens à découvrir VoiceInk"
+            "value" : "Aidez les gens à découvrir 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "帮助更多人发现 VoiceInk"
+            "value" : "帮助更多人发现 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help people discover 술술"
           }
         }
       }
@@ -13829,19 +13949,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn dir VoiceInk geholfen hat, hilft ein Stern auf GitHub anderen, es zu finden."
+            "value" : "Wenn dir 술술 geholfen hat, hilft ein Stern auf GitHub anderen, es zu finden."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si VoiceInk a été utile, une étoile sur GitHub aide les autres à le trouver."
+            "value" : "Si 술술 a été utile, une étoile sur GitHub aide les autres à le trouver."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果 VoiceInk 对你有帮助，在 GitHub 上点个星标可以帮助更多人发现它。"
+            "value" : "如果 술술 对你有帮助，在 GitHub 上点个星标可以帮助更多人发现它。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If 술술 has been useful, a star on GitHub helps others find it."
           }
         }
       }
@@ -14093,19 +14219,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Einstellungen importieren"
+            "value" : "술술-Einstellungen importieren"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Importer les paramètres VoiceInk"
+            "value" : "Importer les paramètres 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导入 VoiceInk 设置"
+            "value" : "导入 술술 设置"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import 술술 Settings"
           }
         }
       }
@@ -14658,19 +14790,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es wird empfohlen, VoiceInk neu zu starten, damit alle Änderungen vollständig wirksam werden."
+            "value" : "Es wird empfohlen, 술술 neu zu starten, damit alle Änderungen vollständig wirksam werden."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il est recommandé de redémarrer VoiceInk pour que toutes les modifications prennent pleinement effet."
+            "value" : "Il est recommandé de redémarrer 술술 pour que toutes les modifications prennent pleinement effet."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建议重新启动 VoiceInk，以使所有更改完全生效。"
+            "value" : "建议重新启动 술술，以使所有更改完全生效。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It is recommended to restart 술술 for all changes to take full effect."
           }
         }
       }
@@ -16667,19 +16805,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modi helfen dir, VoiceInk für verschiedene Schreibaufgaben, Arbeitsabläufe und Szenarien einzurichten."
+            "value" : "Modi helfen dir, 술술 für verschiedene Schreibaufgaben, Arbeitsabläufe und Szenarien einzurichten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les modes vous aident à configurer VoiceInk pour différentes tâches d'écriture, flux de travail et scénarios."
+            "value" : "Les modes vous aident à configurer 술술 pour différentes tâches d'écriture, flux de travail et scénarios."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模式可帮助你针对不同的写作任务、工作流程和使用场景来设置 VoiceInk。"
+            "value" : "模式可帮助你针对不同的写作任务、工作流程和使用场景来设置 술술。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modes help you set up 술술 for different writing tasks, workflows, and scenarios."
           }
         }
       }
@@ -19143,19 +19287,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Öffne aktuelle Transkriptionen, ohne das VoiceInk-Hauptfenster zu öffnen. Suche, wähle eine aus und drücke die Eingabetaste, um sie in deine aktuelle App einzufügen."
+            "value" : "Öffne aktuelle Transkriptionen, ohne das 술술-Hauptfenster zu öffnen. Suche, wähle eine aus und drücke die Eingabetaste, um sie in deine aktuelle App einzufügen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrez les transcriptions récentes sans ouvrir la fenêtre principale de VoiceInk. Recherchez, sélectionnez et appuyez sur Retour pour coller dans votre application actuelle."
+            "value" : "Ouvrez les transcriptions récentes sans ouvrir la fenêtre principale de 술술. Recherchez, sélectionnez et appuyez sur Retour pour coller dans votre application actuelle."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无需打开 VoiceInk 主窗口即可打开最近的转录。搜索并选择一项，然后按回车键将其粘贴到当前应用中。"
+            "value" : "无需打开 술술 主窗口即可打开最近的转录。搜索并选择一项，然后按回车键将其粘贴到当前应用中。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open recent transcriptions without opening the main 술술 window. Search, select, and press Return to paste into your current app."
           }
         }
       }
@@ -19235,19 +19385,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Update %@ öffnen"
+            "value" : "술술-Update %@ öffnen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrez la mise à jour VoiceInk %@"
+            "value" : "Ouvrez la mise à jour 술술 %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打开 VoiceInk %@ 更新"
+            "value" : "打开 술술 %@ 更新"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the 술술 %@ update"
           }
         }
       }
@@ -20002,19 +20158,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle das Mikrofon aus, das VoiceInk für Aufnahmen verwenden soll."
+            "value" : "Wähle das Mikrofon aus, das 술술 für Aufnahmen verwenden soll."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisissez le microphone que VoiceInk doit utiliser pour les enregistrements."
+            "value" : "Choisissez le microphone que 술술 doit utiliser pour les enregistrements."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选取 VoiceInk 录音时应使用的麦克风。"
+            "value" : "选取 술술 录音时应使用的麦克风。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick the microphone 술술 should use for recordings."
           }
         }
       }
@@ -20203,19 +20365,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drücke während der Aufnahme die Eingabetaste, um die Aufnahme zu beenden und das Ergebnis auszugeben. VoiceInk fügt das Ergebnis anschließend ein und drückt die ausgewählte Taste, um es zu senden. Wähle „Kein“, um diese Funktion zu deaktivieren."
+            "value" : "Drücke während der Aufnahme die Eingabetaste, um die Aufnahme zu beenden und das Ergebnis auszugeben. 술술 fügt das Ergebnis anschließend ein und drückt die ausgewählte Taste, um es zu senden. Wähle „Kein“, um diese Funktion zu deaktivieren."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuyez sur Retour pendant l’enregistrement pour l’arrêter et produire le résultat. VoiceInk colle ensuite le résultat et appuie sur la touche choisie pour l’envoyer. Choisissez « Aucun » pour désactiver cette fonction."
+            "value" : "Appuyez sur Retour pendant l’enregistrement pour l’arrêter et produire le résultat. 술술 colle ensuite le résultat et appuie sur la touche choisie pour l’envoyer. Choisissez « Aucun » pour désactiver cette fonction."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "录音时按 Return 可停止录音并输出结果。VoiceInk 随后会粘贴结果，并按下所选按键将其发送。选择“无”可禁用此功能。"
+            "value" : "录音时按 Return 可停止录音并输出结果。술술 随后会粘贴结果，并按下所选按键将其发送。选择“无”可禁用此功能。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press Return while recording to stop and deliver the result. 술술 will then paste the result and press the selected key to send it. Choose None to disable this feature."
           }
         }
       }
@@ -20562,19 +20730,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aktivität wird zusammengeführt."
+            "value" : "술술-Aktivität wird zusammengeführt."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rassembler votre activité VoiceInk."
+            "value" : "Rassembler votre activité 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正在汇总你的 VoiceInk 活动。"
+            "value" : "正在汇总你的 술술 活动。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulling together your 술술 activity."
           }
         }
       }
@@ -20697,19 +20871,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk beenden"
+            "value" : "술술 beenden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitter VoiceInk"
+            "value" : "Quitter 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出 VoiceInk"
+            "value" : "退出 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit 술술"
           }
         }
       }
@@ -21860,19 +22040,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erforderlich für VoiceInk-Tastaturkürzel und app-weite Steuerung."
+            "value" : "Erforderlich für 술술-Tastaturkürzel und app-weite Steuerung."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Requis pour que les raccourcis VoiceInk et les commandes à l’échelle de l’application fonctionnent correctement."
+            "value" : "Requis pour que les raccourcis 술술 et les commandes à l’échelle de l’application fonctionnent correctement."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 的快捷键和全局控制需要此权限才能正常工作。"
+            "value" : "술술 的快捷键和全局控制需要此权限才能正常工作。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required for 술술 shortcuts and app-wide controls to work properly."
           }
         }
       }
@@ -22016,19 +22202,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk nach dem Aktivieren der Bildschirmaufnahme neu starten."
+            "value" : "술술 nach dem Aktivieren der Bildschirmaufnahme neu starten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redémarrez VoiceInk après avoir activé l'enregistrement d'écran."
+            "value" : "Redémarrez 술술 après avoir activé l'enregistrement d'écran."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "启用屏幕录制后，请重新启动 VoiceInk。"
+            "value" : "启用屏幕录制后，请重新启动 술술。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart 술술 after enabling Screen Recording."
           }
         }
       }
@@ -22038,19 +22230,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk neu starten, um die Sprache anzuwenden"
+            "value" : "술술 neu starten, um die Sprache anzuwenden"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redémarrez VoiceInk pour appliquer la langue"
+            "value" : "Redémarrez 술술 pour appliquer la langue"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "重新启动 VoiceInk 以应用语言"
+            "value" : "重新启动 술술 以应用语言"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart 술술 to Apply Language"
           }
         }
       }
@@ -22399,19 +22597,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe, wie VoiceInk deine Daten handhabt, bevor du eine Lizenz auswählst."
+            "value" : "Überprüfe, wie 술술 deine Daten handhabt, bevor du eine Lizenz auswählst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifiez comment VoiceInk gère vos données avant de choisir une licence."
+            "value" : "Vérifiez comment 술술 gère vos données avant de choisir une licence."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择许可证前，请先查看 VoiceInk 如何处理你的数据。"
+            "value" : "选择许可证前，请先查看 술술 如何处理你的数据。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review how 술술 handles your data before choosing a license."
           }
         }
       }
@@ -23687,19 +23891,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lege fest, wie VoiceInk deine Sprache transkribiert und formatiert, und diktiere dann in jeder App."
+            "value" : "Lege fest, wie 술술 deine Sprache transkribiert und formatiert, und diktiere dann in jeder App."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Définissez la manière dont VoiceInk transcrit et formate votre discours, puis commencez à dicter dans n'importe quelle application."
+            "value" : "Définissez la manière dont 술술 transcrit et formate votre discours, puis commencez à dicter dans n'importe quelle application."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "设置 VoiceInk 如何转写和格式化你的语音，然后即可在任何 App 中开始听写。"
+            "value" : "设置 술술 如何转写和格式化你的语音，然后即可在任何 App 中开始听写。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set how 술술 transcribes and formats your speech, then start dictating in any app."
           }
         }
       }
@@ -24135,9 +24345,7 @@
         }
       }
     },
-    "Skip" : {
-
-    },
+    "Skip" : {},
     "Skip API Setup" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -24161,9 +24369,7 @@
         }
       }
     },
-    "Skip onboarding" : {
-
-    },
+    "Skip onboarding" : {},
     "Skip short transcriptions" : {
       "localizations" : {
         "de" : {
@@ -24186,9 +24392,7 @@
         }
       }
     },
-    "Skip the remaining onboarding steps" : {
-
-    },
+    "Skip the remaining onboarding steps" : {},
     "Skipped %lld duplicate, conflicting, invalid, or cyclic entries." : {
       "localizations" : {
         "de" : {
@@ -24531,19 +24735,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme für Sprachtranskription starten oder stoppen."
+            "value" : "술술-Aufnahme für Sprachtranskription starten oder stoppen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Démarrez ou arrêtez l'enregistreur VoiceInk pour la transcription vocale."
+            "value" : "Démarrez ou arrêtez l'enregistreur 술술 pour la transcription vocale."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "启动或停止 VoiceInk 录音器，以进行语音转写。"
+            "value" : "启动或停止 술술 录音器，以进行语音转写。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start or stop the 술술 recorder for voice transcription."
           }
         }
       }
@@ -25291,19 +25501,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Danke, dass du VoiceInk verwendest"
+            "value" : "Danke, dass du 술술 verwendest"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Merci d'utiliser VoiceInk"
+            "value" : "Merci d'utiliser 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "感谢你使用 VoiceInk"
+            "value" : "感谢你使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for using 술술"
           }
         }
       }
@@ -25814,19 +26030,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Schlüssel funktioniert, aber VoiceInk konnte ihn nicht sicher speichern."
+            "value" : "Der Schlüssel funktioniert, aber 술술 konnte ihn nicht sicher speichern."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La clé a fonctionné, mais VoiceInk n'a pas pu la sauvegarder en toute sécurité."
+            "value" : "La clé a fonctionné, mais 술술 n'a pas pu la sauvegarder en toute sécurité."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "密钥有效，但 VoiceInk 无法安全地存储它。"
+            "value" : "密钥有效，但 술술 无法安全地存储它。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The key worked, but 술술 could not save it securely."
           }
         }
       }
@@ -26423,25 +26645,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dadurch wird VoiceInk auf diesem Mac deaktiviert und ein Geräteplatz in deiner Lizenz freigegeben."
+            "value" : "Dadurch wird 술술 auf diesem Mac deaktiviert und ein Geräteplatz in deiner Lizenz freigegeben."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This deactivates VoiceInk on this Mac and frees a device on your license."
+            "value" : "This deactivates 술술 on this Mac and frees a device on your license."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cela désactive VoiceInk sur ce Mac et libère un appareil sur votre licence."
+            "value" : "Cela désactive 술술 sur ce Mac et libère un appareil sur votre licence."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这将在此 Mac 上停用 VoiceInk，并释放许可证中的一个设备名额。"
+            "value" : "这将在此 Mac 上停用 술술，并释放许可证中的一个设备名额。"
           }
         }
       }
@@ -26473,19 +26695,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Datei enthält kein gültiges VoiceInk-Wörterbuch."
+            "value" : "Diese Datei enthält kein gültiges 술술-Wörterbuch."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce fichier ne contient pas de dictionnaire VoiceInk valide."
+            "value" : "Ce fichier ne contient pas de dictionnaire 술술 valide."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此文件不包含有效的 VoiceInk 词典。"
+            "value" : "此文件不包含有效的 술술 词典。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file does not contain a valid 술술 dictionary."
           }
         }
       }
@@ -26933,19 +27161,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme umschalten"
+            "value" : "술술-Aufnahme umschalten"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Basculer l'enregistreur VoiceInk"
+            "value" : "Basculer l'enregistreur 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "切换 VoiceInk 录音器"
+            "value" : "切换 술술 录音器"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toggle 술술 Recorder"
           }
         }
       }
@@ -27584,19 +27818,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probiere ein paar kurze Beispiele aus und sieh dir an, wie VoiceInk funktioniert."
+            "value" : "Probiere ein paar kurze Beispiele aus und sieh dir an, wie 술술 funktioniert."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essayez quelques courts échantillons et voyez comment fonctionne VoiceInk avant de commencer."
+            "value" : "Essayez quelques courts échantillons et voyez comment fonctionne 술술 avant de commencer."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "开始之前，先试几个简短的示例，看看 VoiceInk 是如何工作的。"
+            "value" : "开始之前，先试几个简短的示例，看看 술술 是如何工作的。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try a few short samples and see how 술술 works before you start."
           }
         }
       }
@@ -27722,19 +27962,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwandle deine gesprochene Notiz mit VoiceInk in einen sauberen E-Mail-Entwurf."
+            "value" : "Verwandle deine gesprochene Notiz mit 술술 in einen sauberen E-Mail-Entwurf."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transformez votre note vocale en un brouillon d'e-mail propre avec VoiceInk."
+            "value" : "Transformez votre note vocale en un brouillon d'e-mail propre avec 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用 VoiceInk 把你的口述整理成整洁的邮件草稿。"
+            "value" : "用 술술 把你的口述整理成整洁的邮件草稿。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn your spoken note into a clean email draft with 술술."
           }
         }
       }
@@ -28086,19 +28332,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk jetzt nutzen."
+            "value" : "술술 jetzt nutzen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilisez VoiceInk maintenant."
+            "value" : "Utilisez 술술 maintenant."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即使用 VoiceInk。"
+            "value" : "立即使用 술술。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use 술술 now."
           }
         }
       }
@@ -28694,19 +28946,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk"
+            "value" : "술술"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk"
+            "value" : "술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk"
+            "value" : "술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술"
           }
         }
       }
@@ -28718,19 +28976,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk %@"
+            "value" : "술술 %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk %@"
+            "value" : "술술 %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk %@"
+            "value" : "술술 %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 %@"
           }
         }
       }
@@ -28740,19 +29004,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-App ist nicht verfügbar"
+            "value" : "술술-App ist nicht verfügbar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'application VoiceInk n'est pas disponible"
+            "value" : "L'application 술술 n'est pas disponible"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk App 不可用"
+            "value" : "술술 App 不可用"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 app is not available"
           }
         }
       }
@@ -28764,19 +29034,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk lernt automatisch aus deinen Korrekturen, um die Transkriptionsgenauigkeit mit der Zeit zu verbessern. Die automatische Wörterbucherweiterung verwendet deinen derzeit konfigurierten KI-Anbieter und dein KI-Modell. Du kannst beides jederzeit in den Wörterbucheinstellungen ändern."
+            "value" : "술술 lernt automatisch aus deinen Korrekturen, um die Transkriptionsgenauigkeit mit der Zeit zu verbessern. Die automatische Wörterbucherweiterung verwendet deinen derzeit konfigurierten KI-Anbieter und dein KI-Modell. Du kannst beides jederzeit in den Wörterbucheinstellungen ändern."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk apprend automatiquement des corrections que vous apportez pour améliorer la précision de la transcription au fil du temps. Dictionary Auto Learn utilise votre fournisseur d'IA et votre modèle d'IA actuellement configurés. Vous pouvez les modifier à tout moment dans les paramètres du dictionnaire."
+            "value" : "술술 apprend automatiquement des corrections que vous apportez pour améliorer la précision de la transcription au fil du temps. Dictionary Auto Learn utilise votre fournisseur d'IA et votre modèle d'IA actuellement configurés. Vous pouvez les modifier à tout moment dans les paramètres du dictionnaire."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 会自动学习你所做的更正，从而逐步提高转录准确度。词典自动学习会使用你当前配置的 AI 提供商和 AI 模型。你可以随时在“词典”设置中更改它们。"
+            "value" : "술술 会自动学习你所做的更正，从而逐步提高转录准确度。词典自动学习会使用你当前配置的 AI 提供商和 AI 模型。你可以随时在“词典”设置中更改它们。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 automatically learns from the corrections you make to improve transcription accuracy over time. Dictionary Auto Learn uses your currently configured AI provider and AI model. You can change them anytime in Dictionary Settings."
           }
         }
       }
@@ -28787,19 +29063,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk wechselt automatisch in diesen Modus, abhängig von der verwendeten App oder Website oder wenn du während der Aufnahme ein Auslösewort sagst."
+            "value" : "술술 wechselt automatisch in diesen Modus, abhängig von der verwendeten App oder Website oder wenn du während der Aufnahme ein Auslösewort sagst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk passe automatiquement à ce mode selon l’application ou le site web que vous utilisez, ou lorsque vous prononcez un mot déclencheur pendant l’enregistrement."
+            "value" : "술술 passe automatiquement à ce mode selon l’application ou le site web que vous utilisez, ou lorsque vous prononcez un mot déclencheur pendant l’enregistrement."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 会根据你正在使用的 App 或网站自动切换到此模式，也会在你录音时说出触发词后切换。"
+            "value" : "술술 会根据你正在使用的 App 或网站自动切换到此模式，也会在你录音时说出触发词后切换。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 automatically switches to this mode based on the app or website you're using, or when you say a trigger word during recording."
           }
         }
       }
@@ -28809,19 +29091,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk erkennt automatisch, woran du arbeitest, und wählt deine bevorzugte Konfiguration aus. Du kannst dies jederzeit anpassen, indem du Modi bearbeitest oder neue erstellst."
+            "value" : "술술 erkennt automatisch, woran du arbeitest, und wählt deine bevorzugte Konfiguration aus. Du kannst dies jederzeit anpassen, indem du Modi bearbeitest oder neue erstellst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk comprend automatiquement avec quoi vous travaillez et sélectionne votre configuration préférée. Vous pouvez toujours configurer cela en modifiant ou en créant de nouveaux modes."
+            "value" : "술술 comprend automatiquement avec quoi vous travaillez et sélectionne votre configuration préférée. Vous pouvez toujours configurer cela en modifiant ou en créant de nouveaux modes."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 会自动识别你正在处理的内容，并选用你偏好的设置。你随时可以通过编辑或创建新模式来进行配置。"
+            "value" : "술술 会自动识别你正在处理的内容，并选用你偏好的设置。你随时可以通过编辑或创建新模式来进行配置。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 automatically understands what you are working with and selects your preferred setup. You can always configure this by editing or creating new modes."
           }
         }
       }
@@ -28831,19 +29119,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk kann anhand der verwendeten App und der konfigurierten Regeln den passenden Modus auswählen."
+            "value" : "술술 kann anhand der verwendeten App und der konfigurierten Regeln den passenden Modus auswählen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk peut sélectionner le bon mode à partir de l'application que vous utilisez et des règles que vous configurez."
+            "value" : "술술 peut sélectionner le bon mode à partir de l'application que vous utilisez et des règles que vous configurez."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 可以根据你正在使用的 App 和你配置的规则选择合适的模式。"
+            "value" : "술술 可以根据你正在使用的 App 和你配置的规则选择合适的模式。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 can select the right mode from the app you are using and the rules you configure."
           }
         }
       }
@@ -28853,19 +29147,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte nicht zu einem anderen Mikrofon wechseln."
+            "value" : "술술 konnte nicht zu einem anderen Mikrofon wechseln."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu passer à un autre microphone."
+            "value" : "술술 n'a pas pu passer à un autre microphone."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法切换到其他麦克风。"
+            "value" : "술술 无法切换到其他麦克风。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 could not switch to another microphone."
           }
         }
       }
@@ -28875,19 +29175,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte nicht auf den Speicherort zugreifen. Deine Transkriptionen werden nicht zwischen Sitzungen gespeichert."
+            "value" : "술술 konnte nicht auf den Speicherort zugreifen. Deine Transkriptionen werden nicht zwischen Sitzungen gespeichert."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu accéder à son emplacement de stockage. Vos transcriptions ne seront pas enregistrées entre les sessions."
+            "value" : "술술 n'a pas pu accéder à son emplacement de stockage. Vos transcriptions ne seront pas enregistrées entre les sessions."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法访问其存储位置。你的转写记录将无法跨会话存储。"
+            "value" : "술술 无法访问其存储位置。你的转写记录将无法跨会话存储。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 couldn't access its storage location. Your transcriptions will not be saved between sessions."
           }
         }
       }
@@ -28899,19 +29205,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte nicht auf den macOS-Schlüsselbund zugreifen. Beende VoiceInk und öffne die App erneut. Falls das Problem weiterhin besteht, starte deinen Mac neu."
+            "value" : "술술 konnte nicht auf den macOS-Schlüsselbund zugreifen. Beende 술술 und öffne die App erneut. Falls das Problem weiterhin besteht, starte deinen Mac neu."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu accéder au trousseau macOS. Quittez et rouvrez VoiceInk. Si le problème persiste, redémarrez votre Mac."
+            "value" : "술술 n'a pas pu accéder au trousseau macOS. Quittez et rouvrez 술술. Si le problème persiste, redémarrez votre Mac."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法访问 macOS 钥匙串。请退出并重新打开 VoiceInk。如果问题仍然存在，请重新启动 Mac。"
+            "value" : "술술 无法访问 macOS 钥匙串。请退出并重新打开 술술。如果问题仍然存在，请重新启动 Mac。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 couldn't access the macOS Keychain. Quit and reopen 술술. If the problem continues, restart your Mac."
           }
         }
       }
@@ -28921,19 +29233,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte die gespeicherte Lizenz nicht entfernen. Bitte versuche es erneut."
+            "value" : "술술 konnte die gespeicherte Lizenz nicht entfernen. Bitte versuche es erneut."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu supprimer la licence enregistrée. Veuillez réessayer."
+            "value" : "술술 n'a pas pu supprimer la licence enregistrée. Veuillez réessayer."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法移除已保存的许可证。请重试。"
+            "value" : "술술 无法移除已保存的许可证。请重试。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 couldn't remove the saved license. Please try again."
           }
         }
       }
@@ -28943,19 +29261,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte die Lizenz nicht speichern. Bitte versuche es erneut."
+            "value" : "술술 konnte die Lizenz nicht speichern. Bitte versuche es erneut."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu enregistrer la licence. Veuillez réessayer."
+            "value" : "술술 n'a pas pu enregistrer la licence. Veuillez réessayer."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法保存许可证。请重试。"
+            "value" : "술술 无法保存许可证。请重试。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 couldn't save the license. Please try again."
           }
         }
       }
@@ -28967,19 +29291,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk konnte den Testzeitraum nicht starten, da der macOS-Schlüsselbund nicht verfügbar ist. Beende VoiceInk und öffne die App erneut. Falls das Problem weiterhin besteht, starte deinen Mac neu."
+            "value" : "술술 konnte den Testzeitraum nicht starten, da der macOS-Schlüsselbund nicht verfügbar ist. Beende 술술 und öffne die App erneut. Falls das Problem weiterhin besteht, starte deinen Mac neu."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk n'a pas pu démarrer la version d'essai car le trousseau macOS n'est pas disponible. Quittez et rouvrez VoiceInk. Si le problème persiste, redémarrez votre Mac."
+            "value" : "술술 n'a pas pu démarrer la version d'essai car le trousseau macOS n'est pas disponible. Quittez et rouvrez 술술. Si le problème persiste, redémarrez votre Mac."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 无法开始试用，因为 macOS 钥匙串不可用。请退出并重新打开 VoiceInk。如果问题仍然存在，请重新启动 Mac。"
+            "value" : "술술 无法开始试用，因为 macOS 钥匙串不可用。请退出并重新打开 술술。如果问题仍然存在，请重新启动 Mac。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 couldn't start the trial because the macOS Keychain is unavailable. Quit and reopen 술술. If the problem continues, restart your Mac."
           }
         }
       }
@@ -28991,19 +29321,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Wirkungsübersicht"
+            "value" : "술술-Wirkungsübersicht"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Résumé de l’impact de VoiceInk"
+            "value" : "Résumé de l’impact de 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 成效概览"
+            "value" : "술술 成效概览"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 impact summary"
           }
         }
       }
@@ -29013,19 +29349,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Einblicke"
+            "value" : "술술-Einblicke"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informations sur VoiceInk"
+            "value" : "Informations sur 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 使用分析"
+            "value" : "술술 使用分析"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Insights"
           }
         }
       }
@@ -29035,19 +29377,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk ist auch Open Source, sodass du jede Codezeile einsehen kannst."
+            "value" : "술술 ist auch Open Source, sodass du jede Codezeile einsehen kannst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est également open source, vous pouvez donc inspecter chaque ligne de code."
+            "value" : "술술 est également open source, vous pouvez donc inspecter chaque ligne de code."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 还是开源软件，你可以查看每一行代码。"
+            "value" : "술술 还是开源软件，你可以查看每一行代码。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is also open source, so you can inspect every single line of code."
           }
         }
       }
@@ -29057,19 +29405,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk erkennt den Kontext"
+            "value" : "술술 erkennt den Kontext"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est contextuel"
+            "value" : "술술 est contextuel"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 支持上下文感知"
+            "value" : "술술 支持上下文感知"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is Context-Aware"
           }
         }
       }
@@ -29079,19 +29433,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk erkennt den Kontext."
+            "value" : "술술 erkennt den Kontext."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est sensible au contexte."
+            "value" : "술술 est sensible au contexte."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 支持上下文感知。"
+            "value" : "술술 支持上下文感知。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is context-aware."
           }
         }
       }
@@ -29101,19 +29461,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk ist Open Source"
+            "value" : "술술 ist Open Source"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est Open Source"
+            "value" : "술술 est Open Source"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 是开源软件"
+            "value" : "술술 是开源软件"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is Open Source"
           }
         }
       }
@@ -29123,19 +29489,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk ist standardmäßig privat"
+            "value" : "술술 ist standardmäßig privat"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est privé par défaut"
+            "value" : "술술 est privé par défaut"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 默认保护隐私"
+            "value" : "술술 默认保护隐私"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is private by default"
           }
         }
       }
@@ -29145,19 +29517,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk ist standardmäßig privat. Keine Daten verlassen dein Gerät, sofern du dem nicht zustimmst."
+            "value" : "술술 ist standardmäßig privat. Keine Daten verlassen dein Gerät, sofern du dem nicht zustimmst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk est privé par défaut. Aucune donnée ne quitte votre appareil à moins que vous ne vous y inscriviez."
+            "value" : "술술 est privé par défaut. Aucune donnée ne quitte votre appareil à moins que vous ne vous y inscriviez."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 默认保护隐私。除非你主动选择，否则任何数据都不会离开你的设备。"
+            "value" : "술술 默认保护隐私。除非你主动选择，否则任何数据都不会离开你的设备。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 is private by default. No data leaves your device unless you opt in."
           }
         }
       }
@@ -29167,7 +29545,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Modi"
+            "value" : "술술-Modi"
           }
         },
         "fr" : {
@@ -29179,7 +29557,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 模式"
+            "value" : "술술 模式"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Modes"
           }
         }
       }
@@ -29189,19 +29573,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Modi umfassen Diktat, Verbesserung, E-Mail, Assistent, Umschreiben, Fragen, Zusammenfassen und Übersetzen."
+            "value" : "술술-Modi umfassen Diktat, Verbesserung, E-Mail, Assistent, Umschreiben, Fragen, Zusammenfassen und Übersetzen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les modes VoiceInk incluent Dictée, Améliorer, E-mail, Assistant, Réécriture, Demander, Résumer et Traduire."
+            "value" : "Les modes 술술 incluent Dictée, Améliorer, E-mail, Assistant, Réécriture, Demander, Résumer et Traduire."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 的模式包括听写、润色、邮件、助手、改写、提问、总结和翻译。"
+            "value" : "술술 的模式包括听写、润色、邮件、助手、改写、提问、总结和翻译。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 modes include Dictation, Enhance, Email, Assistant, Rewrite, Ask, Summarize, and Translate."
           }
         }
       }
@@ -29213,19 +29603,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk benötigt mindestens einen Modus zum Aufnehmen. Erstelle einen, um mit dem Diktieren zu beginnen."
+            "value" : "술술 benötigt mindestens einen Modus zum Aufnehmen. Erstelle einen, um mit dem Diktieren zu beginnen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk a besoin d'au moins un mode pour enregistrer. Créez-en un pour commencer à dicter."
+            "value" : "술술 a besoin d'au moins un mode pour enregistrer. Créez-en un pour commencer à dicter."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 至少需要一个模式才能录音。创建一个模式即可开始听写。"
+            "value" : "술술 至少需要一个模式才能录音。创建一个模式即可开始听写。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 needs at least one mode to record. Create one to start dictating."
           }
         }
       }
@@ -29235,19 +29631,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Pro"
+            "value" : "술술 Pro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Pro"
+            "value" : "술술 Pro"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Pro"
+            "value" : "술술 Pro"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Pro"
           }
         }
       }
@@ -29259,19 +29661,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Fortschritt"
+            "value" : "술술-Fortschritt"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progression de VoiceInk"
+            "value" : "Progression de 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 进度"
+            "value" : "술술 进度"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 progress"
           }
         }
       }
@@ -29281,19 +29689,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk liest sichtbare Bildschirminhalte, um die Genauigkeit der Transkripte zu verbessern."
+            "value" : "술술 liest sichtbare Bildschirminhalte, um die Genauigkeit der Transkripte zu verbessern."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk lit le contenu visible de l'écran pour améliorer la précision des transcriptions."
+            "value" : "술술 lit le contenu visible de l'écran pour améliorer la précision des transcriptions."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 会读取屏幕上的可见内容，以提高转写的准确性。"
+            "value" : "술술 会读取屏幕上的可见内容，以提高转写的准确性。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 reads visible screen content to improve the accuracy of transcripts."
           }
         }
       }
@@ -29303,19 +29717,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme geschlossen"
+            "value" : "술술-Aufnahme geschlossen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistreur VoiceInk rejeté"
+            "value" : "Enregistreur 술술 rejeté"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 录音器已关闭"
+            "value" : "술술 录音器已关闭"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 recorder dismissed"
           }
         }
       }
@@ -29325,19 +29745,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahme umgeschaltet"
+            "value" : "술술-Aufnahme umgeschaltet"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistreur VoiceInk activé"
+            "value" : "Enregistreur 술술 activé"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已切换 VoiceInk 录音器"
+            "value" : "已切换 술술 录音器"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 recorder toggled"
           }
         }
       }
@@ -29347,19 +29773,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk-Aufnahmedienst ist nicht verfügbar"
+            "value" : "술술-Aufnahmedienst ist nicht verfügbar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le service d'enregistrement VoiceInk n'est pas disponible"
+            "value" : "Le service d'enregistrement 술술 n'est pas disponible"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 录音服务不可用"
+            "value" : "술술 录音服务不可用"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 recording service is not available"
           }
         }
       }
@@ -29369,19 +29801,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine konnte die Verbesserung nicht abschließen."
+            "value" : "술술 Refine konnte die Verbesserung nicht abschließen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine n'a pas pu terminer l'amélioration."
+            "value" : "술술 Refine n'a pas pu terminer l'amélioration."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 无法完成润色。"
+            "value" : "술술 Refine 无法完成润色。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine could not complete the enhancement."
           }
         }
       }
@@ -29391,19 +29829,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine konnte das Modell nicht vorbereiten."
+            "value" : "술술 Refine konnte das Modell nicht vorbereiten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine n'a pas pu préparer le modèle."
+            "value" : "술술 Refine n'a pas pu préparer le modèle."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 无法准备模型。"
+            "value" : "술술 Refine 无法准备模型。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine could not prepare the model."
           }
         }
       }
@@ -29413,19 +29857,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine wurde nicht heruntergeladen."
+            "value" : "술술 Refine wurde nicht heruntergeladen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine n’est pas téléchargé."
+            "value" : "술술 Refine n’est pas téléchargé."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "尚未下载 VoiceInk Refine。"
+            "value" : "尚未下载 술술 Refine。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine is not downloaded."
           }
         }
       }
@@ -29435,19 +29885,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine unterstützt nur die Transkriptbereinigung."
+            "value" : "술술 Refine unterstützt nur die Transkriptbereinigung."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine prend uniquement en charge le nettoyage des transcriptions."
+            "value" : "술술 Refine prend uniquement en charge le nettoyage des transcriptions."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 仅支持转录文本清理。"
+            "value" : "술술 Refine 仅支持转录文本清理。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine only supports transcript cleanup."
           }
         }
       }
@@ -29457,19 +29913,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine hat eine ungültige Anfrage erhalten."
+            "value" : "술술 Refine hat eine ungültige Anfrage erhalten."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine a reçu une demande non valide."
+            "value" : "술술 Refine a reçu une demande non valide."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 收到了无效请求。"
+            "value" : "술술 Refine 收到了无效请求。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine received an invalid request."
           }
         }
       }
@@ -29479,19 +29941,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine erfordert einen Mac mit Apple-Chip und mindestens 16 GB Arbeitsspeicher."
+            "value" : "술술 Refine erfordert einen Mac mit Apple-Chip und mindestens 16 GB Arbeitsspeicher."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine nécessite un Mac Apple Silicon avec au moins 16 Go de mémoire."
+            "value" : "술술 Refine nécessite un Mac Apple Silicon avec au moins 16 Go de mémoire."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 需要配备 Apple 芯片且内存至少为 16 GB 的 Mac。"
+            "value" : "술술 Refine 需要配备 Apple 芯片且内存至少为 16 GB 的 Mac。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine requires an Apple silicon Mac with at least 16 GB of memory."
           }
         }
       }
@@ -29501,19 +29969,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine hat eine ungültige Antwort zurückgegeben."
+            "value" : "술술 Refine hat eine ungültige Antwort zurückgegeben."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine a renvoyé une réponse non valide."
+            "value" : "술술 Refine a renvoyé une réponse non valide."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk Refine 返回了无效响应。"
+            "value" : "술술 Refine 返回了无效响应。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 Refine returned an invalid response."
           }
         }
       }
@@ -29523,19 +29997,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk nutzt die Zwischenablage vorübergehend zum Einfügen der Transkription. Wenn aktiviert, wird der frühere Inhalt der Zwischenablage nach der gewählten Verzögerung wiederhergestellt. Wenn deaktiviert, bleibt die Transkription in der Zwischenablage."
+            "value" : "술술 nutzt die Zwischenablage vorübergehend zum Einfügen der Transkription. Wenn aktiviert, wird der frühere Inhalt der Zwischenablage nach der gewählten Verzögerung wiederhergestellt. Wenn deaktiviert, bleibt die Transkription in der Zwischenablage."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk utilise temporairement le presse-papiers pour coller la transcription. Lorsqu'il est activé, il restaure le contenu précédent de votre presse-papiers après le délai sélectionné. Lorsqu'elle est désactivée, la transcription collée reste dans votre presse-papiers."
+            "value" : "술술 utilise temporairement le presse-papiers pour coller la transcription. Lorsqu'il est activé, il restaure le contenu précédent de votre presse-papiers après le délai sélectionné. Lorsqu'elle est désactivée, la transcription collée reste dans votre presse-papiers."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 会临时使用剪贴板来粘贴转写内容。打开后，它会在所选延迟后恢复你之前的剪贴板内容。关闭后，粘贴的转写内容会保留在剪贴板中。"
+            "value" : "술술 会临时使用剪贴板来粘贴转写内容。打开后，它会在所选延迟后恢复你之前的剪贴板内容。关闭后，粘贴的转写内容会保留在剪贴板中。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay. When disabled, the pasted transcription stays on your clipboard."
           }
         }
       }
@@ -29545,19 +30025,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk verwendet Bedienungshilfen, um Transkriptionen direkt in jede App einzugeben."
+            "value" : "술술 verwendet Bedienungshilfen, um Transkriptionen direkt in jede App einzugeben."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk utilise Accessibility pour saisir des transcriptions directement dans n'importe quelle application."
+            "value" : "술술 utilise Accessibility pour saisir des transcriptions directement dans n'importe quelle application."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 使用辅助功能将转写内容直接输入到任何 App 中。"
+            "value" : "술술 使用辅助功能将转写内容直接输入到任何 App 中。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 uses Accessibility to type transcriptions directly into any app."
           }
         }
       }
@@ -29567,19 +30053,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk verwendet LLMs, um Transkripte zu verbessern und KI-Aktionen auszuführen. Richte einen API-Schlüssel ein, bevor du fortfährst."
+            "value" : "술술 verwendet LLMs, um Transkripte zu verbessern und KI-Aktionen auszuführen. Richte einen API-Schlüssel ein, bevor du fortfährst."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk utilise des LLM pour améliorer les transcriptions et effectuer des actions d'IA. Configurez une clé API avant de continuer."
+            "value" : "술술 utilise des LLM pour améliorer les transcriptions et effectuer des actions d'IA. Configurez une clé API avant de continuer."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 使用大语言模型润色转写记录并执行 AI 操作。请先设置 API 密钥再继续。"
+            "value" : "술술 使用大语言模型润色转写记录并执行 AI 操作。请先设置 API 密钥再继续。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 uses LLMs to enhance transcripts and perform AI actions. Set up an API key before continuing."
           }
         }
       }
@@ -29589,19 +30081,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk verwendet dein Mikrofon, um deine Stimme aufzunehmen."
+            "value" : "술술 verwendet dein Mikrofon, um deine Stimme aufzunehmen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk utilise votre microphone pour capturer votre voix."
+            "value" : "술술 utilise votre microphone pour capturer votre voix."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "VoiceInk 使用你的麦克风来采集语音。"
+            "value" : "술술 使用你的麦克风来采集语音。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술 uses your microphone to capture your voice."
           }
         }
       }
@@ -29775,7 +30273,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neu in VoiceInk"
+            "value" : "Neu in 술술"
           }
         },
         "fr" : {
@@ -29845,19 +30343,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit VoiceInk"
+            "value" : "mit 술술"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec VoiceInk"
+            "value" : "avec 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用 VoiceInk"
+            "value" : "使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with 술술"
           }
         }
       }
@@ -29869,19 +30373,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit VoiceInk in den letzten 30 Tagen"
+            "value" : "mit 술술 in den letzten 30 Tagen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec VoiceInk au cours des 30 derniers jours"
+            "value" : "avec 술술 au cours des 30 derniers jours"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "过去 30 天使用 VoiceInk"
+            "value" : "过去 30 天使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with 술술 over the last 30 days"
           }
         }
       }
@@ -29893,19 +30403,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit VoiceInk diese Woche"
+            "value" : "mit 술술 diese Woche"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec VoiceInk cette semaine"
+            "value" : "avec 술술 cette semaine"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "本周使用 VoiceInk"
+            "value" : "本周使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with 술술 this week"
           }
         }
       }
@@ -29917,19 +30433,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit VoiceInk dieses Jahr"
+            "value" : "mit 술술 dieses Jahr"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec VoiceInk cette année"
+            "value" : "avec 술술 cette année"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今年使用 VoiceInk"
+            "value" : "今年使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with 술술 this year"
           }
         }
       }
@@ -29941,19 +30463,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mit VoiceInk heute"
+            "value" : "mit 술술 heute"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "avec VoiceInk aujourd'hui"
+            "value" : "avec 술술 aujourd'hui"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今天使用 VoiceInk"
+            "value" : "今天使用 술술"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with 술술 today"
           }
         }
       }
@@ -30381,19 +30909,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast %@ mit VoiceInk gespart"
+            "value" : "Du hast %@ mit 술술 gespart"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vous avez enregistré %@ avec VoiceInk"
+            "value" : "Vous avez enregistré %@ avec 술술"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你已使用 VoiceInk 节省了 %@"
+            "value" : "你已使用 술술 节省了 %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have saved %@ with 술술"
           }
         }
       }
@@ -30636,19 +31170,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Sprachänderung wird vollständig wirksam, nachdem du VoiceInk beendet und erneut geöffnet hast."
+            "value" : "Die Sprachänderung wird vollständig wirksam, nachdem du 술술 beendet und erneut geöffnet hast."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre changement de langue prendra pleinement effet après avoir quitté et rouvert VoiceInk."
+            "value" : "Votre changement de langue prendra pleinement effet après avoir quitté et rouvert 술술."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "退出并重新打开 VoiceInk 后，语言更改才会完全生效。"
+            "value" : "退出并重新打开 술술 后，语言更改才会完全生效。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your language change will take full effect after you quit and reopen 술술."
           }
         }
       }
@@ -30659,19 +31199,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Lizenzschlüssel wurde verifiziert. VoiceInk ist auf diesem Mac einsatzbereit."
+            "value" : "Dein Lizenzschlüssel wurde verifiziert. 술술 ist auf diesem Mac einsatzbereit."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre clé de licence est vérifiée. VoiceInk est prêt à être utilisé sur ce Mac."
+            "value" : "Votre clé de licence est vérifiée. 술술 est prêt à être utilisé sur ce Mac."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的许可证密钥已通过验证。VoiceInk 已可在这台 Mac 上使用。"
+            "value" : "你的许可证密钥已通过验证。술술 已可在这台 Mac 上使用。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your license key is verified. 술술 is ready to use on this Mac."
           }
         }
       }
@@ -30773,19 +31319,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Testversion ist beendet. Upgrade auf VoiceInk Pro unter %@"
+            "value" : "Deine Testversion ist beendet. Upgrade auf 술술 Pro unter %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Votre essai est terminé. Mise à niveau vers VoiceInk Pro sur %@"
+            "value" : "Votre essai est terminé. Mise à niveau vers 술술 Pro sur %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你的试用已结束。请前往 %@ 升级到 VoiceInk Pro"
+            "value" : "你的试用已结束。请前往 %@ 升级到 술술 Pro"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your trial has ended. Upgrade to 술술 Pro at %@"
           }
         }
       }

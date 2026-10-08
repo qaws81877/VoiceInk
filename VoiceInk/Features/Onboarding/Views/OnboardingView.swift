@@ -3,7 +3,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Binding var hasCompletedOnboardingV2: Bool
-    @EnvironmentObject var fluidAudioModelManager: FluidAudioModelManager
+    @EnvironmentObject var whisperModelManager: WhisperModelManager
     @EnvironmentObject var transcriptionModelManager: TranscriptionModelManager
     @EnvironmentObject var aiService: AIService
     @EnvironmentObject var enhancementService: AIEnhancementService
@@ -11,9 +11,18 @@ struct OnboardingView: View {
     let contentMaxWidth: CGFloat = 560
 
     var body: some View {
-        let isTranscriptionModelDownloaded = coordinator.isTranscriptionModelDownloaded(
-            using: fluidAudioModelManager
-        )
+        let selectedWhisperModel = coordinator.selectedWhisperModel
+        let isTranscriptionModelDownloaded = selectedWhisperModel.map {
+            coordinator.isWhisperModelDownloaded($0, using: whisperModelManager)
+        } ?? false
+        let isWhisperDownloading = selectedWhisperModel.map {
+            whisperModelManager.downloadProgress[$0.name + "_main"] != nil
+                || whisperModelManager.downloadProgress[$0.name + "_coreml"] != nil
+        } ?? false
+        let whisperDownloadProgress = selectedWhisperModel.flatMap {
+            whisperModelManager.downloadProgress[$0.name + "_main"]
+                ?? whisperModelManager.downloadProgress[$0.name + "_coreml"]
+        }
         let isTranscriptionSetupReady = coordinator.isTranscriptionSetupReady(
             isTranscriptionModelDownloaded: isTranscriptionModelDownloaded
         )
@@ -52,27 +61,25 @@ struct OnboardingView: View {
                 case .model:
                     OnboardingModelScreen(
                         contentMaxWidth: contentMaxWidth,
-                        localModel: coordinator.requiredTranscriptionModel,
+                        whisperModels: coordinator.whisperModelChoices,
+                        selectedWhisperModelName: coordinator.storedLocalWhisperModelName,
                         setupKind: coordinator.transcriptionSetupKind,
                         providerOptions: coordinator.onboardingTranscriptionProviderOptions,
                         selectedProviderKey: coordinator.selectedOnboardingTranscriptionProviderKeyBinding(),
                         isLocalDownloaded: isTranscriptionModelDownloaded,
-                        isLocalDownloading: coordinator.requiredTranscriptionModel.map {
-                            fluidAudioModelManager.isFluidAudioModelDownloading($0)
-                        } ?? false,
-                        localDownloadStatus: coordinator.requiredTranscriptionModel.flatMap {
-                            fluidAudioModelManager.downloadStatus(for: $0)
-                        },
+                        isLocalDownloading: isWhisperDownloading,
+                        localDownloadProgress: whisperDownloadProgress,
                         isSetupReady: isTranscriptionSetupReady,
+                        onSelectWhisperModel: coordinator.flow.selectLocalWhisperModel(named:),
                         onSelectSetupKind: coordinator.flow.selectOnboardingTranscriptionSetup,
                         onDownload: {
-                            coordinator.flow.downloadTranscriptionModel(
-                                $0,
-                                modelManager: fluidAudioModelManager
-                            )
+                            coordinator.flow.downloadSelectedWhisperModel(using: whisperModelManager)
                         },
                         onCancelDownload: {
-                            fluidAudioModelManager.cancelDownload($0)
+                            coordinator.flow.cancelSelectedWhisperDownload(using: whisperModelManager)
+                        },
+                        onSkip: {
+                            coordinator.flow.skipLocalModelAndContinue(aiService: aiService)
                         },
                         onVerificationChanged: coordinator.flow.refreshTranscriptionSetupVerification,
                         onBack: coordinator.flow.goToMicrophoneStep,
@@ -168,41 +175,6 @@ struct OnboardingView: View {
                             )
                         },
                         onContinue: {
-                            #if LOCAL_BUILD
-                                coordinator.flow.completeOnboarding(
-                                    isTranscriptionSetupReady: isTranscriptionSetupReady
-                                ) {
-                                    hasCompletedOnboardingV2 = true
-                                }
-                            #else
-                                coordinator.flow.goToLicenseStep(
-                                    isTranscriptionSetupReady: isTranscriptionSetupReady
-                                )
-                            #endif
-                        }
-                    )
-                    .transition(.opacity)
-                case .license:
-                    OnboardingLicenseScreen(
-                        licenseViewModel: coordinator.licenseViewModel,
-                        licenseKeyDraft: $coordinator.licenseKeyDraft,
-                        onBack: {
-                            coordinator.flow.goToPreviousLicenseStep(
-                                isTranscriptionSetupReady: isTranscriptionSetupReady
-                            )
-                        },
-                        onPurchase: {
-                            coordinator.licenseViewModel.openPurchaseLink()
-                        },
-                        onStartTrial: {
-                            coordinator.flow.startLicenseTrial(
-                                isTranscriptionSetupReady: isTranscriptionSetupReady
-                            ) {
-                                hasCompletedOnboardingV2 = true
-                            }
-                        },
-                        onActivate: coordinator.flow.activateLicense,
-                        onFinish: {
                             coordinator.flow.completeOnboarding(
                                 isTranscriptionSetupReady: isTranscriptionSetupReady
                             ) {
@@ -299,7 +271,7 @@ struct OnboardingView: View {
         switch coordinator.stage {
         case .permissions, .microphone, .model, .api:
             return false
-        case .experience, .contextAwareness, .trust, .license:
+        case .experience, .contextAwareness, .trust:
             return true
         }
     }

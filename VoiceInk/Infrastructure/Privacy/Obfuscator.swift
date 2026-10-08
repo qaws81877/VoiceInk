@@ -28,7 +28,7 @@ struct Obfuscator {
     }
 
     /// Gets a device-specific identifier to use as salt
-    /// Uses the same logic as PolarService for consistency
+    /// Device-specific salt for values stored in UserDefaults.
     static func getDeviceIdentifier() -> String {
         // Try to get Mac serial number first
         if let serialNumber = getMacSerialNumber() {

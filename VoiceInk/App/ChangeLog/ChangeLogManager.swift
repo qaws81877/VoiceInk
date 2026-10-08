@@ -7,11 +7,13 @@ struct ChangeLogItem: Identifiable {
     let youtubeVideoID: String
 
     var previewImageURL: URL? {
-        URL(string: "https://i.ytimg.com/vi/\(youtubeVideoID)/maxresdefault.jpg")
+        guard !youtubeVideoID.isEmpty else { return nil }
+        return URL(string: "https://i.ytimg.com/vi/\(youtubeVideoID)/maxresdefault.jpg")
     }
 
     var videoURL: URL? {
-        URL(string: "https://www.youtube.com/watch?v=\(youtubeVideoID)")
+        guard !youtubeVideoID.isEmpty else { return nil }
+        return URL(string: "https://www.youtube.com/watch?v=\(youtubeVideoID)")
     }
 }
 
@@ -22,7 +24,7 @@ enum ChangeLogCatalog {
         id: "dictionary-auto-learn",
         summary:
             "VoiceInk automatically learns from the corrections you make to improve transcription accuracy over time. Dictionary Auto Learn uses your currently configured AI provider and AI model. You can change them anytime in Dictionary Settings.",
-        youtubeVideoID: "29Wy0SkoWk8"
+        youtubeVideoID: ""
     )
 }
 

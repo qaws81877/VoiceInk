@@ -52,8 +52,8 @@ extension AIService {
                 reasoning: policy.reasoning,
                 provider: policy.provider,
                 includeRouterMetadata: true,
-                appReferer: URL(string: "https://tryvoiceink.com"),
-                appTitle: "VoiceInk",
+                appReferer: URL(string: "https://github.com/qaws81877/VoiceInk"),
+                appTitle: "술술",
                 timeout: timeout
             )
             guard !OpenRouterRequestPolicy.outputWasTruncated(finishReason: completion.finishReason) else {
@@ -76,10 +76,6 @@ extension AIService {
                 systemPrompt: systemPrompt,
                 temperature: 0.3,
                 timeout: timeout
-            )
-        case .voiceInkRefine:
-            throw EnhancementError.customError(
-                String(localized: "VoiceInk Refine only supports transcript cleanup.")
             )
         case .ollama:
             result = try await enhanceWithOllama(

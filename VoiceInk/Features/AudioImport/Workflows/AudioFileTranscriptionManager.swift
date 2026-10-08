@@ -19,7 +19,7 @@ class AudioTranscriptionManager: ObservableObject {
     private var processingTask: Task<Void, Never>?
     private var processingGeneration: UInt64 = 0
     private let audioProcessor = AudioProcessor()
-    private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "AudioTranscriptionManager")
+    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "AudioTranscriptionManager")
 
     private init() {}
 
@@ -155,11 +155,8 @@ class AudioTranscriptionManager: ObservableObject {
             let audioAsset = AVURLAsset(url: item.url)
             let duration = CMTimeGetSeconds(try await audioAsset.load(.duration))
 
-            let recordingsDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[
-                0
-            ]
-            .appendingPathComponent("com.prakashjoshipax.VoiceInk")
-            .appendingPathComponent("Recordings")
+            let recordingsDirectory = AppIdentity.applicationSupportDirectory()
+                .appendingPathComponent("Recordings")
 
             let fileName = "transcribed_\(UUID().uuidString).wav"
             let permanentURL = recordingsDirectory.appendingPathComponent(fileName)

@@ -32,8 +32,10 @@ struct ChangeLogView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
 
-            videoPreview
-                .padding(.top, 22)
+            if item.previewImageURL != nil {
+                videoPreview
+                    .padding(.top, 22)
+            }
 
             description
                 .padding(.top, 16)
@@ -61,7 +63,7 @@ struct ChangeLogView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(AppTheme.Text.primary)
 
-                Text("VoiceInk \(appVersion)")
+                Text("술술 \(appVersion)")
                     .font(.system(size: 12))
                     .foregroundStyle(AppTheme.Text.secondary)
             }
@@ -139,12 +141,14 @@ struct ChangeLogView: View {
 
             Spacer()
 
-            AppActionButton(
-                "Watch video",
-                kind: .primary,
-                minWidth: 112,
-                action: onWatchVideo
-            )
+            if item.videoURL != nil {
+                AppActionButton(
+                    "Watch video",
+                    kind: .primary,
+                    minWidth: 112,
+                    action: onWatchVideo
+                )
+            }
         }
     }
 
