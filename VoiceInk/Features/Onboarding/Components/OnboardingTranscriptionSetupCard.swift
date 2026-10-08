@@ -116,7 +116,7 @@ struct OnboardingTranscriptionSetupCard: View {
     private var localSetup: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(
-                "Parakeet does not support Korean. Pick a Whisper model to download, or skip and choose one later in AI Models."
+                "Whisper Large v3 Turbo is recommended for Korean. Parakeet does not support Korean."
             )
             .font(.system(size: 12, weight: .medium))
             .foregroundColor(AppTheme.Text.secondary)

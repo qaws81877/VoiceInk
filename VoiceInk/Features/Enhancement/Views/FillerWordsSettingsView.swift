@@ -40,12 +40,14 @@ struct FillerWordChip: View {
 
 struct FillerWordsSettingsSection: View {
     @StateObject private var fillerWordManager = FillerWordManager.shared
+    @AppStorage("IsFillerWordRemovalEnabled") private var isFillerWordRemovalEnabled = false
     @State private var newWord = ""
     @State private var isShowingAddWord = false
     @State private var errorMessage: String?
 
     var body: some View {
         Section {
+            Toggle("Remove filler words", isOn: $isFillerWordRemovalEnabled)
             if !fillerWordManager.fillerWords.isEmpty {
                 FlowLayout(spacing: 6) {
                     ForEach(fillerWordManager.fillerWords, id: \.self) { word in
@@ -62,7 +64,7 @@ struct FillerWordsSettingsSection: View {
                 HStack(spacing: 4) {
                     Text("Remove Filler Words")
                     InfoTip(
-                        "Automatically remove configured filler words like 'uh', 'um', or 'hmm' from transcriptions. If no filler words are configured, this cleanup is skipped."
+                        "Off by default. The word list can delete meaningful Korean such as \"그 사람\" or \"어, 알았어\". Turn it on only when you want those exact words removed."
                     )
                 }
 

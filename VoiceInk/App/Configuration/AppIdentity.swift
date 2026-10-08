@@ -7,7 +7,9 @@ enum AppIdentity {
     static let keychainService = "com.qaws81877.sulsul"
     static let keychainServiceLocalBuild = "com.qaws81877.sulsul.Local"
     static let loggerSubsystem = "com.qaws81877.sulsul"
-    static let displayName = "술술"
+    static var displayName: String {
+        String(localized: "Sulsul")
+    }
     static let productName = "Sulsul"
     static let sparklePublicKeyPlaceholder = "REPLACE_WITH_SPARKLE_PUBLIC_KEY"
     static let sparkleFeedURL = "https://github.com/qaws81877/VoiceInk/releases/latest/download/appcast.xml"

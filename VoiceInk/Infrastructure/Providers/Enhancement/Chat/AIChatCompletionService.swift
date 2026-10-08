@@ -31,13 +31,22 @@ extension AIService {
                 timeout: timeout
             )
         case .anthropic:
-            result = try await AnthropicLLMClient.chatCompletion(
-                apiKey: try chatAPIKey(for: provider, modelName: resolvedModel),
-                model: resolvedModel,
-                messages: messages,
-                systemPrompt: systemPrompt,
-                timeout: timeout
-            )
+            if resolvedModel == KoreanCleanupModels.anthropic {
+                result = try await completeAnthropicHaiku(
+                    apiKey: try chatAPIKey(for: provider, modelName: resolvedModel),
+                    messages: messages,
+                    systemPrompt: systemPrompt,
+                    timeout: timeout
+                )
+            } else {
+                result = try await AnthropicLLMClient.chatCompletion(
+                    apiKey: try chatAPIKey(for: provider, modelName: resolvedModel),
+                    model: resolvedModel,
+                    messages: messages,
+                    systemPrompt: systemPrompt,
+                    timeout: timeout
+                )
+            }
         case .openRouter:
             let policy = OpenRouterRequestPolicy.lowLatency(
                 modelName: resolvedModel,
@@ -137,6 +146,96 @@ extension AIService {
             throw EnhancementError.enhancementFailed
         }
         return filteredResult
+    }
+
+    /// LLMkit's Anthropic client defaults to 8192. The Korean cleanup path keeps its own 600-token cap.
+    private static let anthropicHaikuMaxTokens = 8192
+
+    private struct AnthropicHaikuResponse: Decodable {
+        struct Block: Decodable {
+            let type: String
+            let text: String?
+        }
+
+        let content: [Block]
+    }
+
+    /// Manual `claude-haiku-5-5` selections bypass LLMkit. That client omits
+    /// `thinking` and `output_config`, which Haiku 5.5 needs, and this path
+    /// must not send `temperature`.
+    private func completeAnthropicHaiku(
+        apiKey: String,
+        messages: [ChatMessage],
+        systemPrompt: String?,
+        timeout: TimeInterval
+    ) async throws -> String {
+        let system: String?
+        let conversation: [ChatMessage]
+        if let systemPrompt {
+            system = systemPrompt
+            conversation = messages.filter { $0.role != "system" }
+        } else {
+            let systemMessages = messages.filter { $0.role == "system" }
+            system = systemMessages.isEmpty ? nil : systemMessages.map(\.content).joined(separator: "\n")
+            conversation = messages.filter { $0.role != "system" }
+        }
+
+        let body = KoreanCleanupRequestBuilder.anthropicMessagesBody(
+            model: KoreanCleanupModels.anthropic,
+            systemPrompt: system,
+            messages: conversation.map {
+                KoreanCleanupRequestBuilder.ChatMessage(role: $0.role, content: $0.content)
+            },
+            maxTokens: Self.anthropicHaikuMaxTokens,
+            stream: false
+        )
+
+        let payload: Data
+        do {
+            payload = try JSONEncoder().encode(body)
+        } catch {
+            throw EnhancementError.customError(error.localizedDescription)
+        }
+
+        guard let url = URL(string: AIProvider.anthropic.baseURL) else {
+            throw EnhancementError.notConfigured
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.timeoutInterval = timeout
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue(KoreanCleanupModels.anthropicVersion, forHTTPHeaderField: "anthropic-version")
+        request.httpBody = payload
+
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch let urlError as URLError where urlError.code == .timedOut {
+            throw EnhancementError.timeout
+        } catch {
+            throw EnhancementError.networkError
+        }
+
+        guard let http = response as? HTTPURLResponse else {
+            throw EnhancementError.invalidResponse
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let message = String(data: data, encoding: .utf8) ?? ""
+            if http.statusCode == 429 { throw EnhancementError.rateLimitExceeded }
+            if http.statusCode == 408 { throw EnhancementError.timeout }
+            if (500...599).contains(http.statusCode) { throw EnhancementError.serverError }
+            throw EnhancementError.customError("HTTP \(http.statusCode): \(message)")
+        }
+
+        let decoded: AnthropicHaikuResponse
+        do {
+            decoded = try JSONDecoder().decode(AnthropicHaikuResponse.self, from: data)
+        } catch {
+            throw EnhancementError.invalidResponse
+        }
+        return decoded.content.filter { $0.type == "text" }.compactMap(\.text).joined()
     }
 
     private func chatAPIKey(for provider: AIProvider, modelName: String) throws -> String {

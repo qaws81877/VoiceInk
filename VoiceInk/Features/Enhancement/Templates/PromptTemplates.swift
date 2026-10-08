@@ -36,28 +36,8 @@ enum PromptTemplates {
             TemplatePrompt(
                 id: defaultPromptId,
                 title: "Default",
-                promptText: """
-                    <TASK>
-                    Clean <TRANSCRIPT> into polished, readable, general-purpose text.
-                    </TASK>
-
-                    <RULES>
-                    - Preserve dictated greetings, sign-offs, headings, and informal abbreviations. Do not add any that were not spoken.
-                    </RULES>
-
-                    <EXAMPLES>
-                    Input: For the invoice folder, we need first the printed map second two markers and third the spare batteries before Saturday Please include the small change in your reply, since the rest of the arrangements are already set.
-                    Output:
-                    For the invoice folder, we need the following before Saturday:
-
-                    1. The printed map
-                    2. Two markers
-                    3. The spare batteries
-
-                    Please include the small change in your reply, since the rest of the arrangements are already set.
-                    </EXAMPLES>
-                    """,
-                useSystemInstructions: true
+                promptText: KoreanCleanupPrompt.text,
+                useSystemInstructions: false
             ),
             TemplatePrompt(
                 id: chatPromptId,

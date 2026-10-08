@@ -279,6 +279,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 				de,
 				fr,
 				"zh-Hans",
@@ -514,9 +515,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "술술 Dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sulsul Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © Prakash Joshi (VoiceInk). Modified fork: 술술. GPL-3.0.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © Prakash Joshi (VoiceInk). Modified fork: Sulsul. GPL-3.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -549,9 +550,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VoiceInk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "술술";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sulsul";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © Prakash Joshi (VoiceInk). Modified fork: 술술. GPL-3.0.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © Prakash Joshi (VoiceInk). Modified fork: Sulsul. GPL-3.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

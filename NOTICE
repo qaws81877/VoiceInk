@@ -15,4 +15,11 @@ Changes in this fork include:
 - Turned off iCloud dictionary sync that depended on the original iCloud container.
 - Onboarding can skip the transcription-model download or use a Whisper model instead of requiring Parakeet.
 
+M2 additions:
+- A fresh install defaults the transcription language to Korean (`ko`) and preselects the non-quantized Whisper model `ggml-large-v3-turbo`. Saved language and model choices are left alone.
+- Regex filler-word removal is off unless the user turns it back on. The word list is still editable.
+- The default cleanup prompt is the bundled Korean prompt (`prompt_ko_v3`). A new install sends it to OpenAI `gpt-6-luna`, then Anthropic `claude-haiku-5-5` if OpenAI fails, stalls, or no OpenAI key is saved. Other providers stay available when chosen by hand.
+- Korean (`ko`) is an app language. English remains the development language, and the app follows the macOS language.
+- API keys are stored in the local Keychain only. They are not iCloud-synced, and none are bundled.
+
 Each person enters their own API keys. No API keys are bundled.

@@ -26,13 +26,16 @@ struct TranscriptionOutputFilter {
             }
         }
 
-        // Remove configured filler words. An empty list is naturally a no-op.
-        for fillerWord in FillerWordManager.shared.fillerWords {
-            let pattern = "\\b\(NSRegularExpression.escapedPattern(for: fillerWord))\\b[,.]?"
-            if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
-                let range = NSRange(filteredText.startIndex..., in: filteredText)
-                filteredText = regex.stringByReplacingMatches(
-                    in: filteredText, options: [], range: range, withTemplate: "")
+        // Off by default. The word list stays so a user can turn removal back on.
+        // Korean cleanup handles fillers; this regex deletes meaningful words such as "그 사람".
+        if UserDefaults.standard.bool(forKey: "IsFillerWordRemovalEnabled") {
+            for fillerWord in FillerWordManager.shared.fillerWords {
+                let pattern = "\\b\(NSRegularExpression.escapedPattern(for: fillerWord))\\b[,.]?"
+                if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+                    let range = NSRange(filteredText.startIndex..., in: filteredText)
+                    filteredText = regex.stringByReplacingMatches(
+                        in: filteredText, options: [], range: range, withTemplate: "")
+                }
             }
         }
 

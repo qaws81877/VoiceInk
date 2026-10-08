@@ -13,8 +13,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "술술"
+            "state" : "translated",
+            "value" : "Sulsul"
           }
         },
         "zh-Hans" : {
@@ -24,6 +24,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술"
+          }
+        },
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "술술"
@@ -43,8 +49,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "술술"
+            "state" : "translated",
+            "value" : "Sulsul"
           }
         },
         "zh-Hans" : {
@@ -54,6 +60,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술"
+          }
+        },
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "술술"
@@ -72,7 +84,7 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "Audio/Video File"
           }
         },
@@ -86,6 +98,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fichier audio/vidéo"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오디오/비디오 파일"
           }
         }
       }
@@ -102,8 +120,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "술술 needs to interact with your browser to detect the current website for applying website-specific configurations."
+            "state" : "translated",
+            "value" : "Sulsul needs to interact with your browser to detect the current website for applying website-specific configurations."
           }
         },
         "zh-Hans" : {
@@ -116,6 +134,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "술술 doit interagir avec votre navigateur pour détecter le site Web actuel afin d'appliquer des configurations spécifiques au site Web."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술이 현재 웹사이트를 감지해 사이트별 설정을 적용하려면 브라우저와 상호작용해야 합니다."
           }
         }
       }
@@ -132,8 +156,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : ""
+            "state" : "translated",
+            "value" : "Copyright © Prakash Joshi (VoiceInk). Modified fork: Sulsul. GPL-3.0."
           }
         },
         "zh-Hans" : {
@@ -146,6 +170,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ""
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © Prakash Joshi (VoiceInk). 수정판: 술술. GPL-3.0."
           }
         }
       }
@@ -162,8 +192,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "술술 needs access to your microphone to record audio for transcription."
+            "state" : "translated",
+            "value" : "Sulsul needs access to your microphone to record audio for transcription."
           }
         },
         "zh-Hans" : {
@@ -176,6 +206,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "술술 a besoin d'accéder à votre microphone pour enregistrer l'audio à des fins de transcription."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술이 받아쓰기용 오디오를 녹음하려면 마이크 접근이 필요합니다."
           }
         }
       }
@@ -191,8 +227,8 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "술술 needs screen recording access to understand context from your screen for improved transcription accuracy."
+            "state" : "translated",
+            "value" : "Sulsul needs screen recording access to understand context from your screen for improved transcription accuracy."
           }
         },
         "zh-Hans" : {
@@ -205,6 +241,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "술술 a besoin d'un accès à l'enregistrement d'écran pour comprendre le contexte de votre écran afin d'améliorer la précision de la transcription."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "술술이 화면의 맥락을 파악해 받아쓰기 정확도를 높이려면 화면 기록 접근이 필요합니다."
           }
         }
       }

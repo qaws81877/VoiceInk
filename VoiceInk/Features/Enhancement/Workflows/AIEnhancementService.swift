@@ -52,6 +52,13 @@ class AIEnhancementService: ObservableObject {
             self.customPrompts = []
         }
 
+        let migratedPrompts = KoreanCleanupPromptMigration.migrate(customPrompts)
+        if migratedPrompts != customPrompts {
+            customPrompts = migratedPrompts
+            savePrompts()
+        }
+
+        KoreanCleanupAdoption.applyIfNeeded()
         repairModePromptSelections()
 
         NotificationCenter.default.addObserver(
@@ -68,6 +75,7 @@ class AIEnhancementService: ObservableObject {
 
     @objc private func handleAPIKeyChange() {
         DispatchQueue.main.async {
+            KoreanCleanupAdoption.applyIfNeeded()
             self.objectWillChange.send()
         }
     }
@@ -77,6 +85,17 @@ class AIEnhancementService: ObservableObject {
     }
 
     func isConfigured(for configuration: EnhancementRuntimeConfiguration) -> Bool {
+        if KoreanCleanupPolicy.usesDefaultPipeline(configuration) {
+            let credentials = KoreanCleanupCredentials(
+                openAI: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.openAI.rawValue),
+                anthropic: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.anthropic.rawValue)
+            )
+            return KoreanCleanupPolicy.route(
+                keys: credentials.keys,
+                selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue
+            ) != .pasteTranscript
+        }
+
         guard let provider = configuration.provider else { return false }
 
         guard configuration.prompt != nil else { return false }
@@ -188,15 +207,34 @@ class AIEnhancementService: ObservableObject {
             throw EnhancementError.notConfigured
         }
 
-        guard let provider = configuration.provider else {
-            throw EnhancementError.notConfigured
-        }
-
         guard !text.isEmpty else {
             return ("", nil, nil)
         }
 
         guard let prompt = configuration.prompt else {
+            throw EnhancementError.notConfigured
+        }
+
+        if KoreanCleanupPolicy.usesDefaultPipeline(configuration) {
+            let systemPrompt = KoreanCleanupPolicy.systemPrompt(from: prompt)
+            let credentials = KoreanCleanupCredentials(
+                openAI: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.openAI.rawValue),
+                anthropic: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.anthropic.rawValue)
+            )
+            let cleaned = await KoreanCleanupClient.clean(
+                transcript: text,
+                systemPrompt: systemPrompt,
+                credentials: credentials,
+                selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue
+            )
+            return (
+                cleaned,
+                systemPrompt,
+                KoreanCleanupRequestBuilder.userMessage(transcript: text)
+            )
+        }
+
+        guard let provider = configuration.provider else {
             throw EnhancementError.notConfigured
         }
 
