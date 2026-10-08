@@ -144,8 +144,9 @@ enum AppDefaults {
 
             // Recording & Transcription
             "IsTextFormattingEnabled": true,
+            "IsFillerWordRemovalEnabled": false,
             "IsVADEnabled": true,
-            "SelectedLanguage": "en",
+            "SelectedLanguage": "ko",
             "AppendTrailingSpace": true,
             "RecorderType": "mini",
             RecorderDisplaySettingsKeys.showLiveTranscript: true,

@@ -102,7 +102,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.selectedAIModel = selectedAIModel
         self.selectedTranscriptionModelName = selectedTranscriptionModelName
         self.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
-        self.selectedLanguage = selectedLanguage ?? "en"
+        self.selectedLanguage = selectedLanguage ?? "ko"
         self.isTextFormattingEnabled = isTextFormattingEnabled
         self.isEnabled = isEnabled
         self.isDefault = isDefault

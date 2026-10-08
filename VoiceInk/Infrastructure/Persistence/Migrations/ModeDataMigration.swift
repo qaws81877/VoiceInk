@@ -29,7 +29,7 @@ extension ModeManager {
             }
 
             if config.selectedLanguage == nil {
-                config.selectedLanguage = UserDefaults.standard.string(forKey: "SelectedLanguage") ?? "en"
+                config.selectedLanguage = UserDefaults.standard.string(forKey: "SelectedLanguage") ?? "ko"
                 changedConfig = true
             }
 

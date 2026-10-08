@@ -311,8 +311,9 @@ final class OnboardingCoordinator: ObservableObject {
     }
 
     var selectedOnboardingTranscriptionLanguage: String {
-        guard let model = selectedOnboardingTranscriptionModel else { return "auto" }
-        return TranscriptionLanguageSupport.validLanguageOrFallback("auto", for: model)
+        let preferred = UserDefaults.standard.string(forKey: "SelectedLanguage") ?? "ko"
+        guard let model = selectedOnboardingTranscriptionModel else { return preferred }
+        return TranscriptionLanguageSupport.validLanguageOrFallback(preferred, for: model)
     }
 
     var recommendedOnboardingTranscriptionProvider: (any CloudProvider)? {

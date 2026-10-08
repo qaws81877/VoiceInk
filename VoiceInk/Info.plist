@@ -15,11 +15,11 @@
 	<key>SUScheduledCheckInterval</key>
 	<integer>14400</integer>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>술술 needs access to your microphone to record audio for transcription.</string>
+	<string>Sulsul needs access to your microphone to record audio for transcription.</string>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>술술 needs to interact with your browser to detect the current website for applying website-specific configurations.</string>
+	<string>Sulsul needs to interact with your browser to detect the current website for applying website-specific configurations.</string>
 	<key>NSScreenCaptureUsageDescription</key>
-	<string>술술 needs screen recording access to understand context from your screen for improved transcription accuracy.</string>
+	<string>Sulsul needs screen recording access to understand context from your screen for improved transcription accuracy.</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

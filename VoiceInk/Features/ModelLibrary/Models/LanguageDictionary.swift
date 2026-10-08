@@ -14,6 +14,10 @@ enum TranscriptionLanguageSupport {
             return language
         }
 
+        if language == nil, languages["ko"] != nil {
+            return "ko"
+        }
+
         if languages["auto"] != nil {
             return "auto"
         }

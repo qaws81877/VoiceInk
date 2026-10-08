@@ -10,7 +10,7 @@ enum StarterModeFactory {
         modelName: String?,
         transcriptionModelName: String = defaultTranscriptionModelName,
         isRealtimeTranscriptionEnabled: Bool = true,
-        selectedLanguage: String = "auto",
+        selectedLanguage: String = "ko",
         installedApps: [InstalledAppInfo]? = nil
     ) {
         let manager = ModeManager.shared
@@ -72,7 +72,14 @@ enum StarterModeFactory {
         selectedLanguage: String,
         installedApps: [InstalledAppInfo]
     ) -> ModeConfig {
-        ModeConfig(
+        let usesKoreanCleanup = template.kind == .clean
+        let resolvedProvider = usesKoreanCleanup ? AIProvider.openAI : provider
+        let resolvedModel =
+            usesKoreanCleanup
+            ? KoreanCleanupModels.openAI
+            : (modelName ?? provider.defaultModel)
+
+        return ModeConfig(
             id: template.id,
             name: template.name,
             icon: template.icon,
@@ -88,8 +95,8 @@ enum StarterModeFactory {
             useSelectedTextContext: template.useSelectedTextContext,
             useScreenCapture: template.useScreenCapture,
             isTextFormattingEnabled: true,
-            selectedAIProvider: template.usesAIEnhancement ? provider.rawValue : nil,
-            selectedAIModel: template.usesAIEnhancement ? (modelName ?? provider.defaultModel) : nil,
+            selectedAIProvider: template.usesAIEnhancement ? resolvedProvider.rawValue : nil,
+            selectedAIModel: template.usesAIEnhancement ? resolvedModel : nil,
             outputMode: template.outputMode,
             isEnabled: true,
             isDefault: template.isDefault

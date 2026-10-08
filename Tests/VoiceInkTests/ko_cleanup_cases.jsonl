@@ -1,0 +1,20 @@
+{"id": "c01", "category": "filler", "input": "음 오늘 저녁에 어 시간 돼", "expected": "오늘 저녁에 시간 돼?", "required": ["오늘 저녁에 시간 돼"], "forbidden_tokens": ["음", "어"]}
+{"id": "c02", "category": "self_correction", "input": "내일, 아니 모레 오후에 만나자", "expected": "모레 오후에 만나자.", "required": ["모레 오후에 만나자"], "forbidden_tokens": ["내일", "아니"]}
+{"id": "c03", "category": "self_correction+number", "input": "회의는 세 시에 아 아니다 네 시 반에 시작해요", "expected": "회의는 4시 반에 시작해요.", "required": ["4시 반에 시작해요", "회의는"], "forbidden_substrings": ["3시", "세 시", "아니다"]}
+{"id": "c04", "category": "repetition", "input": "제가 제가 제가 오늘 안에 보내 드릴게요", "expected": "제가 오늘 안에 보내 드릴게요.", "required": ["오늘 안에 보내"], "max_count": {"제가": 1}, "required_tokens": ["제가"]}
+{"id": "c05", "category": "trap_demonstrative", "input": "그 사람이 어제 말한 그 카페 이름이 뭐였지", "expected": "그 사람이 어제 말한 그 카페 이름이 뭐였지?", "required": ["그 사람이", "그 카페"]}
+{"id": "c06", "category": "trap_answer_eo", "input": "어 알았어 지금 출발할게", "expected": "어, 알았어. 지금 출발할게.", "required": ["알았어", "지금 출발할게"], "required_tokens": ["어"]}
+{"id": "c07", "category": "english_terms+filler", "input": "음 이번 PR 머지하기 전에 어 CI 통과했는지 GitHub Actions 로그 좀 봐 줘", "expected": "이번 PR 머지하기 전에 CI 통과했는지 GitHub Actions 로그 좀 봐 줘.", "required": ["PR", "CI", "GitHub Actions", "로그 좀 봐 줘"], "forbidden_tokens": ["음", "어"]}
+{"id": "c08", "category": "hangul_loanword_keep", "input": "슬랙에 저기 디자인 시안 올려놨으니까 피그마 링크 확인해 줘", "expected": "슬랙에 디자인 시안 올려놨으니까 피그마 링크 확인해 줘.", "required": ["슬랙에", "피그마"], "forbidden_tokens": ["저기"], "forbidden_substrings": ["Slack", "Figma"]}
+{"id": "c09", "category": "trap_location_jeogi", "input": "저기 창가 자리에 앉자", "expected": "저기 창가 자리에 앉자.", "required": ["창가 자리에 앉자"], "required_tokens": ["저기"]}
+{"id": "c10", "category": "filler_mwoji", "input": "그러니까 뭐지 그 보고서 마감이 금요일이었나", "expected": "그 보고서 마감이 금요일이었나?", "required": ["그 보고서 마감이 금요일이었나"], "forbidden_tokens": ["뭐지"]}
+{"id": "c11", "category": "filler_yakgan", "input": "약간 이게 약간 좀 애매한 것 같아 약간", "expected": "이게 좀 애매한 것 같아.", "required": ["애매한 것 같아"], "max_count": {"약간": 1}}
+{"id": "c12", "category": "list", "input": "장 볼 거 첫째 우유 둘째 계란 셋째 대파", "expected": "장 볼 거\n1. 우유\n2. 계란\n3. 대파", "required": ["장 볼 거", "\n1.", "\n2.", "\n3.", "우유", "계란", "대파"], "forbidden_tokens": ["첫째", "둘째", "셋째"]}
+{"id": "c13", "category": "number_money", "input": "이번 달 구독료가 삼만 오천 원이야", "expected": "이번 달 구독료가 35,000원이야.", "required": ["35,000원이야"]}
+{"id": "c14", "category": "no_answer_injection", "input": "음 파이썬에서 리스트 정렬하는 방법 알려 줘", "expected": "파이썬에서 리스트 정렬하는 방법 알려 줘.", "required": ["정렬하는 방법 알려"], "forbidden_substrings": ["sort", "sorted"], "forbidden_tokens": ["음"], "max_len_ratio": 1.3}
+{"id": "c15", "category": "honorific+filler_geu", "input": "어 팀장님 그 내일 오전 미팅 혹시 오후로 옮겨도 될까요", "expected": "팀장님, 내일 오전 미팅 혹시 오후로 옮겨도 될까요?", "required": ["팀장님", "오후로 옮겨도 될까요", "혹시"], "forbidden_tokens": ["어", "그"]}
+{"id": "c16", "category": "spacing", "input": "회의끝나고 같이밥먹을수있어", "expected": "회의 끝나고 같이 밥 먹을 수 있어?", "required": ["회의 끝나고", "먹을 수 있어"]}
+{"id": "c17", "category": "long_mixed", "input": "이번 주 금요일에 아니 목요일에 배포하고 음 다음 주 월요일에 회고 미팅 잡을게요 어 Notion에 일정 올려 둘게요", "expected": "이번 주 목요일에 배포하고 다음 주 월요일에 회고 미팅 잡을게요. Notion에 일정 올려 둘게요.", "required": ["이번 주 목요일에 배포", "회고 미팅", "Notion에"], "forbidden_substrings": ["금요일"], "forbidden_tokens": ["음", "어", "아니"]}
+{"id": "c18", "category": "no_translate_codeswitch", "input": "Okay 그럼 deadline은 next Monday로 할게요", "expected": "Okay, 그럼 deadline은 next Monday로 할게요.", "required": ["deadline", "next Monday", "Okay"], "forbidden_substrings": ["마감", "다음 주 월요일"]}
+{"id": "c19", "category": "very_short", "input": "응", "expected": "응.", "required": ["응"], "max_len_ratio": 3.0}
+{"id": "c20", "category": "trap_negation_ani", "input": "아니 그건 내가 안 했어", "expected": "아니, 그건 내가 안 했어.", "required": ["그건 내가 안 했어"], "required_tokens": ["아니"]}

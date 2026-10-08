@@ -50,14 +50,16 @@ enum StarterModeCatalog {
             id: UUID(uuidString: "10000000-0000-0000-0000-000000000001")!,
             name: "Dictation",
             icon: .symbol("mic.fill"),
-            description: String(localized: "Fast transcription with no AI enhancement."),
+            description: String(
+                localized: "Fast transcription. Korean cleanup runs when an OpenAI or Anthropic key is saved."
+            ),
             guidance: String(
                 localized:
-                    "Use this when you want the quickest possible voice-to-text result. It records with your configured transcription model and pastes the transcript as-is."
+                    "Use this for everyday dictation. Once an OpenAI or Anthropic key is saved, Sulsul cleans the transcript before pasting."
             ),
-            promptId: nil,
+            promptId: PromptTemplates.defaultPromptId,
             outputMode: .paste,
-            usesAIEnhancement: false,
+            usesAIEnhancement: true,
             useSelectedTextContext: false,
             useScreenCapture: false,
             isDefault: true
@@ -84,7 +86,7 @@ enum StarterModeCatalog {
             icon: .symbol("envelope.fill"),
             description: "Turn a rough thought into a clean email.",
             guidance:
-                "Use this after selecting relevant text or opening the related window. VoiceInk uses that context to shape a clear email draft.",
+                "Use this after selecting relevant text or opening the related window. Sulsul uses that context to shape a clear email draft.",
             promptId: PromptTemplates.emailPromptId,
             outputMode: .paste,
             usesAIEnhancement: true,
@@ -114,7 +116,7 @@ enum StarterModeCatalog {
             icon: .symbol("bubble.left.and.bubble.right.fill"),
             description: "Ask a question and keep the answer in the recorder.",
             guidance:
-                "Use this for answers, summaries, and follow-ups. Instead of pasting, VoiceInk keeps the conversation inside the recorder.",
+                "Use this for answers, summaries, and follow-ups. Instead of pasting, Sulsul keeps the conversation inside the recorder.",
             promptId: PromptTemplates.assistantPromptId,
             outputMode: .respond,
             usesAIEnhancement: true,
