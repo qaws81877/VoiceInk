@@ -26,7 +26,7 @@ enum KoreanCleanupRoute: Equatable {
     case pasteTranscript
 }
 
-enum KoreanCleanupFallbackReason: Equatable {
+enum KoreanCleanupFallbackReason: Error, Equatable {
     case requestFailed
     case firstTokenTimeout
     case overallTimeout
