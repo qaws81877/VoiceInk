@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct TranscriptionRuntimeConfiguration {
     let mode: ModeConfig
@@ -13,11 +14,25 @@ struct TranscriptionRuntimeConfiguration {
         return (mode.name, mode.icon.value)
     }
 
-    var requestContext: TranscriptionRequestContext {
-        TranscriptionRequestContext(
-            language: language,
-            prompt: model.provider == .whisper ? WhisperPrompt.resolvedPrompt(for: language) : nil
-        )
+    func requestContext(modelContext: ModelContext) -> TranscriptionRequestContext {
+        let terms =
+            model.provider == .whisper
+            ? CustomVocabularyService.shared.vocabularyTerms(from: modelContext)
+            : []
+        return requestContext(vocabularyTerms: terms)
+    }
+
+    func requestContext(vocabularyTerms: [String]) -> TranscriptionRequestContext {
+        let prompt: String?
+        if model.provider == .whisper {
+            prompt = WhisperVocabularyPrompt.prompt(
+                languagePrompt: WhisperPrompt.resolvedPrompt(for: language),
+                terms: vocabularyTerms
+            )
+        } else {
+            prompt = nil
+        }
+        return TranscriptionRequestContext(language: language, prompt: prompt)
     }
 }
 

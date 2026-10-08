@@ -216,7 +216,10 @@ class AIEnhancementService: ObservableObject {
         }
 
         if KoreanCleanupPolicy.usesDefaultPipeline(configuration) {
-            let systemPrompt = KoreanCleanupPolicy.systemPrompt(from: prompt)
+            let systemPrompt = KoreanCleanupVocabulary.systemPrompt(
+                base: KoreanCleanupPolicy.systemPrompt(from: prompt),
+                vocabularyText: customVocabularyService.getCustomVocabulary(from: modelContext)
+            )
             let credentials = KoreanCleanupCredentials(
                 openAI: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.openAI.rawValue),
                 anthropic: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.anthropic.rawValue)

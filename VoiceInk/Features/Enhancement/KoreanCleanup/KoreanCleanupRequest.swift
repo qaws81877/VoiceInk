@@ -135,6 +135,27 @@ enum KoreanCleanupPolicy {
     }
 }
 
+/// Vocabulary appended after the frozen cleanup prompt. An empty list leaves the base bytes unchanged.
+enum KoreanCleanupVocabulary {
+    static func systemPrompt(base: String, vocabularyText: String) -> String {
+        guard !vocabularyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return base
+        }
+        return base + "\n\n" + section(containing: vocabularyText)
+    }
+
+    static func section(containing vocabularyText: String) -> String {
+        """
+        # Custom Vocabulary
+        Use these custom vocabulary words, proper nouns, acronyms, product names, and technical terms as the spelling authority. When the text clearly refers to one of these entries, replace similar-sounding or phonetically close transcription mistakes with the exact spelling shown below. Do not force a replacement when the text clearly means something else:
+        Korean-script phonetic renderings or near-miss transcriptions of an entry (for example 클로드, 그록, 드록, 그록봇, 드록볶, 오픈에이아이) must be written in the entry's exact spelling. Do not force a replacement when the text clearly means a different ordinary Korean word.
+        <CUSTOM_VOCABULARY>
+        \(vocabularyText)
+        </CUSTOM_VOCABULARY>
+        """
+    }
+}
+
 enum KoreanCleanupOpenAIDecision: Equatable {
     case accept
     case keepWaiting

@@ -108,7 +108,7 @@ class TranscriptionPipeline {
                 text = try await serviceRegistry.transcribe(
                     audioURL: audioURL,
                     model: model,
-                    context: transcriptionConfiguration.requestContext
+                    context: transcriptionConfiguration.requestContext(modelContext: modelContext)
                 )
             }
             text = TranscriptionOutputFilter.filter(text)

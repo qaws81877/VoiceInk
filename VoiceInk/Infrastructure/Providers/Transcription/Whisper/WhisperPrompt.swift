@@ -132,3 +132,32 @@ class WhisperPrompt: ObservableObject {
         objectWillChange.send()
     }
 }
+
+/// Local Whisper `initial_prompt` vocabulary line.
+/// Empty terms leave `languagePrompt` unchanged. Later terms are dropped once either cap is hit.
+enum WhisperVocabularyPrompt {
+    static let maxTermCount = 40
+    static let maxAppendedCharacters = 400
+
+    static func prompt(languagePrompt: String, terms: [String]) -> String {
+        let line = cappedLine(terms: terms)
+        guard !line.isEmpty else { return languagePrompt }
+        guard !languagePrompt.isEmpty else { return line }
+        return languagePrompt + "\n" + line
+    }
+
+    static func cappedLine(terms: [String]) -> String {
+        var selected: [String] = []
+        var characterCount = 0
+        for raw in terms {
+            if selected.count >= maxTermCount { break }
+            let term = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !term.isEmpty else { continue }
+            let added = term.count + (selected.isEmpty ? 0 : 2)
+            if characterCount + added > maxAppendedCharacters { break }
+            selected.append(term)
+            characterCount += added
+        }
+        return selected.joined(separator: ", ")
+    }
+}

@@ -81,7 +81,7 @@ final class ModelPrewarmService: ObservableObject {
             let _ = try await serviceRegistry.transcribe(
                 audioURL: audioURL,
                 model: currentModel,
-                context: transcriptionConfiguration.requestContext
+                context: transcriptionConfiguration.requestContext(modelContext: modelContext)
             )
             let duration = Date().timeIntervalSince(startTime)
 

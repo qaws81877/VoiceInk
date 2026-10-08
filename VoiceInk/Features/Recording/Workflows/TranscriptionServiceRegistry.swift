@@ -72,9 +72,13 @@ class TranscriptionServiceRegistry {
                 onPartialTranscript: onPartialTranscript
             )
             let fallback = service(for: model.provider)
-            return StreamingTranscriptionSession(streamingService: streamingService, fallbackService: fallback)
+            return StreamingTranscriptionSession(
+                streamingService: streamingService,
+                fallbackService: fallback,
+                modelContext: modelContext
+            )
         } else {
-            return FileTranscriptionSession(service: service(for: model.provider))
+            return FileTranscriptionSession(service: service(for: model.provider), modelContext: modelContext)
         }
     }
 

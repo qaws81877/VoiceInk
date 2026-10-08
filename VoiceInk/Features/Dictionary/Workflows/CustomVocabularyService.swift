@@ -15,6 +15,10 @@ class CustomVocabularyService {
         return "Important Vocabulary: \(wordsText)"
     }
 
+    func vocabularyTerms(from context: ModelContext) -> [String] {
+        getCustomVocabularyWords(from: context) ?? []
+    }
+
     private func getCustomVocabularyWords(from context: ModelContext) -> [String]? {
         let descriptor = FetchDescriptor<VocabularyWord>(sortBy: [SortDescriptor(\VocabularyWord.word)])
 

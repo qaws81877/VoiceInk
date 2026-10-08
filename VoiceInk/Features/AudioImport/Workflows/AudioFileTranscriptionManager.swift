@@ -171,7 +171,7 @@ class AudioTranscriptionManager: ObservableObject {
             var text = try await serviceRegistry.transcribe(
                 audioURL: permanentURL,
                 model: currentModel,
-                context: transcriptionConfiguration.requestContext
+                context: transcriptionConfiguration.requestContext(modelContext: modelContext)
             )
             let transcriptionDuration = Date().timeIntervalSince(transcriptionStart)
             text = TranscriptionOutputFilter.filter(text)

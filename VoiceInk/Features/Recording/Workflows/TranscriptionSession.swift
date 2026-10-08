@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 import os
 
 /// Encapsulates a single recording-to-transcription lifecycle (streaming or file-based).
@@ -20,16 +21,18 @@ protocol TranscriptionSession: AnyObject {
 @MainActor
 final class FileTranscriptionSession: TranscriptionSession {
     private let service: TranscriptionService
+    private let modelContext: ModelContext
     private var model: (any TranscriptionModel)?
     private var context: TranscriptionRequestContext = .currentDefaults
 
-    init(service: TranscriptionService) {
+    init(service: TranscriptionService, modelContext: ModelContext) {
         self.service = service
+        self.modelContext = modelContext
     }
 
     func prepare(configuration: TranscriptionRuntimeConfiguration) async throws -> ((Data) -> Void)? {
         self.model = configuration.model
-        self.context = configuration.requestContext.scoped(to: configuration.model)
+        self.context = configuration.requestContext(modelContext: modelContext).scoped(to: configuration.model)
         return nil
     }
 
@@ -52,6 +55,7 @@ final class FileTranscriptionSession: TranscriptionSession {
 final class StreamingTranscriptionSession: TranscriptionSession {
     private let streamingService: StreamingTranscriptionService
     private let fallbackService: TranscriptionService
+    private let modelContext: ModelContext
     private var model: (any TranscriptionModel)?
     private var context: TranscriptionRequestContext = .currentDefaults
     private var streamingFailed = false
@@ -59,14 +63,19 @@ final class StreamingTranscriptionSession: TranscriptionSession {
     private var startupTaskID: UUID?
     private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "StreamingTranscriptionSession")
 
-    init(streamingService: StreamingTranscriptionService, fallbackService: TranscriptionService) {
+    init(
+        streamingService: StreamingTranscriptionService,
+        fallbackService: TranscriptionService,
+        modelContext: ModelContext
+    ) {
         self.streamingService = streamingService
         self.fallbackService = fallbackService
+        self.modelContext = modelContext
     }
 
     func prepare(configuration: TranscriptionRuntimeConfiguration) async throws -> ((Data) -> Void)? {
         let model = configuration.model
-        let context = configuration.requestContext.scoped(to: model)
+        let context = configuration.requestContext(modelContext: modelContext).scoped(to: model)
 
         self.model = model
         self.context = context
