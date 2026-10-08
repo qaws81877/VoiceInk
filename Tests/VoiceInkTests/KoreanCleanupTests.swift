@@ -63,6 +63,50 @@ final class KoreanCleanupTests: XCTestCase {
         )
     }
 
+    func testGenericAnthropicHaikuBodyOmitsTemperature() throws {
+        let data = try JSONEncoder().encode(
+            KoreanCleanupRequestBuilder.anthropicMessagesBody(
+                model: KoreanCleanupModels.anthropic,
+                systemPrompt: "Rewrite this",
+                messages: [
+                    .init(role: "user", content: "hello"),
+                    .init(role: "assistant", content: "hi"),
+                ],
+                maxTokens: 8192,
+                stream: false
+            )
+        )
+        let object = try jsonObject(data)
+
+        XCTAssertEqual(object["model"] as? String, "claude-haiku-5-5")
+        XCTAssertEqual(object["max_tokens"] as? Int, 8192)
+        XCTAssertEqual(object["system"] as? String, "Rewrite this")
+        XCTAssertEqual(object["stream"] as? Bool, false)
+        XCTAssertEqual((object["thinking"] as? [String: Any])?["type"] as? String, "disabled")
+        XCTAssertEqual((object["output_config"] as? [String: Any])?["effort"] as? String, "low")
+        XCTAssertNil(object["temperature"])
+        XCTAssertFalse(containsKey(object, named: "temperature"))
+
+        let messages = object["messages"] as? [[String: Any]]
+        XCTAssertEqual(messages?.count, 2)
+        XCTAssertEqual(messages?[0]["role"] as? String, "user")
+        XCTAssertEqual(messages?[1]["role"] as? String, "assistant")
+
+        let withoutSystem = try JSONEncoder().encode(
+            KoreanCleanupRequestBuilder.anthropicMessagesBody(
+                model: KoreanCleanupModels.anthropic,
+                systemPrompt: nil,
+                messages: [.init(role: "user", content: "hello")],
+                maxTokens: 8192,
+                stream: false
+            )
+        )
+        let omitted = try jsonObject(withoutSystem)
+        XCTAssertNil(omitted["system"])
+        XCTAssertFalse(omitted.keys.contains("system"))
+        XCTAssertFalse(containsKey(omitted, named: "temperature"))
+    }
+
     func testFallbackRouteUsesHaikuOnlyWhenOpenAIKeyIsMissing() {
         XCTAssertEqual(
             KoreanCleanupPolicy.route(keys: KoreanCleanupKeys(openAI: true, anthropic: true)),

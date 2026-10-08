@@ -228,7 +228,7 @@ enum KoreanCleanupRequestBuilder {
 
         let model: String
         let maxTokens: Int
-        let system: String
+        let system: String?
         let stream: Bool
         let thinking: Thinking
         let outputConfig: OutputConfig
@@ -242,6 +242,17 @@ enum KoreanCleanupRequestBuilder {
             case thinking
             case outputConfig = "output_config"
             case messages
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(model, forKey: .model)
+            try container.encode(maxTokens, forKey: .maxTokens)
+            try container.encodeIfPresent(system, forKey: .system)
+            try container.encode(stream, forKey: .stream)
+            try container.encode(thinking, forKey: .thinking)
+            try container.encode(outputConfig, forKey: .outputConfig)
+            try container.encode(messages, forKey: .messages)
         }
     }
 
@@ -262,17 +273,35 @@ enum KoreanCleanupRequestBuilder {
         )
     }
 
-    static func anthropicBody(systemPrompt: String, transcript: String) -> AnthropicBody {
+    /// Shared Anthropic body. `temperature` is not a field, so it cannot be encoded.
+    /// `thinking` and `output_config` always come from `KoreanCleanupModels`.
+    static func anthropicMessagesBody(
+        model: String,
+        systemPrompt: String?,
+        messages: [ChatMessage],
+        maxTokens: Int,
+        stream: Bool
+    ) -> AnthropicBody {
         AnthropicBody(
-            model: KoreanCleanupModels.anthropic,
-            maxTokens: KoreanCleanupModels.maxTokens,
+            model: model,
+            maxTokens: maxTokens,
             system: systemPrompt,
-            stream: true,
+            stream: stream,
             thinking: AnthropicBody.Thinking(type: KoreanCleanupModels.anthropicThinkingType),
             outputConfig: AnthropicBody.OutputConfig(effort: KoreanCleanupModels.anthropicOutputEffort),
+            messages: messages
+        )
+    }
+
+    static func anthropicBody(systemPrompt: String, transcript: String) -> AnthropicBody {
+        anthropicMessagesBody(
+            model: KoreanCleanupModels.anthropic,
+            systemPrompt: systemPrompt,
             messages: [
                 ChatMessage(role: "user", content: userMessage(transcript: transcript))
-            ]
+            ],
+            maxTokens: KoreanCleanupModels.maxTokens,
+            stream: true
         )
     }
 
