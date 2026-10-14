@@ -2,7 +2,9 @@
 DEPS_DIR := $(HOME)/VoiceInk-Dependencies
 WHISPER_CPP_DIR := $(DEPS_DIR)/whisper.cpp
 FRAMEWORK_PATH := $(WHISPER_CPP_DIR)/build-apple/whisper.xcframework
-LOCAL_DERIVED_DATA := $(CURDIR)/.local-build
+# The .noindex suffix keeps Spotlight from listing every built copy of the app.
+LOCAL_DERIVED_DATA := $(CURDIR)/.local-build.noindex
+DEV_DERIVED_DATA := $(CURDIR)/.build.noindex
 LOCAL_CODESIGN_IDENTITY ?=
 RUN_APP_NAME ?= Sulsul
 
@@ -46,6 +48,7 @@ setup: whisper
 
 build: setup
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug CODE_SIGN_IDENTITY="" \
+		-derivedDataPath "$(DEV_DERIVED_DATA)" \
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
 		build
@@ -90,6 +93,7 @@ local: check setup
 		rm -rf "$$HOME/Downloads/Sulsul.app"; \
 		ditto "$$APP_PATH" "$$HOME/Downloads/Sulsul.app"; \
 		xattr -cr "$$HOME/Downloads/Sulsul.app"; \
+		rm -rf "$$APP_PATH"; \
 		echo ""; \
 		echo "Build complete! App saved to: ~/Downloads/Sulsul.app"; \
 		echo "Run with: open ~/Downloads/Sulsul.app"; \
@@ -108,8 +112,8 @@ run:
 		echo "Opening ~/Downloads/$(RUN_APP_NAME).app..."; \
 		open "$$HOME/Downloads/$(RUN_APP_NAME).app"; \
 	else \
-		echo "Looking for $(RUN_APP_NAME).app in DerivedData..."; \
-		APP_PATH=$$(find "$$HOME/Library/Developer/Xcode/DerivedData" -name "$(RUN_APP_NAME).app" -type d | head -1) && \
+		echo "Looking for $(RUN_APP_NAME).app in $(DEV_DERIVED_DATA)..."; \
+		APP_PATH=$$(find "$(DEV_DERIVED_DATA)/Build/Products" -name "$(RUN_APP_NAME).app" -type d -maxdepth 2 2>/dev/null | head -1) && \
 		if [ -n "$$APP_PATH" ]; then \
 			echo "Found app at: $$APP_PATH"; \
 			open "$$APP_PATH"; \

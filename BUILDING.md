@@ -34,7 +34,7 @@ make local
 open ~/Downloads/Sulsul.app
 ```
 
-`make local` prepares `whisper.xcframework` under `~/VoiceInk-Dependencies` (a build-tool checkout, not the app's data folder), builds the `VoiceInk` scheme in the Release configuration into `.local-build`, and copies `Sulsul.app` to `~/Downloads`.
+`make local` prepares `whisper.xcframework` under `~/VoiceInk-Dependencies` (a build-tool checkout, not the app's data folder), builds the `VoiceInk` scheme in the Release configuration into `.local-build.noindex`, copies `Sulsul.app` to `~/Downloads`, and removes the built copy so only one app with the bundle ID remains.
 
 It uses `LocalBuild.xcconfig`, `VoiceInk/VoiceInk.local.entitlements`, and the `LOCAL_BUILD` Swift flag. Without an override, it uses the only available Apple Development identity, or ad-hoc signing when none or several are found.
 
