@@ -22,6 +22,7 @@ enum PromptTemplates {
     static let emailPromptId = UUID(uuidString: "00000000-0000-0000-0000-000000000003")!
     static let rewritePromptId = UUID(uuidString: "00000000-0000-0000-0000-000000000004")!
     static let assistantPromptId = UUID(uuidString: "00000000-0000-0000-0000-000000000005")!
+    static let organizePromptId = UUID(uuidString: "00000000-0000-0000-0000-000000000006")!
 
     static var all: [TemplatePrompt] {
         createTemplatePrompts()
@@ -37,6 +38,12 @@ enum PromptTemplates {
                 id: defaultPromptId,
                 title: "Default",
                 promptText: KoreanCleanupPrompt.text,
+                useSystemInstructions: false
+            ),
+            TemplatePrompt(
+                id: organizePromptId,
+                title: "Organize",
+                promptText: KoreanOrganizePrompt.text,
                 useSystemInstructions: false
             ),
             TemplatePrompt(

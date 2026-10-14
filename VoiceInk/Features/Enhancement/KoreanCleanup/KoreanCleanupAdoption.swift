@@ -65,12 +65,68 @@ enum KoreanCleanupAdoption {
         case .enableDefaultCleanup:
             guard var updated = mode else { return }
             updated.isAIEnhancementEnabled = true
-            updated.selectedPrompt = PromptTemplates.defaultPromptId.uuidString
+            updated.selectedPrompt = PromptTemplates.organizePromptId.uuidString
             updated.selectedAIProvider = AIProvider.openAI.rawValue
             updated.selectedAIModel = KoreanCleanupModels.openAI
             manager.updateConfiguration(updated)
             defaults.set(true, forKey: didApplyKey)
         }
+    }
+}
+
+/// One-time switch that makes "Organize" the default for existing users.
+/// Adds the Organize prompt once and moves the stock Dictation mode off the
+/// verbatim cleanup prompt only while it still uses the default provider pair.
+enum KoreanOrganizeAdoption {
+    static let didApplyKey = "DidApplyKoreanOrganizeDefault"
+
+    /// Fresh installs get the prompt from `StarterModePromptSeeder`, so an empty list is left alone.
+    static func ensurePrompt(in prompts: [CustomPrompt]) -> [CustomPrompt] {
+        guard !prompts.isEmpty,
+            !prompts.contains(where: { $0.id == PromptTemplates.organizePromptId }),
+            let seed = PromptTemplates.seedPrompts.first(where: { $0.id == PromptTemplates.organizePromptId })
+        else {
+            return prompts
+        }
+        var updated = prompts
+        if let index = updated.firstIndex(where: { $0.id == PromptTemplates.defaultPromptId }) {
+            updated.insert(seed, at: index + 1)
+        } else {
+            updated.append(seed)
+        }
+        return updated
+    }
+
+    static func shouldSwitchToOrganize(_ mode: ModeConfig) -> Bool {
+        mode.id == KoreanCleanupAdoption.dictationModeID
+            && mode.selectedPrompt == PromptTemplates.defaultPromptId.uuidString
+            && KoreanCleanupPolicy.isDefaultCleanupSelection(
+                providerName: mode.selectedAIProvider,
+                modelName: mode.selectedAIModel
+            )
+    }
+
+    /// Returns the prompt list to keep. The mode switch happens only when the prompt exists.
+    @MainActor
+    static func applyIfNeeded(
+        prompts: [CustomPrompt],
+        defaults: UserDefaults = .standard
+    ) -> [CustomPrompt] {
+        guard !defaults.bool(forKey: didApplyKey) else {
+            return prompts
+        }
+
+        let updatedPrompts = ensurePrompt(in: prompts)
+        let manager = ModeManager.shared
+        if updatedPrompts.contains(where: { $0.id == PromptTemplates.organizePromptId }),
+            var mode = manager.getConfiguration(with: KoreanCleanupAdoption.dictationModeID),
+            shouldSwitchToOrganize(mode)
+        {
+            mode.selectedPrompt = PromptTemplates.organizePromptId.uuidString
+            manager.updateConfiguration(mode)
+        }
+        defaults.set(true, forKey: didApplyKey)
+        return updatedPrompts
     }
 }
 

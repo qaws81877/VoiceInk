@@ -12,6 +12,16 @@ enum EnhancementRequestSettings {
         return TimeInterval(configuredTimeout > 0 ? configuredTimeout : defaultTimeoutSeconds)
     }
 
+    static let secondsPerCharacter: TimeInterval = 0.03
+    static let maximumScaledTimeout: TimeInterval = 300
+
+    /// The configured timeout, raised for long input so a long dictation is not cut off.
+    /// Never lower than the user's setting; capped so a stalled request still ends.
+    static func timeout(forCharacters characters: Int, configured: TimeInterval = timeout) -> TimeInterval {
+        let scaled = min(maximumScaledTimeout, TimeInterval(characters) * secondsPerCharacter)
+        return max(configured, scaled)
+    }
+
     static var retryOnTimeout: Bool {
         guard UserDefaults.standard.object(forKey: retryOnTimeoutKey) != nil else {
             return defaultRetryOnTimeout

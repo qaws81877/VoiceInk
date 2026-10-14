@@ -57,7 +57,7 @@ enum StarterModeCatalog {
                 localized:
                     "Use this for everyday dictation. Once an OpenAI or Anthropic key is saved, Sulsul cleans the transcript before pasting."
             ),
-            promptId: PromptTemplates.defaultPromptId,
+            promptId: PromptTemplates.organizePromptId,
             outputMode: .paste,
             usesAIEnhancement: true,
             useSelectedTextContext: false,

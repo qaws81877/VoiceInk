@@ -29,9 +29,6 @@ class AIEnhancementService: ObservableObject {
     private let aiService: AIService
     private let screenCaptureService: ScreenCaptureService
     private let customVocabularyService: CustomVocabularyService
-    private var requestTimeout: TimeInterval {
-        EnhancementRequestSettings.timeout
-    }
     private let rateLimitInterval: TimeInterval = 1.0
     private var lastRequestTime: Date?
     private let modelContext: ModelContext
@@ -52,7 +49,9 @@ class AIEnhancementService: ObservableObject {
             self.customPrompts = []
         }
 
-        let migratedPrompts = KoreanCleanupPromptMigration.migrate(customPrompts)
+        let migratedPrompts = KoreanOrganizeAdoption.applyIfNeeded(
+            prompts: KoreanCleanupPromptMigration.migrate(customPrompts)
+        )
         if migratedPrompts != customPrompts {
             customPrompts = migratedPrompts
             savePrompts()
@@ -228,7 +227,8 @@ class AIEnhancementService: ObservableObject {
                 transcript: text,
                 systemPrompt: systemPrompt,
                 credentials: credentials,
-                selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue
+                selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue,
+                selectedModel: configuration.mode?.selectedAIModel ?? configuration.modelName
             )
             return (
                 cleaned,
@@ -260,7 +260,7 @@ class AIEnhancementService: ObservableObject {
                 messages: [.user(formattedText)],
                 systemPrompt: systemMessage,
                 localUserPrompt: formattedText,
-                timeout: requestTimeout
+                timeout: EnhancementRequestSettings.timeout(forCharacters: text.count)
             )
             if let openRouterCompletion = completion.openRouterCompletion {
                 let routedProvider = openRouterCompletion.provider ?? "unknown"

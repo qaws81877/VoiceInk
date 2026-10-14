@@ -10,6 +10,58 @@ enum KoreanCleanupTimeouts {
     static let anthropicOverall: TimeInterval = 30
 }
 
+/// Output and time budget for one cleanup call, scaled to transcript length.
+/// Short transcripts keep the base values, so their request bytes and deadlines are unchanged.
+/// Caps exist only so a stalled stream cannot hang dictation forever.
+struct KoreanCleanupBudget: Equatable {
+    static let tokensPerCharacter = 2
+    static let maxTokensCap = 16_000
+    static let firstTokenSecondsPerCharacter: TimeInterval = 0.002
+    static let firstTokenCap: TimeInterval = 10
+    static let openAISecondsPerCharacter: TimeInterval = 0.02
+    static let anthropicSecondsPerCharacter: TimeInterval = 0.03
+    static let overallCap: TimeInterval = 300
+
+    let maxTokens: Int
+    let openAIFirstToken: TimeInterval
+    let openAIOverall: TimeInterval
+    let anthropicOverall: TimeInterval
+
+    static let base = KoreanCleanupBudget(
+        maxTokens: KoreanCleanupModels.maxTokens,
+        openAIFirstToken: KoreanCleanupTimeouts.openAIFirstToken,
+        openAIOverall: KoreanCleanupTimeouts.openAIOverall,
+        anthropicOverall: KoreanCleanupTimeouts.anthropicOverall
+    )
+
+    static func forTranscript(_ transcript: String) -> KoreanCleanupBudget {
+        let characters = transcript.count
+        let seconds = TimeInterval(characters)
+        return KoreanCleanupBudget(
+            maxTokens: min(maxTokensCap, max(KoreanCleanupModels.maxTokens, characters * tokensPerCharacter)),
+            openAIFirstToken: clamp(
+                seconds * firstTokenSecondsPerCharacter,
+                floor: KoreanCleanupTimeouts.openAIFirstToken,
+                cap: firstTokenCap
+            ),
+            openAIOverall: clamp(
+                seconds * openAISecondsPerCharacter,
+                floor: KoreanCleanupTimeouts.openAIOverall,
+                cap: overallCap
+            ),
+            anthropicOverall: clamp(
+                seconds * anthropicSecondsPerCharacter,
+                floor: KoreanCleanupTimeouts.anthropicOverall,
+                cap: overallCap
+            )
+        )
+    }
+
+    private static func clamp(_ value: TimeInterval, floor: TimeInterval, cap: TimeInterval) -> TimeInterval {
+        min(cap, max(floor, value))
+    }
+}
+
 enum KoreanCleanupModels {
     static let openAI = "gpt-6-luna"
     static let anthropic = "claude-haiku-5-5"
@@ -18,6 +70,16 @@ enum KoreanCleanupModels {
     static let anthropicThinkingType = "disabled"
     static let anthropicOutputEffort = "low"
     static let anthropicVersion = "2023-06-01"
+}
+
+struct KoreanCleanupModelChoice: Equatable {
+    static let defaults = KoreanCleanupModelChoice(
+        openAI: KoreanCleanupModels.openAI,
+        anthropic: KoreanCleanupModels.anthropic
+    )
+
+    let openAI: String
+    let anthropic: String
 }
 
 enum KoreanCleanupRoute: Equatable {
@@ -95,16 +157,50 @@ enum KoreanCleanupPolicy {
         }
     }
 
-    /// The default Korean cleanup pair, not a manually chosen provider or model.
+    /// Built-in Korean prompts that run on the default cleanup pipeline.
+    static let pipelinePromptIds: Set<UUID> = [
+        PromptTemplates.defaultPromptId,
+        PromptTemplates.organizePromptId,
+    ]
+
+    /// A built-in Korean prompt with OpenAI, Anthropic, or no provider runs on the cleanup pipeline,
+    /// whichever model of those providers the mode selected.
     static func usesDefaultPipeline(_ configuration: EnhancementRuntimeConfiguration) -> Bool {
-        guard configuration.prompt?.id == PromptTemplates.defaultPromptId else {
+        guard let promptId = configuration.prompt?.id, pipelinePromptIds.contains(promptId) else {
             return false
         }
 
         let providerName = configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue
-        let modelName = configuration.mode?.selectedAIModel ?? configuration.modelName
-        return isDefaultCleanupSelection(providerName: providerName, modelName: modelName)
+        return isPipelineProvider(providerName)
     }
+
+    static func isPipelineProvider(_ providerName: String?) -> Bool {
+        guard let providerName, !providerName.isEmpty else {
+            return true
+        }
+        return providerName == AIProvider.openAI.rawValue || providerName == AIProvider.anthropic.rawValue
+    }
+
+    /// The mode's model for the provider that is called first, or the default model when unset.
+    static func models(selectedProvider: String?, selectedModel: String?) -> KoreanCleanupModelChoice {
+        let model = selectedModel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        switch selectedProvider {
+        case AIProvider.anthropic.rawValue:
+            return KoreanCleanupModelChoice(
+                openAI: KoreanCleanupModels.openAI,
+                anthropic: model.isEmpty ? KoreanCleanupModels.anthropic : model
+            )
+        case AIProvider.openAI.rawValue:
+            return KoreanCleanupModelChoice(
+                openAI: model.isEmpty ? KoreanCleanupModels.openAI : model,
+                anthropic: KoreanCleanupModels.anthropic
+            )
+        default:
+            return .defaults
+        }
+    }
+
+    /// The stock pair the app installs. Used to decide whether a mode is still untouched.
 
     static func isDefaultCleanupSelection(providerName: String?, modelName: String?) -> Bool {
         if let providerName, !providerName.isEmpty,
@@ -131,7 +227,10 @@ enum KoreanCleanupPolicy {
 
     static func systemPrompt(from prompt: CustomPrompt) -> String {
         let trimmed = prompt.promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? KoreanCleanupPrompt.text : prompt.promptText
+        guard trimmed.isEmpty else {
+            return prompt.promptText
+        }
+        return prompt.id == PromptTemplates.organizePromptId ? KoreanOrganizePrompt.text : KoreanCleanupPrompt.text
     }
 }
 
@@ -281,15 +380,20 @@ enum KoreanCleanupRequestBuilder {
         "<TRANSCRIPT>\n\(transcript)\n</TRANSCRIPT>"
     }
 
-    static func openAIBody(systemPrompt: String, transcript: String) -> OpenAIBody {
+    static func openAIBody(
+        systemPrompt: String,
+        transcript: String,
+        maxTokens: Int = KoreanCleanupModels.maxTokens,
+        model: String = KoreanCleanupModels.openAI
+    ) -> OpenAIBody {
         OpenAIBody(
-            model: KoreanCleanupModels.openAI,
+            model: model,
             messages: [
                 ChatMessage(role: "system", content: systemPrompt),
                 ChatMessage(role: "user", content: userMessage(transcript: transcript)),
             ],
             reasoningEffort: KoreanCleanupModels.openAIReasoningEffort,
-            maxCompletionTokens: KoreanCleanupModels.maxTokens,
+            maxCompletionTokens: maxTokens,
             stream: true
         )
     }
@@ -314,24 +418,43 @@ enum KoreanCleanupRequestBuilder {
         )
     }
 
-    static func anthropicBody(systemPrompt: String, transcript: String) -> AnthropicBody {
+    static func anthropicBody(
+        systemPrompt: String,
+        transcript: String,
+        maxTokens: Int = KoreanCleanupModels.maxTokens,
+        model: String = KoreanCleanupModels.anthropic
+    ) -> AnthropicBody {
         anthropicMessagesBody(
-            model: KoreanCleanupModels.anthropic,
+            model: model,
             systemPrompt: systemPrompt,
             messages: [
                 ChatMessage(role: "user", content: userMessage(transcript: transcript))
             ],
-            maxTokens: KoreanCleanupModels.maxTokens,
+            maxTokens: maxTokens,
             stream: true
         )
     }
 
-    static func openAIJSON(systemPrompt: String, transcript: String) throws -> Data {
-        try JSONEncoder().encode(openAIBody(systemPrompt: systemPrompt, transcript: transcript))
+    static func openAIJSON(
+        systemPrompt: String,
+        transcript: String,
+        maxTokens: Int = KoreanCleanupModels.maxTokens,
+        model: String = KoreanCleanupModels.openAI
+    ) throws -> Data {
+        try JSONEncoder().encode(
+            openAIBody(systemPrompt: systemPrompt, transcript: transcript, maxTokens: maxTokens, model: model)
+        )
     }
 
-    static func anthropicJSON(systemPrompt: String, transcript: String) throws -> Data {
-        try JSONEncoder().encode(anthropicBody(systemPrompt: systemPrompt, transcript: transcript))
+    static func anthropicJSON(
+        systemPrompt: String,
+        transcript: String,
+        maxTokens: Int = KoreanCleanupModels.maxTokens,
+        model: String = KoreanCleanupModels.anthropic
+    ) throws -> Data {
+        try JSONEncoder().encode(
+            anthropicBody(systemPrompt: systemPrompt, transcript: transcript, maxTokens: maxTokens, model: model)
+        )
     }
 }
 

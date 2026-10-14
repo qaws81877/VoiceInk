@@ -2,7 +2,8 @@ import Foundation
 import os
 
 /// Streams the default Korean cleanup call.
-/// OpenAI `gpt-6-luna` is primary. Anthropic `claude-haiku-5-5` is the fallback.
+/// OpenAI (the mode's model, `gpt-6-luna` by default) is primary and Anthropic `claude-haiku-5-5`
+/// is the fallback. When the mode selects Anthropic, only the mode's Anthropic model is called.
 /// If neither key can produce text, the raw transcript is returned.
 enum KoreanCleanupClient {
     private static let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "KoreanCleanup")
@@ -11,9 +12,12 @@ enum KoreanCleanupClient {
         transcript: String,
         systemPrompt: String,
         credentials: KoreanCleanupCredentials,
-        selectedProvider: String? = nil
+        selectedProvider: String? = nil,
+        selectedModel: String? = nil
     ) async -> String {
         let keys = credentials.keys
+        let budget = KoreanCleanupBudget.forTranscript(transcript)
+        let models = KoreanCleanupPolicy.models(selectedProvider: selectedProvider, selectedModel: selectedModel)
         switch KoreanCleanupPolicy.route(keys: keys, selectedProvider: selectedProvider) {
         case .pasteTranscript:
             return transcript
@@ -24,7 +28,9 @@ enum KoreanCleanupClient {
             return await anthropicOrTranscript(
                 transcript: transcript,
                 systemPrompt: systemPrompt,
-                apiKey: apiKey
+                apiKey: apiKey,
+                budget: budget,
+                models: models
             )
         case .openAIThenAnthropic:
             guard let apiKey = credentials.openAIToken else {
@@ -33,7 +39,9 @@ enum KoreanCleanupClient {
             let openAI = await completeOpenAI(
                 transcript: transcript,
                 systemPrompt: systemPrompt,
-                apiKey: apiKey
+                apiKey: apiKey,
+                budget: budget,
+                models: models
             )
             switch openAI {
             case .success(let text):
@@ -50,7 +58,9 @@ enum KoreanCleanupClient {
                 return await anthropicOrTranscript(
                     transcript: transcript,
                     systemPrompt: systemPrompt,
-                    apiKey: anthropicKey
+                    apiKey: anthropicKey,
+                    budget: budget,
+                models: models
                 )
             }
         }
@@ -59,9 +69,17 @@ enum KoreanCleanupClient {
     private static func anthropicOrTranscript(
         transcript: String,
         systemPrompt: String,
-        apiKey: String
+        apiKey: String,
+        budget: KoreanCleanupBudget,
+        models: KoreanCleanupModelChoice
     ) async -> String {
-        switch await completeAnthropic(transcript: transcript, systemPrompt: systemPrompt, apiKey: apiKey) {
+        switch await completeAnthropic(
+            transcript: transcript,
+            systemPrompt: systemPrompt,
+            apiKey: apiKey,
+            budget: budget,
+                models: models
+        ) {
         case .success(let text):
             return text
         case .failure:
@@ -73,13 +91,17 @@ enum KoreanCleanupClient {
     private static func completeOpenAI(
         transcript: String,
         systemPrompt: String,
-        apiKey: String
+        apiKey: String,
+        budget: KoreanCleanupBudget,
+        models: KoreanCleanupModelChoice
     ) async -> Result<String, KoreanCleanupFallbackReason> {
         let body: Data
         do {
             body = try KoreanCleanupRequestBuilder.openAIJSON(
                 systemPrompt: systemPrompt,
-                transcript: transcript
+                transcript: transcript,
+                maxTokens: budget.maxTokens,
+                model: models.openAI
             )
         } catch {
             return .failure(.requestFailed)
@@ -96,19 +118,19 @@ enum KoreanCleanupClient {
         request.httpBody = body
 
         let flag = FirstTokenFlag()
-        let session = makeSession(timeout: KoreanCleanupTimeouts.anthropicOverall)
+        let session = makeSession(timeout: budget.anthropicOverall)
         let clock = ContinuousClock()
         let started = clock.now
 
         let result = await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                try? await Task.sleep(for: .seconds(KoreanCleanupTimeouts.openAIFirstToken))
+                try? await Task.sleep(for: .seconds(budget.openAIFirstToken))
                 if !flag.isMarked {
                     session.invalidateAndCancel()
                 }
             }
             group.addTask {
-                try? await Task.sleep(for: .seconds(KoreanCleanupTimeouts.openAIOverall))
+                try? await Task.sleep(for: .seconds(budget.openAIOverall))
                 session.invalidateAndCancel()
             }
 
@@ -118,7 +140,8 @@ enum KoreanCleanupClient {
                 clock: clock,
                 started: started,
                 flag: flag,
-                overallLimit: KoreanCleanupTimeouts.openAIOverall,
+                overallLimit: budget.openAIOverall,
+                firstTokenLimit: budget.openAIFirstToken,
                 enforcesFirstTokenDeadline: true,
                 parse: KoreanCleanupStreamParser.openAIEvent(fromLine:)
             )
@@ -132,13 +155,17 @@ enum KoreanCleanupClient {
     private static func completeAnthropic(
         transcript: String,
         systemPrompt: String,
-        apiKey: String
+        apiKey: String,
+        budget: KoreanCleanupBudget,
+        models: KoreanCleanupModelChoice
     ) async -> Result<String, KoreanCleanupFallbackReason> {
         let body: Data
         do {
             body = try KoreanCleanupRequestBuilder.anthropicJSON(
                 systemPrompt: systemPrompt,
-                transcript: transcript
+                transcript: transcript,
+                maxTokens: budget.maxTokens,
+                model: models.anthropic
             )
         } catch {
             return .failure(.requestFailed)
@@ -155,14 +182,14 @@ enum KoreanCleanupClient {
         request.setValue(KoreanCleanupModels.anthropicVersion, forHTTPHeaderField: "anthropic-version")
         request.httpBody = body
 
-        let session = makeSession(timeout: KoreanCleanupTimeouts.anthropicOverall)
+        let session = makeSession(timeout: budget.anthropicOverall)
         let clock = ContinuousClock()
         let started = clock.now
         let flag = FirstTokenFlag()
 
         let result = await withTaskGroup(of: Void.self) { group in
             group.addTask {
-                try? await Task.sleep(for: .seconds(KoreanCleanupTimeouts.anthropicOverall))
+                try? await Task.sleep(for: .seconds(budget.anthropicOverall))
                 session.invalidateAndCancel()
             }
             let streamed = await readStream(
@@ -171,7 +198,8 @@ enum KoreanCleanupClient {
                 clock: clock,
                 started: started,
                 flag: flag,
-                overallLimit: KoreanCleanupTimeouts.anthropicOverall,
+                overallLimit: budget.anthropicOverall,
+                firstTokenLimit: budget.anthropicOverall,
                 enforcesFirstTokenDeadline: false,
                 parse: KoreanCleanupStreamParser.anthropicEvent(fromLine:)
             )
@@ -189,6 +217,7 @@ enum KoreanCleanupClient {
         started: ContinuousClock.Instant,
         flag: FirstTokenFlag,
         overallLimit: TimeInterval,
+        firstTokenLimit: TimeInterval,
         enforcesFirstTokenDeadline: Bool,
         parse: (String) -> KoreanCleanupStreamEvent
     ) async -> Result<String, KoreanCleanupFallbackReason> {
@@ -216,6 +245,7 @@ enum KoreanCleanupClient {
                         firstTokenElapsed: firstTokenElapsed,
                         completionElapsed: elapsed,
                         overallLimit: overallLimit,
+                        firstTokenLimit: firstTokenLimit,
                         enforcesFirstTokenDeadline: enforcesFirstTokenDeadline
                     )
                 case .content(let piece):
@@ -223,7 +253,7 @@ enum KoreanCleanupClient {
                         sawToken = true
                         firstTokenElapsed = elapsed
                         flag.mark()
-                        if enforcesFirstTokenDeadline, elapsed > KoreanCleanupTimeouts.openAIFirstToken {
+                        if enforcesFirstTokenDeadline, elapsed > firstTokenLimit {
                             return .failure(.firstTokenTimeout)
                         }
                     }
@@ -240,18 +270,15 @@ enum KoreanCleanupClient {
                 firstTokenElapsed: firstTokenElapsed,
                 completionElapsed: elapsed,
                 overallLimit: overallLimit,
+                firstTokenLimit: firstTokenLimit,
                 enforcesFirstTokenDeadline: enforcesFirstTokenDeadline
             )
         } catch {
             let elapsed = seconds(from: started.duration(to: clock.now))
-            let firstTokenLimit =
-                enforcesFirstTokenDeadline
-                ? KoreanCleanupTimeouts.openAIFirstToken
-                : overallLimit
             let reason = KoreanCleanupOpenAITiming.stalledReason(
                 sawToken: flag.isMarked,
                 elapsed: elapsed,
-                firstTokenLimit: firstTokenLimit,
+                firstTokenLimit: enforcesFirstTokenDeadline ? firstTokenLimit : overallLimit,
                 overallLimit: overallLimit
             )
             return .failure(reason)
@@ -264,6 +291,7 @@ enum KoreanCleanupClient {
         firstTokenElapsed: TimeInterval?,
         completionElapsed: TimeInterval,
         overallLimit: TimeInterval,
+        firstTokenLimit: TimeInterval,
         enforcesFirstTokenDeadline: Bool
     ) -> Result<String, KoreanCleanupFallbackReason> {
         let decision = KoreanCleanupOpenAITiming.decision(
@@ -271,9 +299,7 @@ enum KoreanCleanupClient {
             sawToken: sawToken,
             firstTokenElapsed: firstTokenElapsed,
             completionElapsed: completionElapsed,
-            firstTokenLimit: enforcesFirstTokenDeadline
-                ? KoreanCleanupTimeouts.openAIFirstToken
-                : overallLimit,
+            firstTokenLimit: enforcesFirstTokenDeadline ? firstTokenLimit : overallLimit,
             overallLimit: overallLimit
         )
         switch decision {
