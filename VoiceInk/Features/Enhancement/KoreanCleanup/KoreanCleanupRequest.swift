@@ -57,6 +57,22 @@ struct KoreanCleanupBudget: Equatable {
         )
     }
 
+    /// Anthropic deadline after an OpenAI attempt, so both providers together stay within
+    /// `anthropicOverall`. Returns nil when no time is left for a fallback.
+    func anthropicFallbackLimit(afterOpenAIElapsed elapsed: TimeInterval) -> TimeInterval? {
+        let remaining = anthropicOverall - elapsed
+        return remaining > 0 ? remaining : nil
+    }
+
+    func withAnthropicOverall(_ limit: TimeInterval) -> KoreanCleanupBudget {
+        KoreanCleanupBudget(
+            maxTokens: maxTokens,
+            openAIFirstToken: openAIFirstToken,
+            openAIOverall: openAIOverall,
+            anthropicOverall: limit
+        )
+    }
+
     private static func clamp(_ value: TimeInterval, floor: TimeInterval, cap: TimeInterval) -> TimeInterval {
         min(cap, max(floor, value))
     }
@@ -92,6 +108,7 @@ enum KoreanCleanupFallbackReason: Error, Equatable {
     case requestFailed
     case firstTokenTimeout
     case overallTimeout
+    case outputTruncated
 }
 
 struct KoreanCleanupKeys: Equatable {
@@ -152,8 +169,23 @@ enum KoreanCleanupPolicy {
         hasAnthropicKey: Bool
     ) -> Bool {
         switch reason {
-        case .requestFailed, .firstTokenTimeout, .overallTimeout:
+        case .requestFailed, .firstTokenTimeout, .overallTimeout, .outputTruncated:
             return hasAnthropicKey
+        }
+    }
+
+    /// Error surfaced when every cleanup provider failed, so the caller pastes the raw transcript
+    /// with a warning instead of recording it as a successful enhancement.
+    /// Timeouts are not mapped to `.timeout`: the pipeline already tried each provider, and a
+    /// retry in `makeRequestWithRetry` would multiply the wait.
+    static func enhancementError(for reason: KoreanCleanupFallbackReason) -> EnhancementError {
+        switch reason {
+        case .requestFailed:
+            return .enhancementFailed
+        case .outputTruncated:
+            return .outputTruncated
+        case .firstTokenTimeout, .overallTimeout:
+            return .customError(EnhancementError.timeout.errorDescription ?? "")
         }
     }
 
@@ -462,6 +494,8 @@ enum KoreanCleanupStreamEvent: Equatable {
     case ignore
     case done
     case content(String)
+    /// The provider stopped at the output token limit, so the text is incomplete.
+    case truncated
     case malformed
 }
 
@@ -484,9 +518,13 @@ enum KoreanCleanupStreamParser {
         else {
             return .malformed
         }
-        guard let choices = json["choices"] as? [[String: Any]],
-            let delta = choices.first?["delta"] as? [String: Any]
-        else {
+        guard let choices = json["choices"] as? [[String: Any]] else {
+            return .ignore
+        }
+        if (choices.first?["finish_reason"] as? String) == "length" {
+            return .truncated
+        }
+        guard let delta = choices.first?["delta"] as? [String: Any] else {
             return .ignore
         }
         if let content = delta["content"] as? String {
@@ -514,6 +552,12 @@ enum KoreanCleanupStreamParser {
         let type = json["type"] as? String
         if type == "error" {
             return .malformed
+        }
+        if type == "message_delta",
+            let delta = json["delta"] as? [String: Any],
+            (delta["stop_reason"] as? String) == "max_tokens"
+        {
+            return .truncated
         }
         guard type == "content_block_delta",
             let delta = json["delta"] as? [String: Any]

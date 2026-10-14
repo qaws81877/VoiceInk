@@ -158,6 +158,12 @@ extension AIService {
         }
 
         let content: [Block]
+        let stopReason: String?
+
+        enum CodingKeys: String, CodingKey {
+            case content
+            case stopReason = "stop_reason"
+        }
     }
 
     /// Manual `claude-haiku-5-5` selections bypass LLMkit. That client omits
@@ -234,6 +240,9 @@ extension AIService {
             decoded = try JSONDecoder().decode(AnthropicHaikuResponse.self, from: data)
         } catch {
             throw EnhancementError.invalidResponse
+        }
+        guard decoded.stopReason != "max_tokens" else {
+            throw EnhancementError.outputTruncated
         }
         return decoded.content.filter { $0.type == "text" }.compactMap(\.text).joined()
     }

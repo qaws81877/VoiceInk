@@ -42,8 +42,19 @@ enum KoreanCleanupAdoption {
         return !mode.isAIEnhancementEnabled && prompt.isEmpty && provider.isEmpty
     }
 
+    /// Organize when it exists, else the verbatim cleanup prompt, else nil so adoption waits.
+    static func cleanupPromptId(availablePromptIds: Set<UUID>) -> UUID? {
+        if availablePromptIds.contains(PromptTemplates.organizePromptId) {
+            return PromptTemplates.organizePromptId
+        }
+        if availablePromptIds.contains(PromptTemplates.defaultPromptId) {
+            return PromptTemplates.defaultPromptId
+        }
+        return nil
+    }
+
     @MainActor
-    static func applyIfNeeded(defaults: UserDefaults = .standard) {
+    static func applyIfNeeded(availablePromptIds: Set<UUID>, defaults: UserDefaults = .standard) {
         let manager = ModeManager.shared
         let mode = manager.getConfiguration(with: dictationModeID)
         let credentials = KoreanCleanupCredentials(
@@ -63,9 +74,11 @@ enum KoreanCleanupAdoption {
         case .leaveCustomized:
             defaults.set(true, forKey: didApplyKey)
         case .enableDefaultCleanup:
-            guard var updated = mode else { return }
+            guard var updated = mode,
+                let promptId = cleanupPromptId(availablePromptIds: availablePromptIds)
+            else { return }
             updated.isAIEnhancementEnabled = true
-            updated.selectedPrompt = PromptTemplates.organizePromptId.uuidString
+            updated.selectedPrompt = promptId.uuidString
             updated.selectedAIProvider = AIProvider.openAI.rawValue
             updated.selectedAIModel = KoreanCleanupModels.openAI
             manager.updateConfiguration(updated)

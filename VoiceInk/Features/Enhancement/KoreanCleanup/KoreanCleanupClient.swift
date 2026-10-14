@@ -4,7 +4,9 @@ import os
 /// Streams the default Korean cleanup call.
 /// OpenAI (the mode's model, `gpt-6-luna` by default) is primary and Anthropic `claude-haiku-5-5`
 /// is the fallback. When the mode selects Anthropic, only the mode's Anthropic model is called.
-/// If neither key can produce text, the raw transcript is returned.
+/// Both attempts share the `anthropicOverall` deadline. If no provider produces complete text,
+/// this throws so the caller pastes the raw transcript with a warning; a cancelled task throws
+/// `CancellationError` without falling back.
 enum KoreanCleanupClient {
     private static let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "KoreanCleanup")
 
@@ -14,18 +16,18 @@ enum KoreanCleanupClient {
         credentials: KoreanCleanupCredentials,
         selectedProvider: String? = nil,
         selectedModel: String? = nil
-    ) async -> String {
+    ) async throws -> String {
         let keys = credentials.keys
         let budget = KoreanCleanupBudget.forTranscript(transcript)
         let models = KoreanCleanupPolicy.models(selectedProvider: selectedProvider, selectedModel: selectedModel)
         switch KoreanCleanupPolicy.route(keys: keys, selectedProvider: selectedProvider) {
         case .pasteTranscript:
-            return transcript
+            throw KoreanCleanupFallbackReason.requestFailed
         case .anthropicOnly:
             guard let apiKey = credentials.anthropicToken else {
-                return transcript
+                throw KoreanCleanupFallbackReason.requestFailed
             }
-            return await anthropicOrTranscript(
+            return try await anthropicOrThrow(
                 transcript: transcript,
                 systemPrompt: systemPrompt,
                 apiKey: apiKey,
@@ -34,8 +36,10 @@ enum KoreanCleanupClient {
             )
         case .openAIThenAnthropic:
             guard let apiKey = credentials.openAIToken else {
-                return transcript
+                throw KoreanCleanupFallbackReason.requestFailed
             }
+            let clock = ContinuousClock()
+            let started = clock.now
             let openAI = await completeOpenAI(
                 transcript: transcript,
                 systemPrompt: systemPrompt,
@@ -47,44 +51,52 @@ enum KoreanCleanupClient {
             case .success(let text):
                 return text
             case .failure(let reason):
+                try Task.checkCancellation()
                 logger.error(
                     "OpenAI cleanup fell back reason=\(String(describing: reason), privacy: .public)"
                 )
                 guard KoreanCleanupPolicy.shouldFallBackToAnthropic(reason, hasAnthropicKey: keys.anthropic),
                     let anthropicKey = credentials.anthropicToken
                 else {
-                    return transcript
+                    throw reason
                 }
-                return await anthropicOrTranscript(
+                let openAIElapsed = seconds(from: started.duration(to: clock.now))
+                guard let remaining = budget.anthropicFallbackLimit(afterOpenAIElapsed: openAIElapsed) else {
+                    throw KoreanCleanupFallbackReason.overallTimeout
+                }
+                return try await anthropicOrThrow(
                     transcript: transcript,
                     systemPrompt: systemPrompt,
                     apiKey: anthropicKey,
-                    budget: budget,
-                models: models
+                    budget: budget.withAnthropicOverall(remaining),
+                    models: models
                 )
             }
         }
     }
 
-    private static func anthropicOrTranscript(
+    private static func anthropicOrThrow(
         transcript: String,
         systemPrompt: String,
         apiKey: String,
         budget: KoreanCleanupBudget,
         models: KoreanCleanupModelChoice
-    ) async -> String {
+    ) async throws -> String {
         switch await completeAnthropic(
             transcript: transcript,
             systemPrompt: systemPrompt,
             apiKey: apiKey,
             budget: budget,
-                models: models
+            models: models
         ) {
         case .success(let text):
             return text
-        case .failure:
-            logger.error("Anthropic cleanup failed; pasting the transcript")
-            return transcript
+        case .failure(let reason):
+            try Task.checkCancellation()
+            logger.error(
+                "Anthropic cleanup failed reason=\(String(describing: reason), privacy: .public); pasting the transcript"
+            )
+            throw reason
         }
     }
 
@@ -258,6 +270,8 @@ enum KoreanCleanupClient {
                         }
                     }
                     text += piece
+                case .truncated:
+                    return .failure(.outputTruncated)
                 case .malformed:
                     return .failure(.requestFailed)
                 }

@@ -165,8 +165,10 @@ final class APIKeyManager {
             guard let legacy = keychain.getString(forKey: key, syncable: true) else {
                 return nil
             }
-            _ = saveLocal(legacy, forKey: key)
-            _ = keychain.delete(forKey: key, syncable: true)
+            // Keep the synced copy until the device-only copy exists, so a failed save cannot lose the key.
+            if saveLocal(legacy, forKey: key) {
+                _ = keychain.delete(forKey: key, syncable: true)
+            }
             return legacy
         #endif
     }

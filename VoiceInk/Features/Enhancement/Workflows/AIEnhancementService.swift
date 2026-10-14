@@ -57,7 +57,7 @@ class AIEnhancementService: ObservableObject {
             savePrompts()
         }
 
-        KoreanCleanupAdoption.applyIfNeeded()
+        KoreanCleanupAdoption.applyIfNeeded(availablePromptIds: Set(customPrompts.map(\.id)))
         repairModePromptSelections()
 
         NotificationCenter.default.addObserver(
@@ -74,7 +74,8 @@ class AIEnhancementService: ObservableObject {
 
     @objc private func handleAPIKeyChange() {
         DispatchQueue.main.async {
-            KoreanCleanupAdoption.applyIfNeeded()
+            KoreanCleanupAdoption.applyIfNeeded(availablePromptIds: Set(self.customPrompts.map(\.id)))
+            self.repairModePromptSelections()
             self.objectWillChange.send()
         }
     }
@@ -223,13 +224,18 @@ class AIEnhancementService: ObservableObject {
                 openAI: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.openAI.rawValue),
                 anthropic: APIKeyManager.shared.getAPIKey(forProvider: AIProvider.anthropic.rawValue)
             )
-            let cleaned = await KoreanCleanupClient.clean(
-                transcript: text,
-                systemPrompt: systemPrompt,
-                credentials: credentials,
-                selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue,
-                selectedModel: configuration.mode?.selectedAIModel ?? configuration.modelName
-            )
+            let cleaned: String
+            do {
+                cleaned = try await KoreanCleanupClient.clean(
+                    transcript: text,
+                    systemPrompt: systemPrompt,
+                    credentials: credentials,
+                    selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue,
+                    selectedModel: configuration.mode?.selectedAIModel ?? configuration.modelName
+                )
+            } catch let reason as KoreanCleanupFallbackReason {
+                throw KoreanCleanupPolicy.enhancementError(for: reason)
+            }
             return (
                 cleaned,
                 systemPrompt,
