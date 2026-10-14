@@ -8,6 +8,43 @@ DEV_DERIVED_DATA := $(CURDIR)/.build.noindex
 LOCAL_CODESIGN_IDENTITY ?=
 RUN_APP_NAME ?= Sulsul
 
+# Shell fragment used by local: sets SIGNING_IDENTITY to the single
+# Apple Development identity (or LOCAL_CODESIGN_IDENTITY), else "-" for ad-hoc.
+# A stable identity keeps the designated requirement, so TCC permissions survive rebuilds.
+RESOLVE_SIGNING_IDENTITY = SIGNING_IDENTITY="$(LOCAL_CODESIGN_IDENTITY)"; \
+	if [ -z "$$SIGNING_IDENTITY" ]; then \
+		SIGNING_IDENTITIES=$$(security find-identity -v -p codesigning 2>/dev/null | awk '/"Apple Development: / { print $$2 }'); \
+		SIGNING_IDENTITY_COUNT=$$(printf '%s\n' "$$SIGNING_IDENTITIES" | awk 'NF { count++ } END { print count + 0 }'); \
+		if [ "$$SIGNING_IDENTITY_COUNT" -eq 1 ]; then \
+			SIGNING_IDENTITY=$$(printf '%s\n' "$$SIGNING_IDENTITIES" | awk 'NF { print; exit }'); \
+		elif [ "$$SIGNING_IDENTITY_COUNT" -gt 1 ]; then \
+			echo "Multiple Apple Development identities found; set LOCAL_CODESIGN_IDENTITY to choose one; using ad-hoc signing"; \
+		fi; \
+	fi; \
+	if [ -n "$$SIGNING_IDENTITY" ] && [ "$$SIGNING_IDENTITY" != "-" ]; then \
+		SIGNING_REQUIRED=YES; \
+		echo "Using stable local signing identity: $$SIGNING_IDENTITY"; \
+	else \
+		SIGNING_IDENTITY="-"; \
+		SIGNING_REQUIRED=NO; \
+		echo "Using ad-hoc signing (permissions may need approval after rebuilds)"; \
+	fi;
+
+# Prints the certificate an app is signed with, or a warning when it is ad-hoc signed.
+# Usage: $(call VERIFY_SIGNATURE,<path to .app>)
+define VERIFY_SIGNATURE
+	@AUTHORITY=$$(codesign -dvv "$(1)" 2>&1 | awk -F= '/^Authority=/ { print $$2; exit }'); \
+	if [ -n "$$AUTHORITY" ]; then \
+		echo "Signature check: $(notdir $(1)) is signed by $$AUTHORITY"; \
+	else \
+		echo ""; \
+		echo "WARNING: $(notdir $(1)) is not signed with a certificate (ad-hoc)."; \
+		echo "WARNING: macOS will ask for microphone and accessibility permissions again."; \
+		echo "WARNING: Check 'security find-identity -v -p codesigning' or set LOCAL_CODESIGN_IDENTITY."; \
+		echo ""; \
+	fi
+endef
+
 .PHONY: all clean whisper setup build local check healthcheck help dev run release release-setup
 
 # Default target
@@ -57,24 +94,7 @@ build: setup
 local: check setup
 	@echo "Building 술술 (Sulsul) for local use (no Apple Developer certificate required)..."
 	@rm -rf "$(LOCAL_DERIVED_DATA)"
-	@SIGNING_IDENTITY="$(LOCAL_CODESIGN_IDENTITY)"; \
-	if [ -z "$$SIGNING_IDENTITY" ]; then \
-		SIGNING_IDENTITIES=$$(security find-identity -v -p codesigning 2>/dev/null | awk '/"Apple Development: / { print $$2 }'); \
-		SIGNING_IDENTITY_COUNT=$$(printf '%s\n' "$$SIGNING_IDENTITIES" | awk 'NF { count++ } END { print count + 0 }'); \
-		if [ "$$SIGNING_IDENTITY_COUNT" -eq 1 ]; then \
-			SIGNING_IDENTITY=$$(printf '%s\n' "$$SIGNING_IDENTITIES" | awk 'NF { print; exit }'); \
-		elif [ "$$SIGNING_IDENTITY_COUNT" -gt 1 ]; then \
-			echo "Multiple Apple Development identities found; set LOCAL_CODESIGN_IDENTITY to choose one; using ad-hoc signing"; \
-		fi; \
-	fi; \
-	if [ -n "$$SIGNING_IDENTITY" ] && [ "$$SIGNING_IDENTITY" != "-" ]; then \
-		SIGNING_REQUIRED=YES; \
-		echo "Using stable local signing identity: $$SIGNING_IDENTITY"; \
-	else \
-		SIGNING_IDENTITY="-"; \
-		SIGNING_REQUIRED=NO; \
-		echo "Using ad-hoc signing (permissions may need approval after rebuilds)"; \
-	fi; \
+	@$(RESOLVE_SIGNING_IDENTITY) \
 	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Release \
 		-derivedDataPath "$(LOCAL_DERIVED_DATA)" \
 		-xcconfig LocalBuild.xcconfig \
@@ -105,6 +125,7 @@ local: check setup
 		echo "Error: Could not find built Sulsul.app at $$APP_PATH"; \
 		exit 1; \
 	fi
+	$(call VERIFY_SIGNATURE,$(HOME)/Downloads/Sulsul.app)
 
 # Run application
 run:
