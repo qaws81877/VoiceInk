@@ -71,7 +71,7 @@ struct LocalEnhancementServiceManagementView: View {
             return Text("Checking")
         }
 
-        if !aiService.connectedProviders.contains(.ollama) {
+        if !aiService.isConnected(.ollama) {
             return Text("Disconnected")
         }
 
@@ -79,7 +79,7 @@ struct LocalEnhancementServiceManagementView: View {
     }
 
     private var ollamaActionTitle: LocalizedStringKey {
-        aiService.connectedProviders.contains(.ollama) ? "Refresh" : "Connect"
+        aiService.isConnected(.ollama) ? "Refresh" : "Connect"
     }
 
     private var ollamaConfiguration: some View {

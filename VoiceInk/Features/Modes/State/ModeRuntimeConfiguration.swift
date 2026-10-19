@@ -222,10 +222,10 @@ enum ModeRuntimeResolver {
             guard let provider = AIProvider(rawValue: providerName) else {
                 return nil
             }
-            return aiService.connectedProviders.contains(provider) ? provider : nil
+            return aiService.isConnected(provider) ? provider : nil
         }
 
-        return aiService.connectedProviders.first
+        return AIProvider.allCases.first(where: aiService.isConnected)
     }
 
     private static func resolvedEnhancementModelName(

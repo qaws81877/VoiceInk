@@ -38,7 +38,7 @@ struct AutoLearnModelSelectionView: View {
     private var selectedProvider: AIProvider? {
         guard let provider = AIProvider(rawValue: autoLearnProvider),
             AutoLearnProviderPolicy.isSupported(provider),
-            provider != .ollama || aiService.connectedProviders.contains(provider)
+            provider != .ollama || aiService.isConnected(provider)
         else {
             return nil
         }
@@ -65,7 +65,7 @@ struct AutoLearnModelSelectionView: View {
                         modelPicker(for: selectedProvider)
                     }
 
-                    if !aiService.connectedProviders.contains(selectedProvider) {
+                    if !aiService.isConnected(selectedProvider) {
                         Text("The selected provider is currently unavailable.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
