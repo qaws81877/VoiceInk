@@ -5,7 +5,7 @@ import SwiftData
 actor AutoLearnService {
     static let shared = AutoLearnService()
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "AutoLearn")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "AutoLearn")
     private let accessibilityRuntime = AutoLearnAXRuntime()
     private let focusObserver = AutoLearnFocusObserver()
     private let pendingQueue = AutoLearnPendingQueue()
@@ -163,9 +163,7 @@ actor AutoLearnService {
         await notifyReviewProposalsChanged()
 
         if summary.hasChanges {
-            await MainActor.run {
-                NotificationCenter.default.post(name: .wordReplacementsDidChange, object: nil)
-            }
+            await notifyWordReplacementsChanged()
             await showLearnedNotification(for: summary)
         }
         return summary
@@ -227,14 +225,7 @@ actor AutoLearnService {
         let previousToken = activeToken
         lifecycleGeneration &+= 1
         let generation = lifecycleGeneration
-        deadlineTask?.cancel()
-        deadlineTask = nil
-        focusFinalizationTask?.cancel()
-        focusFinalizationTask = nil
-        focusObserver.stop()
-        activeToken = nil
-        activeGeneration = nil
-        activeProcessID = nil
+        clearActiveSessionState()
 
         guard lifecycleGeneration == generation, AutoLearnSettings.isEnabled else { return nil }
 
@@ -316,14 +307,7 @@ actor AutoLearnService {
     private func discardActiveSession() async {
         snapshotCancellationGeneration &+= 1
         let token = activeToken
-        deadlineTask?.cancel()
-        deadlineTask = nil
-        focusFinalizationTask?.cancel()
-        focusFinalizationTask = nil
-        focusObserver.stop()
-        activeToken = nil
-        activeGeneration = nil
-        activeProcessID = nil
+        clearActiveSessionState()
         if let token {
             await accessibilityRuntime.discard(token: token)
         } else {
@@ -333,20 +317,26 @@ actor AutoLearnService {
 
     private func completeSession(token: AutoLearnPasteToken, persist: Bool) async {
         guard activeToken == token, activeGeneration != nil else { return }
-        deadlineTask?.cancel()
-        activeToken = nil
-        activeGeneration = nil
-        activeProcessID = nil
-        deadlineTask = nil
-        focusFinalizationTask?.cancel()
-        focusFinalizationTask = nil
-        focusObserver.stop()
+        clearActiveSessionState()
 
         if persist {
             await persistFinishedSession(token: token)
         } else {
             await accessibilityRuntime.discard(token: token)
         }
+    }
+
+    /// Cancels the session's timers, stops focus observation, and forgets the
+    /// active paste. Synchronous, so callers keep their own await points.
+    private func clearActiveSessionState() {
+        deadlineTask?.cancel()
+        deadlineTask = nil
+        focusFinalizationTask?.cancel()
+        focusFinalizationTask = nil
+        focusObserver.stop()
+        activeToken = nil
+        activeGeneration = nil
+        activeProcessID = nil
     }
 
     private func persistFinishedSession(token: AutoLearnPasteToken) async {
@@ -455,14 +445,12 @@ actor AutoLearnService {
             reviewGeneration == generation,
             AutoLearnSettings.isEnabled
         else {
-            try? await releaseAllClaimsToQueue()
-            await finishReviewTask(generation: generation)
+            await abandonBatch(generation: generation)
             return
         }
 
         guard let replacementStore, let reviewer else {
-            try? await releaseAllClaimsToQueue()
-            await finishReviewTask(generation: generation)
+            await abandonBatch(generation: generation)
             return
         }
 
@@ -472,15 +460,13 @@ actor AutoLearnService {
                 limit: AutoLearnLimits.maximumReviewBatchCandidates
             )
         } catch {
-            try? await releaseAllClaimsToQueue()
-            await finishReviewTask(generation: generation)
+            await abandonBatch(generation: generation)
             log(error, message: "Failed to load queued Auto Learn candidates")
             return
         }
 
         guard !candidates.isEmpty else {
-            try? await releaseAllClaimsToQueue()
-            await finishReviewTask(generation: generation)
+            await abandonBatch(generation: generation)
             await notifyQueueChanged()
             return
         }
@@ -490,18 +476,18 @@ actor AutoLearnService {
         let reviewResult: AutoLearnReviewResult
         do {
             reviewResult = try await reviewer.review(candidates)
-            let replacementAndVocabularyCount = reviewResult.reviewDecisions.filter {
-                $0.learningAction == .addReplacementAndVocabulary
-            }.count
-            let vocabularyOnlyCount = reviewResult.reviewDecisions.filter {
-                $0.learningAction == .addVocabularyOnly
-            }.count
-            let replacementOnlyCount = reviewResult.reviewDecisions.filter {
-                $0.learningAction == .addReplacementOnly
-            }.count
-            let rejectedCount = reviewResult.reviewDecisions.filter {
-                $0.learningAction == .rejectCorrection
-            }.count
+            var replacementAndVocabularyCount = 0
+            var replacementOnlyCount = 0
+            var vocabularyOnlyCount = 0
+            var rejectedCount = 0
+            for decision in reviewResult.reviewDecisions {
+                switch decision.learningAction {
+                case .addReplacementAndVocabulary: replacementAndVocabularyCount += 1
+                case .addReplacementOnly: replacementOnlyCount += 1
+                case .addVocabularyOnly: vocabularyOnlyCount += 1
+                case .rejectCorrection: rejectedCount += 1
+                }
+            }
             logger.notice(
                 "Auto Learn review completed replacementAndVocabulary=\(replacementAndVocabularyCount, privacy: .public) replacementOnly=\(replacementOnlyCount, privacy: .public) vocabularyOnly=\(vocabularyOnlyCount, privacy: .public) rejected=\(rejectedCount, privacy: .public) discarded=\(reviewResult.unresolvedReviews.count, privacy: .public)"
             )
@@ -516,8 +502,7 @@ actor AutoLearnService {
         }
 
         guard !Task.isCancelled, AutoLearnSettings.isEnabled else {
-            try? await releaseAllClaimsToQueue()
-            await finishReviewTask(generation: generation)
+            await abandonBatch(generation: generation)
             return
         }
 
@@ -532,47 +517,35 @@ actor AutoLearnService {
                 await notifyQueueChanged()
                 await notifyReviewProposalsChanged()
                 AutoLearnSettings.clearFailure()
-
-                if try await pendingQueue.pendingCount() > 0 {
-                    await processPendingReviewBatch(
-                        generation: generation,
-                        stagesForApproval: true
-                    )
-                    return
-                }
-
-                try await releaseAllClaimsToQueue()
-                await notifyQueueChanged()
-                await finishReviewTask(generation: generation)
-                return
-            }
-
-            let summary = try await replacementStore.apply(
-                reviewResult.reviewDecisions,
-                candidates: candidates
-            )
-            try await pendingQueue.remove(candidateIDs)
-            releaseClaim(candidateIDs)
-            await notifyQueueChanged()
-            // Cleared only after the queue and dictionary are consistent, so a
-            // failure in this block still surfaces to the user.
-            AutoLearnSettings.clearFailure()
-            if summary.hasChanges {
-                logger.notice(
-                    "Auto Learn apply completed replacementsCreated=\(summary.createdCount, privacy: .public) replacementsUpdated=\(summary.updatedCount, privacy: .public) vocabularyCreated=\(summary.vocabularyCount, privacy: .public)"
-                )
-                await MainActor.run {
-                    NotificationCenter.default.post(name: .wordReplacementsDidChange, object: nil)
-                }
-                await showLearnedNotification(for: summary)
             } else {
-                logger.notice("Auto Learn apply completed without dictionary changes")
+                let summary = try await replacementStore.apply(
+                    reviewResult.reviewDecisions,
+                    candidates: candidates
+                )
+                try await pendingQueue.remove(candidateIDs)
+                releaseClaim(candidateIDs)
+                await notifyQueueChanged()
+                // Cleared only after the queue and dictionary are consistent, so a
+                // failure in this block still surfaces to the user.
+                AutoLearnSettings.clearFailure()
+                if summary.hasChanges {
+                    logger.notice(
+                        "Auto Learn apply completed replacementsCreated=\(summary.createdCount, privacy: .public) replacementsUpdated=\(summary.updatedCount, privacy: .public) vocabularyCreated=\(summary.vocabularyCount, privacy: .public)"
+                    )
+                    await notifyWordReplacementsChanged()
+                    await showLearnedNotification(for: summary)
+                } else {
+                    logger.notice("Auto Learn apply completed without dictionary changes")
+                }
             }
 
             if try await pendingQueue.pendingCount() > 0 {
                 // The schedule controls when a review run starts. Once started,
                 // drain the backlog sequentially in bounded batches.
-                await processPendingReviewBatch(generation: generation)
+                await processPendingReviewBatch(
+                    generation: generation,
+                    stagesForApproval: stagesForApproval
+                )
                 return
             }
 
@@ -587,6 +560,12 @@ actor AutoLearnService {
             await finishReviewTask(generation: generation)
             log(error, message: "Failed to apply Auto Learn results; candidates remain queued")
         }
+    }
+
+    /// Returns every claimed candidate to the queue and ends this review run.
+    private func abandonBatch(generation: UInt64) async {
+        try? await releaseAllClaimsToQueue()
+        await finishReviewTask(generation: generation)
     }
 
     /// Forgets the in-flight batch; cancellation consumes its claim before a
@@ -646,6 +625,12 @@ actor AutoLearnService {
         }
     }
 
+    private func notifyWordReplacementsChanged() async {
+        await MainActor.run {
+            NotificationCenter.default.post(name: .wordReplacementsDidChange, object: nil)
+        }
+    }
+
     private func showLearnedNotification(for summary: AutoLearnMutationSummary) async {
         let corrections = summary.learnedCorrections
         guard !corrections.isEmpty else { return }
@@ -690,9 +675,7 @@ actor AutoLearnService {
         guard let replacementStore else { return }
         do {
             try await replacementStore.undo(correction)
-            await MainActor.run {
-                NotificationCenter.default.post(name: .wordReplacementsDidChange, object: nil)
-            }
+            await notifyWordReplacementsChanged()
         } catch {
             log(error, message: "Failed to undo Auto Learn correction")
         }
