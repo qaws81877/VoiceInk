@@ -4,10 +4,13 @@ import SwiftUI
 import os
 
 struct DashboardContent: View {
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "DashboardContent")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "DashboardContent")
     private static let fallbackDisplayName = String(localized: "there")
     private static let displayNameFontSize: CGFloat = 28
-    private static let displayNameFontWeight: NSFont.Weight = .bold
+    // Keep the SwiftUI font and the NSFont used for width measurement at the same (bold) weight.
+    private static let displayNameFont = Font.system(size: displayNameFontSize, weight: .bold, design: .rounded)
+    private static let displayNameMeasurementFont = NSFont.systemFont(ofSize: displayNameFontSize, weight: .bold)
+    private static let systemDisplayName = systemAccountFirstName() ?? fallbackDisplayName
     private static let displayNameMinWidth: CGFloat = 72
     private static let displayNameMaxWidth: CGFloat = 280
     private static let displayNameHorizontalPadding: CGFloat = 8
@@ -21,8 +24,6 @@ struct DashboardContent: View {
 
     @State private var statsSummary: DashboardStatsSummary = .empty
     @State private var hasLoadedStatsSnapshot: Bool = false
-    @State private var statsSnapshotGeneratedAt: Date?
-    @State private var isDashboardStatsRefreshing = false
     @State private var dashboardStatsTask: Task<Void, Never>?
     @State private var dashboardStatsLoadGeneration = 0
     @State private var isModelPerformancePanelPresented = false
@@ -59,10 +60,8 @@ struct DashboardContent: View {
         self.modelContext = modelContext
 
         let cachedSummary = DashboardStatsCache.shared.currentSummary()
-        let cachedMetadata = DashboardStatsCache.shared.currentMetadata()
         _statsSummary = State(initialValue: cachedSummary ?? .empty)
         _hasLoadedStatsSnapshot = State(initialValue: cachedSummary != nil)
-        _statsSnapshotGeneratedAt = State(initialValue: cachedMetadata?.generatedAt)
     }
 
     var body: some View {
@@ -75,7 +74,9 @@ struct DashboardContent: View {
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
                 } else {
-                    DashboardAmbientBackground()
+                    Color.clear
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
                 }
 
                 ScrollView {
@@ -145,7 +146,6 @@ struct DashboardContent: View {
             dashboardStatsTask?.cancel()
             dashboardStatsTask = nil
             dashboardStatsLoadGeneration += 1
-            isDashboardStatsRefreshing = false
             autoLearnFailurePresentationTask?.cancel()
             autoLearnFailurePresentationTask = nil
         }
@@ -223,7 +223,9 @@ struct DashboardContent: View {
     }
 
     private func dashboardMainContent(availableWidth: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: DashboardLayout.sectionSpacing) {
+        let recentTranscriptions = recentDashboardTranscriptions
+
+        return VStack(alignment: .leading, spacing: DashboardLayout.sectionSpacing) {
             greetingHeader
 
             nameEditorDismissArea {
@@ -232,19 +234,33 @@ struct DashboardContent: View {
 
             if !isAccessibilityEnabled {
                 nameEditorDismissArea {
-                    accessibilityReminder
+                    DashboardReminderCard(
+                        icon: "hand.raised",
+                        title: "Enable Accessibility Access",
+                        message: "Required for VoiceInk shortcuts and app-wide controls to work properly.",
+                        buttonTitle: "Open Settings",
+                        help: "Open Accessibility settings",
+                        action: openAccessibilitySettings
+                    )
                 }
             }
 
             if !modeManager.hasEnabledConfiguration {
                 nameEditorDismissArea {
-                    DashboardNoModesReminder(onOpenModes: ModeSetupNavigator.openModesSettings)
+                    DashboardReminderCard(
+                        icon: "square.grid.2x2",
+                        title: "Set Up a Mode",
+                        message: "VoiceInk needs at least one mode to record. Create one to start dictating.",
+                        buttonTitle: "Manage Modes",
+                        help: "Open Modes settings",
+                        action: ModeSetupNavigator.openModesSettings
+                    )
                 }
             }
 
-            if !recentDashboardTranscriptions.isEmpty {
+            if !recentTranscriptions.isEmpty {
                 nameEditorDismissArea {
-                    DashboardTranscriptCards(transcriptions: recentDashboardTranscriptions)
+                    DashboardTranscriptCards(transcriptions: recentTranscriptions)
                 }
             }
 
@@ -264,9 +280,8 @@ struct DashboardContent: View {
     private var recentDashboardTranscriptions: [Transcription] {
         Array(
             recentTranscriptionCandidates
-                .filter { transcription in
-                    isRecentDashboardTranscription(transcription)
-                }
+                .lazy
+                .filter(isRecentDashboardTranscription)
                 .prefix(5)
         )
     }
@@ -354,19 +369,17 @@ struct DashboardContent: View {
         canViewInsights ? "View insights" : "Insights locked"
     }
 
-    private var accessibilityReminder: some View {
-        DashboardAccessibilityReminder(onOpenSettings: openAccessibilitySettings)
-    }
-
     private var greetingHeader: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        let greeting = Self.greeting(for: Calendar.current.component(.hour, from: Date()))
+
+        return VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(greetingEmoji)
+                Text(greeting.emoji)
                     .font(.system(size: 25))
                     .accessibilityHidden(true)
 
-                Text("\(greetingText),")
-                    .font(displayNameFont)
+                Text("\(greeting.text),")
+                    .font(Self.displayNameFont)
                     .foregroundStyle(AppTheme.Text.primary)
                     .onTapGesture(perform: dismissDisplayNameEditorIfNeeded)
 
@@ -397,7 +410,7 @@ struct DashboardContent: View {
         if isEditingDisplayName {
             TextField("your name", text: displayNameBinding)
                 .textFieldStyle(.plain)
-                .font(displayNameFont)
+                .font(Self.displayNameFont)
                 .foregroundStyle(AppTheme.Text.primary)
                 .focused($isNameFieldFocused)
                 .frame(width: displayNameFieldWidth, alignment: .leading)
@@ -417,7 +430,7 @@ struct DashboardContent: View {
                 }
         } else {
             Text(defaultedDisplayName)
-                .font(displayNameFont)
+                .font(Self.displayNameFont)
                 .foregroundStyle(AppTheme.Text.primary)
                 .lineLimit(1)
                 .frame(width: displayNameFieldWidth, alignment: .leading)
@@ -425,10 +438,6 @@ struct DashboardContent: View {
                 .contentShape(Rectangle())
                 .onTapGesture(perform: beginEditingDisplayName)
         }
-    }
-
-    private var displayNameFont: Font {
-        .system(size: Self.displayNameFontSize, weight: .bold, design: .rounded)
     }
 
     private var dismissingSpacer: some View {
@@ -458,18 +467,6 @@ struct DashboardContent: View {
         }
 
         isInsightsViewPresented = true
-    }
-
-    private func openModelPerformancePanel() {
-        isModelPerformancePanelPresented = true
-    }
-
-    private func openModelUsagePanel() {
-        isModelUsagePanelPresented = true
-    }
-
-    private func openAutoLearnReviewPanel() {
-        isAutoLearnReviewPanelPresented = true
     }
 
     @MainActor
@@ -516,12 +513,7 @@ struct DashboardContent: View {
             }
 
             let shouldStartRefresh = await MainActor.run {
-                guard generation == dashboardStatsLoadGeneration else {
-                    return false
-                }
-
-                self.isDashboardStatsRefreshing = true
-                return true
+                generation == dashboardStatsLoadGeneration
             }
 
             guard shouldStartRefresh else {
@@ -531,43 +523,25 @@ struct DashboardContent: View {
             let summary = try await DashboardStatsLoader.load(from: modelContainer)
 
             guard !Task.isCancelled else {
-                await finishDashboardStatsRefresh(generation: generation)
                 return
             }
 
             let shouldAcceptSummary = summary.totalCount > 0 || !SessionMetricMigrationService.shared.isRunning
 
             await MainActor.run {
-                guard generation == dashboardStatsLoadGeneration else {
-                    return
-                }
-
-                self.isDashboardStatsRefreshing = false
-
-                guard shouldAcceptSummary else {
+                guard generation == dashboardStatsLoadGeneration, shouldAcceptSummary else {
                     return
                 }
 
                 self.statsSummary = summary
-                let metadata = DashboardStatsCache.shared.update(summary)
-                self.statsSnapshotGeneratedAt = metadata.generatedAt
+                DashboardStatsCache.shared.update(summary)
                 self.hasLoadedStatsSnapshot = true
             }
-        } catch is CancellationError {
-            await finishDashboardStatsRefresh(generation: generation)
         } catch {
-            await finishDashboardStatsRefresh(generation: generation)
-            logger.error("Error loading dashboard stats: \(error, privacy: .public)")
-        }
-    }
-
-    private func finishDashboardStatsRefresh(generation: Int) async {
-        await MainActor.run {
-            guard generation == dashboardStatsLoadGeneration else {
+            guard !(error is CancellationError) else {
                 return
             }
-
-            self.isDashboardStatsRefreshing = false
+            logger.error("Error loading dashboard stats: \(error, privacy: .public)")
         }
     }
 
@@ -584,8 +558,8 @@ struct DashboardContent: View {
             modelUsage: selectedModelUsage,
             modelPerformanceSummaries: selectedModelPerformance,
             onBack: { isInsightsViewPresented = false },
-            onViewModelUsage: openModelUsagePanel,
-            onViewModelPerformance: openModelPerformancePanel
+            onViewModelUsage: { isModelUsagePanelPresented = true },
+            onViewModelPerformance: { isModelPerformancePanelPresented = true }
         )
     }
 
@@ -601,7 +575,7 @@ struct DashboardContent: View {
             actionAccessibilityLabel: insightsActionAccessibilityLabel,
             reviewCorrectionCount: dashboardReviewCorrectionCount,
             onViewInsights: openInsightsIfAvailable,
-            onReviewCorrections: openAutoLearnReviewPanel
+            onReviewCorrections: { isAutoLearnReviewPanelPresented = true }
         )
     }
 
@@ -687,9 +661,7 @@ struct DashboardContent: View {
     private var displayNameFieldWidth: CGFloat {
         let name = isEditingDisplayName ? displayNameDraft : defaultedDisplayName
         let measuredWidth = (name as NSString).size(
-            withAttributes: [
-                .font: NSFont.systemFont(ofSize: Self.displayNameFontSize, weight: Self.displayNameFontWeight)
-            ]
+            withAttributes: [.font: Self.displayNameMeasurementFont]
         ).width
         return min(
             max(measuredWidth + (Self.displayNameHorizontalPadding * 2) + 6, Self.displayNameMinWidth),
@@ -699,11 +671,7 @@ struct DashboardContent: View {
 
     private var defaultedDisplayName: String {
         let storedName = sanitizedDisplayName(dashboardDisplayName)
-        return storedName.isEmpty ? systemDisplayName : storedName
-    }
-
-    private var systemDisplayName: String {
-        Self.systemAccountFirstName() ?? Self.fallbackDisplayName
+        return storedName.isEmpty ? Self.systemDisplayName : storedName
     }
 
     private func beginEditingDisplayName() {
@@ -766,33 +734,16 @@ struct DashboardContent: View {
         return trimmed.isEmpty ? nil : trimmed
     }
 
-    private var greetingText: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-
+    private static func greeting(for hour: Int) -> (text: String, emoji: String) {
         switch hour {
         case 5..<12:
-            return String(localized: "Good morning")
+            return (String(localized: "Good morning"), "☀️")
         case 12..<17:
-            return String(localized: "Good afternoon")
+            return (String(localized: "Good afternoon"), "👋")
         case 17..<24:
-            return String(localized: "Good evening")
+            return (String(localized: "Good evening"), "🌙")
         default:
-            return String(localized: "Hi")
-        }
-    }
-
-    private var greetingEmoji: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-
-        switch hour {
-        case 5..<12:
-            return "☀️"
-        case 12..<17:
-            return "👋"
-        case 17..<24:
-            return "🌙"
-        default:
-            return "👋"
+            return (String(localized: "Hi"), "👋")
         }
     }
 
@@ -880,93 +831,5 @@ struct DashboardContent: View {
         }
 
         return String(localized: "\(Formatters.formattedNumber(count)) times")
-    }
-}
-
-private struct DashboardAccessibilityReminder: View {
-    let onOpenSettings: () -> Void
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(AppTheme.Accent.fill)
-
-                Image(systemName: "hand.raised")
-                    .font(.system(size: 15, weight: .medium))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.primary)
-            }
-            .frame(width: 34, height: 34)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Enable Accessibility Access")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-
-                Text("Required for VoiceInk shortcuts and app-wide controls to work properly.")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-
-            Spacer(minLength: 12)
-
-            Button("Open Settings", action: onOpenSettings)
-                .controlSize(.small)
-                .help("Open Accessibility settings")
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppCardBackground(cornerRadius: 16))
-    }
-}
-
-private struct DashboardNoModesReminder: View {
-    let onOpenModes: () -> Void
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(AppTheme.Accent.fill)
-
-                Image(systemName: "square.grid.2x2")
-                    .font(.system(size: 15, weight: .medium))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(AppTheme.Accent.primary)
-            }
-            .frame(width: 34, height: 34)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Set Up a Mode")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-
-                Text("VoiceInk needs at least one mode to record. Create one to start dictating.")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-
-            Spacer(minLength: 12)
-
-            Button("Manage Modes", action: onOpenModes)
-                .controlSize(.small)
-                .help("Open Modes settings")
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppCardBackground(cornerRadius: 16))
-    }
-}
-
-private struct DashboardAmbientBackground: View {
-    var body: some View {
-        Color.clear
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
     }
 }
