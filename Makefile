@@ -5,6 +5,7 @@ FRAMEWORK_PATH := $(WHISPER_CPP_DIR)/build-apple/whisper.xcframework
 # The .noindex suffix keeps Spotlight from listing every built copy of the app.
 LOCAL_DERIVED_DATA := $(CURDIR)/.local-build.noindex
 DEV_DERIVED_DATA := $(CURDIR)/.build.noindex
+TEST_DERIVED_DATA := $(CURDIR)/.test-build.noindex
 LOCAL_CODESIGN_IDENTITY ?=
 RUN_APP_NAME ?= Sulsul
 
@@ -45,7 +46,7 @@ define VERIFY_SIGNATURE
 	fi
 endef
 
-.PHONY: all clean whisper setup build local check healthcheck help dev run release release-setup
+.PHONY: all clean whisper setup build test local check healthcheck help dev run release release-setup
 
 # Default target
 all: check build
@@ -89,6 +90,19 @@ build: setup
 		-skipPackagePluginValidation \
 		-skipMacroValidation \
 		build
+
+# Unit tests, ad-hoc signed: the Debug entitlements need a provisioning profile.
+# Separate derived data, so the LOCAL_BUILD test host never replaces Sulsul Dev.app.
+test: setup
+	xcodebuild -project VoiceInk.xcodeproj -scheme VoiceInk -configuration Debug \
+		-xcconfig LocalBuild.xcconfig \
+		CODE_SIGN_IDENTITY=- \
+		CODE_SIGN_ENTITLEMENTS="$(CURDIR)/VoiceInk/VoiceInk.local.entitlements" \
+		-derivedDataPath "$(TEST_DERIVED_DATA)" \
+		-skipPackagePluginValidation \
+		-skipMacroValidation \
+		-only-testing:VoiceInkTests \
+		test
 
 # Build locally with stable Apple Development signing when available.
 local: check setup
@@ -169,6 +183,7 @@ help:
 	@echo "  whisper            Clone and build whisper.cpp XCFramework"
 	@echo "  setup              Prepare whisper.xcframework for the Sulsul project"
 	@echo "  build              Build the Xcode project (scheme VoiceInk, product Sulsul Dev)"
+	@echo "  test               Run VoiceInkTests (ad-hoc signed)"
 	@echo "  local              Build locally with stable signing when available"
 	@echo "    LOCAL_CODESIGN_IDENTITY=<SHA or name> overrides automatic Apple Development detection"
 	@echo "  run                Launch the built Sulsul app"
