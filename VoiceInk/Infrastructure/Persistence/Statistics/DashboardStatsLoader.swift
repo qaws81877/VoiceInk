@@ -11,48 +11,12 @@ enum DashboardStatsLoader {
 
             try Task.checkCancellation()
 
-            var words = 0
-            var duration: TimeInterval = 0
-            var todayCount = 0
-            var todayWords = 0
-            var todayDuration: TimeInterval = 0
-            var recentSevenDayCount = 0
-            var recentSevenDayWords = 0
-            var recentSevenDayDuration: TimeInterval = 0
-            var previousSevenDayCount = 0
-            var previousSevenDayWords = 0
-            var previousSevenDayDuration: TimeInterval = 0
-            var lastThirtyDayCount = 0
-            var lastThirtyDayWords = 0
-            var lastThirtyDayDuration: TimeInterval = 0
-            var thisYearCount = 0
-            var thisYearWords = 0
-            var thisYearDuration: TimeInterval = 0
-            var lastSevenDayTranscriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var lastSevenDayEnhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var lastThirtyDayTranscriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var lastThirtyDayEnhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var thisYearTranscriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var thisYearEnhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var allTimeTranscriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var allTimeEnhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var todayTranscriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var todayEnhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
-            var lastSevenDayTranscriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
-            var lastSevenDayEnhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
-            var lastThirtyDayTranscriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
-            var lastThirtyDayEnhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
-            var thisYearTranscriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
-            var thisYearEnhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
-            var allTimeTranscriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
-            var allTimeEnhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
-            var todayTranscriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
-            var todayEnhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
-            var todayPeakHours: [Int: DashboardPeakHourAccumulator] = [:]
-            var lastSevenDayPeakHours: [Int: DashboardPeakHourAccumulator] = [:]
-            var lastThirtyDayPeakHours: [Int: DashboardPeakHourAccumulator] = [:]
-            var thisYearPeakHours: [Int: DashboardPeakHourAccumulator] = [:]
-            var allTimePeakHours: [Int: DashboardPeakHourAccumulator] = [:]
+            var allTime = PeriodAccumulator()
+            var today = PeriodAccumulator()
+            var recentSevenDay = PeriodAccumulator()
+            var previousSevenDay = DashboardMetricTotals()
+            var lastThirtyDay = PeriodAccumulator()
+            var thisYear = PeriodAccumulator()
             var allTimeMonthWords: [Date: Int] = [:]
             var allTimeDayWords: [Date: Int] = [:]
             var firstMetricDate: Date?
@@ -68,26 +32,25 @@ enum DashboardStatsLoader {
                 from: windows.thisYearStart, through: now, calendar: calendar)
             var thisYearDailyActivity = Self.dailyProductivityPoints(
                 from: windows.thisYearStart, through: now, calendar: calendar)
-            let todayHourIndices = Dictionary(
-                uniqueKeysWithValues: todayProductivity.enumerated().map { index, point in
-                    (startOfHour(for: point.date, calendar: calendar), index)
-                })
-            let sevenDayIndices = Dictionary(
-                uniqueKeysWithValues: lastSevenDayProductivity.enumerated().map { index, point in
-                    (calendar.startOfDay(for: point.date), index)
-                })
-            let thirtyDayIndices = Dictionary(
-                uniqueKeysWithValues: lastThirtyDayProductivity.enumerated().map { index, point in
-                    (calendar.startOfDay(for: point.date), index)
-                })
-            let thisYearMonthIndices = Dictionary(
-                uniqueKeysWithValues: thisYearProductivity.enumerated().map { index, point in
-                    (startOfMonth(for: point.date, calendar: calendar), index)
-                })
-            let thisYearDayIndices = Dictionary(
-                uniqueKeysWithValues: thisYearDailyActivity.enumerated().map { index, point in
-                    (calendar.startOfDay(for: point.date), index)
-                })
+            let todayHourIndices = Self.indexMap(for: todayProductivity) { startOfHour(for: $0, calendar: calendar) }
+            let sevenDayIndices = Self.indexMap(for: lastSevenDayProductivity) { calendar.startOfDay(for: $0) }
+            let thirtyDayIndices = Self.indexMap(for: lastThirtyDayProductivity) { calendar.startOfDay(for: $0) }
+            let thisYearMonthIndices = Self.indexMap(for: thisYearProductivity) {
+                startOfMonth(for: $0, calendar: calendar)
+            }
+            let thisYearDayIndices = Self.indexMap(for: thisYearDailyActivity) { calendar.startOfDay(for: $0) }
+            // Only metrics inside the span of today's hour buckets can match `todayHourIndices`,
+            // so the per-metric hour lookup is skipped outside it. Without a span, every metric is looked up.
+            let todayHourSpan: Range<Date>? = {
+                guard let first = todayProductivity.first?.date,
+                    let last = todayProductivity.last?.date,
+                    let lastEnd = calendar.dateInterval(of: .hour, for: last)?.end,
+                    first < lastEnd
+                else {
+                    return nil
+                }
+                return first..<lastEnd
+            }()
             var offset = 0
 
             while offset < count {
@@ -109,51 +72,31 @@ enum DashboardStatsLoader {
                 }
 
                 for metric in records {
-                    words += metric.wordCount
-                    duration += metric.audioDuration
+                    let timestamp = metric.timestamp
+                    let isToday = windows.todayInterval.contains(timestamp)
+                    let isRecentSevenDay = windows.recentSevenDayInterval.contains(timestamp)
+                    let isLastThirtyDay = windows.recentThirtyDayInterval.contains(timestamp)
+                    let isThisYear = windows.thisYearInterval.contains(timestamp)
 
-                    if windows.todayInterval.contains(metric.timestamp) {
-                        todayCount += 1
-                        todayWords += metric.wordCount
-                        todayDuration += metric.audioDuration
+                    if isRecentSevenDay == false, windows.previousSevenDayInterval.contains(timestamp) {
+                        previousSevenDay.add(metric)
                     }
 
-                    if windows.recentSevenDayInterval.contains(metric.timestamp) {
-                        recentSevenDayCount += 1
-                        recentSevenDayWords += metric.wordCount
-                        recentSevenDayDuration += metric.audioDuration
-                    } else if windows.previousSevenDayInterval.contains(metric.timestamp) {
-                        previousSevenDayCount += 1
-                        previousSevenDayWords += metric.wordCount
-                        previousSevenDayDuration += metric.audioDuration
-                    }
-
-                    if windows.recentThirtyDayInterval.contains(metric.timestamp) {
-                        lastThirtyDayCount += 1
-                        lastThirtyDayWords += metric.wordCount
-                        lastThirtyDayDuration += metric.audioDuration
-                    }
-
-                    if windows.thisYearInterval.contains(metric.timestamp) {
-                        thisYearCount += 1
-                        thisYearWords += metric.wordCount
-                        thisYearDuration += metric.audioDuration
-                    }
-
-                    let metricHourStart = startOfHour(for: metric.timestamp, calendar: calendar)
-                    if let todayHourIndex = todayHourIndices[metricHourStart] {
+                    if todayHourSpan?.contains(timestamp) ?? true,
+                        let todayHourIndex = todayHourIndices[startOfHour(for: timestamp, calendar: calendar)]
+                    {
                         todayProductivity[todayHourIndex].words += metric.wordCount
                     }
 
-                    let metricDay = calendar.startOfDay(for: metric.timestamp)
+                    let metricDay = calendar.startOfDay(for: timestamp)
+                    let metricMonth = startOfMonth(for: timestamp, calendar: calendar)
                     if let weekIndex = sevenDayIndices[metricDay] {
                         lastSevenDayProductivity[weekIndex].words += metric.wordCount
                     }
                     if let monthIndex = thirtyDayIndices[metricDay] {
                         lastThirtyDayProductivity[monthIndex].words += metric.wordCount
                     }
-                    if windows.thisYearInterval.contains(metric.timestamp) {
-                        let metricMonth = startOfMonth(for: metric.timestamp, calendar: calendar)
+                    if isThisYear {
                         if let thisYearIndex = thisYearMonthIndices[metricMonth] {
                             thisYearProductivity[thisYearIndex].words += metric.wordCount
                         }
@@ -161,75 +104,21 @@ enum DashboardStatsLoader {
                             thisYearDailyActivity[thisYearDayIndex].words += metric.wordCount
                         }
                     }
-                    allTimeMonthWords[startOfMonth(for: metric.timestamp, calendar: calendar), default: 0] +=
-                        metric.wordCount
+                    allTimeMonthWords[metricMonth, default: 0] += metric.wordCount
                     allTimeDayWords[metricDay, default: 0] += metric.wordCount
 
-                    let metricHour = calendar.component(.hour, from: metric.timestamp)
-
-                    if windows.todayInterval.contains(metric.timestamp) {
-                        addModelPerformance(
-                            for: metric,
-                            transcriptionPerformance: &todayTranscriptionPerformance,
-                            enhancementPerformance: &todayEnhancementPerformance
-                        )
-                        addModelUsage(
-                            for: metric,
-                            transcriptionAudioUsage: &todayTranscriptionAudioUsage,
-                            enhancementTokenUsage: &todayEnhancementTokenUsage
-                        )
-                        addPeakHour(for: metric, hour: metricHour, day: metricDay, to: &todayPeakHours)
-                    }
-                    if windows.recentSevenDayInterval.contains(metric.timestamp) {
-                        addModelPerformance(
-                            for: metric,
-                            transcriptionPerformance: &lastSevenDayTranscriptionPerformance,
-                            enhancementPerformance: &lastSevenDayEnhancementPerformance
-                        )
-                        addModelUsage(
-                            for: metric,
-                            transcriptionAudioUsage: &lastSevenDayTranscriptionAudioUsage,
-                            enhancementTokenUsage: &lastSevenDayEnhancementTokenUsage
-                        )
-                        addPeakHour(for: metric, hour: metricHour, day: metricDay, to: &lastSevenDayPeakHours)
-                    }
-                    if windows.recentThirtyDayInterval.contains(metric.timestamp) {
-                        addModelPerformance(
-                            for: metric,
-                            transcriptionPerformance: &lastThirtyDayTranscriptionPerformance,
-                            enhancementPerformance: &lastThirtyDayEnhancementPerformance
-                        )
-                        addModelUsage(
-                            for: metric,
-                            transcriptionAudioUsage: &lastThirtyDayTranscriptionAudioUsage,
-                            enhancementTokenUsage: &lastThirtyDayEnhancementTokenUsage
-                        )
-                        addPeakHour(for: metric, hour: metricHour, day: metricDay, to: &lastThirtyDayPeakHours)
-                    }
-                    if windows.thisYearInterval.contains(metric.timestamp) {
-                        addModelPerformance(
-                            for: metric,
-                            transcriptionPerformance: &thisYearTranscriptionPerformance,
-                            enhancementPerformance: &thisYearEnhancementPerformance
-                        )
-                        addModelUsage(
-                            for: metric,
-                            transcriptionAudioUsage: &thisYearTranscriptionAudioUsage,
-                            enhancementTokenUsage: &thisYearEnhancementTokenUsage
-                        )
-                        addPeakHour(for: metric, hour: metricHour, day: metricDay, to: &thisYearPeakHours)
-                    }
-                    addModelPerformance(
-                        for: metric,
-                        transcriptionPerformance: &allTimeTranscriptionPerformance,
-                        enhancementPerformance: &allTimeEnhancementPerformance
+                    let sample = PeriodSample(
+                        metric: metric,
+                        transcriptionModelName: sanitizedModelName(metric.transcriptionModelName),
+                        enhancementModelName: sanitizedModelName(metric.aiEnhancementModelName),
+                        hour: calendar.component(.hour, from: timestamp),
+                        day: metricDay
                     )
-                    addModelUsage(
-                        for: metric,
-                        transcriptionAudioUsage: &allTimeTranscriptionAudioUsage,
-                        enhancementTokenUsage: &allTimeEnhancementTokenUsage
-                    )
-                    addPeakHour(for: metric, hour: metricHour, day: metricDay, to: &allTimePeakHours)
+                    if isToday { today.add(sample) }
+                    if isRecentSevenDay { recentSevenDay.add(sample) }
+                    if isLastThirtyDay { lastThirtyDay.add(sample) }
+                    if isThisYear { thisYear.add(sample) }
+                    allTime.add(sample)
                 }
 
                 offset += records.count
@@ -258,23 +147,23 @@ enum DashboardStatsLoader {
 
             return DashboardStatsSummary(
                 totalCount: count,
-                totalWords: words,
-                totalDuration: duration,
-                todayCount: todayCount,
-                todayWords: todayWords,
-                todayDuration: todayDuration,
-                recentSevenDayCount: recentSevenDayCount,
-                recentSevenDayWords: recentSevenDayWords,
-                recentSevenDayDuration: recentSevenDayDuration,
-                previousSevenDayCount: previousSevenDayCount,
-                previousSevenDayWords: previousSevenDayWords,
-                previousSevenDayDuration: previousSevenDayDuration,
-                lastThirtyDayCount: lastThirtyDayCount,
-                lastThirtyDayWords: lastThirtyDayWords,
-                lastThirtyDayDuration: lastThirtyDayDuration,
-                thisYearCount: thisYearCount,
-                thisYearWords: thisYearWords,
-                thisYearDuration: thisYearDuration,
+                totalWords: allTime.totals.words,
+                totalDuration: allTime.totals.duration,
+                todayCount: today.totals.count,
+                todayWords: today.totals.words,
+                todayDuration: today.totals.duration,
+                recentSevenDayCount: recentSevenDay.totals.count,
+                recentSevenDayWords: recentSevenDay.totals.words,
+                recentSevenDayDuration: recentSevenDay.totals.duration,
+                previousSevenDayCount: previousSevenDay.count,
+                previousSevenDayWords: previousSevenDay.words,
+                previousSevenDayDuration: previousSevenDay.duration,
+                lastThirtyDayCount: lastThirtyDay.totals.count,
+                lastThirtyDayWords: lastThirtyDay.totals.words,
+                lastThirtyDayDuration: lastThirtyDay.totals.duration,
+                thisYearCount: thisYear.totals.count,
+                thisYearWords: thisYear.totals.words,
+                thisYearDuration: thisYear.totals.duration,
                 todayProductivity: todayProductivity,
                 lastSevenDayProductivity: lastSevenDayProductivity,
                 lastThirtyDayProductivity: lastThirtyDayProductivity,
@@ -282,51 +171,21 @@ enum DashboardStatsLoader {
                 allTimeProductivity: allTimeProductivity,
                 thisYearDailyActivity: thisYearDailyActivity,
                 allTimeDailyActivity: allTimeDailyActivity,
-                todayModelPerformance: Self.modelPerformance(
-                    transcription: todayTranscriptionPerformance,
-                    enhancement: todayEnhancementPerformance
-                ),
-                lastSevenDayModelPerformance: Self.modelPerformance(
-                    transcription: lastSevenDayTranscriptionPerformance,
-                    enhancement: lastSevenDayEnhancementPerformance
-                ),
-                lastThirtyDayModelPerformance: Self.modelPerformance(
-                    transcription: lastThirtyDayTranscriptionPerformance,
-                    enhancement: lastThirtyDayEnhancementPerformance
-                ),
-                thisYearModelPerformance: Self.modelPerformance(
-                    transcription: thisYearTranscriptionPerformance,
-                    enhancement: thisYearEnhancementPerformance
-                ),
-                allTimeModelPerformance: Self.modelPerformance(
-                    transcription: allTimeTranscriptionPerformance,
-                    enhancement: allTimeEnhancementPerformance
-                ),
-                todayModelUsage: Self.modelUsage(
-                    transcriptionAudio: todayTranscriptionAudioUsage,
-                    enhancementTokens: todayEnhancementTokenUsage
-                ),
-                lastSevenDayModelUsage: Self.modelUsage(
-                    transcriptionAudio: lastSevenDayTranscriptionAudioUsage,
-                    enhancementTokens: lastSevenDayEnhancementTokenUsage
-                ),
-                lastThirtyDayModelUsage: Self.modelUsage(
-                    transcriptionAudio: lastThirtyDayTranscriptionAudioUsage,
-                    enhancementTokens: lastThirtyDayEnhancementTokenUsage
-                ),
-                thisYearModelUsage: Self.modelUsage(
-                    transcriptionAudio: thisYearTranscriptionAudioUsage,
-                    enhancementTokens: thisYearEnhancementTokenUsage
-                ),
-                allTimeModelUsage: Self.modelUsage(
-                    transcriptionAudio: allTimeTranscriptionAudioUsage,
-                    enhancementTokens: allTimeEnhancementTokenUsage
-                ),
-                todayPeakHours: Self.peakHoursSummary(from: todayPeakHours),
-                lastSevenDayPeakHours: Self.peakHoursSummary(from: lastSevenDayPeakHours),
-                lastThirtyDayPeakHours: Self.peakHoursSummary(from: lastThirtyDayPeakHours),
-                thisYearPeakHours: Self.peakHoursSummary(from: thisYearPeakHours),
-                allTimePeakHours: Self.peakHoursSummary(from: allTimePeakHours)
+                todayModelPerformance: today.modelPerformance,
+                lastSevenDayModelPerformance: recentSevenDay.modelPerformance,
+                lastThirtyDayModelPerformance: lastThirtyDay.modelPerformance,
+                thisYearModelPerformance: thisYear.modelPerformance,
+                allTimeModelPerformance: allTime.modelPerformance,
+                todayModelUsage: today.modelUsage,
+                lastSevenDayModelUsage: recentSevenDay.modelUsage,
+                lastThirtyDayModelUsage: lastThirtyDay.modelUsage,
+                thisYearModelUsage: thisYear.modelUsage,
+                allTimeModelUsage: allTime.modelUsage,
+                todayPeakHours: today.peakHours,
+                lastSevenDayPeakHours: recentSevenDay.peakHours,
+                lastThirtyDayPeakHours: lastThirtyDay.peakHours,
+                thisYearPeakHours: thisYear.peakHours,
+                allTimePeakHours: allTime.peakHours
             )
         }
 
@@ -349,14 +208,10 @@ enum DashboardStatsLoader {
             return []
         }
 
-        let labelFormatter = DateFormatter()
-        labelFormatter.calendar = calendar
-        labelFormatter.locale = .current
+        let labelFormatter = dateFormatter(calendar: calendar)
         labelFormatter.dateFormat = "MMM"
 
-        let accessibilityFormatter = DateFormatter()
-        accessibilityFormatter.calendar = calendar
-        accessibilityFormatter.locale = .current
+        let accessibilityFormatter = dateFormatter(calendar: calendar)
         accessibilityFormatter.dateFormat = "MMMM yyyy"
 
         return (0...max(monthCount, 0)).compactMap { offset in
@@ -385,14 +240,10 @@ enum DashboardStatsLoader {
             return []
         }
 
-        let labelFormatter = DateFormatter()
-        labelFormatter.calendar = calendar
-        labelFormatter.locale = .current
+        let labelFormatter = dateFormatter(calendar: calendar)
         labelFormatter.setLocalizedDateFormatFromTemplate("MMM d")
 
-        let accessibilityFormatter = DateFormatter()
-        accessibilityFormatter.calendar = calendar
-        accessibilityFormatter.locale = .current
+        let accessibilityFormatter = dateFormatter(calendar: calendar)
         accessibilityFormatter.dateStyle = .full
 
         return (0...max(dayCount, 0)).compactMap { offset in
@@ -415,8 +266,8 @@ enum DashboardStatsLoader {
         calendar: Calendar
     ) -> [DashboardProductivityPoint] {
         let todayStart = calendar.startOfDay(for: now)
-        let labelFormatter = Formatters.localizedHourFormatter(calendar: calendar)
-        let accessibilityFormatter = Formatters.localizedHourFormatter(calendar: calendar)
+        // Label and accessibility label use the same localized hour format.
+        let hourFormatter = Formatters.localizedHourFormatter(calendar: calendar)
 
         return (0..<24).compactMap { offset in
             guard let date = calendar.date(byAdding: .hour, value: offset, to: todayStart) else {
@@ -425,8 +276,8 @@ enum DashboardStatsLoader {
 
             return DashboardProductivityPoint(
                 date: startOfHour(for: date, calendar: calendar),
-                label: labelFormatter.string(from: date),
-                accessibilityLabel: accessibilityFormatter.string(from: date)
+                label: hourFormatter.string(from: date),
+                accessibilityLabel: hourFormatter.string(from: date)
             )
         }
     }
@@ -442,14 +293,10 @@ enum DashboardStatsLoader {
             return []
         }
 
-        let labelFormatter = DateFormatter()
-        labelFormatter.calendar = calendar
-        labelFormatter.locale = .current
+        let labelFormatter = dateFormatter(calendar: calendar)
         labelFormatter.dateFormat = labelStyle.dateFormat
 
-        let accessibilityFormatter = DateFormatter()
-        accessibilityFormatter.calendar = calendar
-        accessibilityFormatter.locale = .current
+        let accessibilityFormatter = dateFormatter(calendar: calendar)
         accessibilityFormatter.dateStyle = .medium
 
         return (0..<dayCount).compactMap { offset in
@@ -465,6 +312,25 @@ enum DashboardStatsLoader {
         }
     }
 
+    /// A formatter with the dashboard calendar and current locale; callers set the format.
+    private static func dateFormatter(calendar: Calendar) -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = .current
+        return formatter
+    }
+
+    /// Maps each point's bucket key (from `key`) to its index in `points`.
+    private static func indexMap(
+        for points: [DashboardProductivityPoint],
+        key: (Date) -> Date
+    ) -> [Date: Int] {
+        Dictionary(
+            uniqueKeysWithValues: points.enumerated().map { index, point in
+                (key(point.date), index)
+            })
+    }
+
     private static func modelPerformance(
         transcription: [String: ModelPerformanceAccumulator],
         enhancement: [String: ModelPerformanceAccumulator]
@@ -477,31 +343,6 @@ enum DashboardStatsLoader {
         }
 
         return transcriptionSummaries.sortedForPerformanceDisplay() + enhancementSummaries.sortedForPerformanceDisplay()
-    }
-
-    private static func addModelPerformance(
-        for metric: SessionMetric,
-        transcriptionPerformance: inout [String: ModelPerformanceAccumulator],
-        enhancementPerformance: inout [String: ModelPerformanceAccumulator]
-    ) {
-        if let modelName = sanitizedModelName(metric.transcriptionModelName),
-            let transcriptionDuration = metric.transcriptionDuration,
-            transcriptionDuration > 0
-        {
-            transcriptionPerformance[modelName, default: ModelPerformanceAccumulator()].add(
-                processingDuration: transcriptionDuration,
-                audioDuration: metric.audioDuration
-            )
-        }
-
-        if let modelName = sanitizedModelName(metric.aiEnhancementModelName),
-            let enhancementDuration = metric.enhancementDuration,
-            enhancementDuration > 0
-        {
-            enhancementPerformance[modelName, default: ModelPerformanceAccumulator()].add(
-                processingDuration: enhancementDuration
-            )
-        }
     }
 
     private static func modelUsage(
@@ -544,40 +385,6 @@ enum DashboardStatsLoader {
         )
     }
 
-    private static func addModelUsage(
-        for metric: SessionMetric,
-        transcriptionAudioUsage: inout [String: TranscriptionAudioUsageAccumulator],
-        enhancementTokenUsage: inout [String: EnhancementTokenUsageAccumulator]
-    ) {
-        if let modelName = sanitizedModelName(metric.transcriptionModelName),
-            metric.audioDuration > 0
-        {
-            transcriptionAudioUsage[modelName, default: TranscriptionAudioUsageAccumulator()].add(
-                audioDuration: metric.audioDuration
-            )
-        }
-
-        if let modelName = sanitizedModelName(metric.aiEnhancementModelName) {
-            let tokens = max(metric.enhancementEstimatedTokenCount ?? 0, 0)
-            enhancementTokenUsage[modelName, default: EnhancementTokenUsageAccumulator()].add(
-                tokens: tokens
-            )
-        }
-    }
-
-    private static func addPeakHour(
-        for metric: SessionMetric,
-        hour: Int,
-        day: Date,
-        to peakHours: inout [Int: DashboardPeakHourAccumulator]
-    ) {
-        peakHours[hour, default: DashboardPeakHourAccumulator()].add(
-            words: metric.wordCount,
-            audioDuration: metric.audioDuration,
-            day: day
-        )
-    }
-
     private static func peakHoursSummary(from peakHours: [Int: DashboardPeakHourAccumulator])
         -> DashboardPeakHoursSummary
     {
@@ -611,6 +418,88 @@ enum DashboardStatsLoader {
             sessionCount: bestSessionCount,
             hourlyActivity: hourlyActivity
         )
+    }
+
+    /// One metric with the per-metric values every period needs, computed once.
+    private struct PeriodSample {
+        let metric: SessionMetric
+        let transcriptionModelName: String?
+        let enhancementModelName: String?
+        let hour: Int
+        let day: Date
+    }
+
+    /// Totals, model performance/usage and peak hours for one dashboard period.
+    private struct PeriodAccumulator {
+        var totals = DashboardMetricTotals()
+        var transcriptionPerformance: [String: ModelPerformanceAccumulator] = [:]
+        var enhancementPerformance: [String: ModelPerformanceAccumulator] = [:]
+        var transcriptionAudioUsage: [String: TranscriptionAudioUsageAccumulator] = [:]
+        var enhancementTokenUsage: [String: EnhancementTokenUsageAccumulator] = [:]
+        var peakHourBuckets: [Int: DashboardPeakHourAccumulator] = [:]
+
+        mutating func add(_ sample: PeriodSample) {
+            let metric = sample.metric
+            totals.add(metric)
+
+            if let modelName = sample.transcriptionModelName {
+                if let transcriptionDuration = metric.transcriptionDuration, transcriptionDuration > 0 {
+                    transcriptionPerformance[modelName, default: ModelPerformanceAccumulator()].add(
+                        processingDuration: transcriptionDuration,
+                        audioDuration: metric.audioDuration
+                    )
+                }
+                if metric.audioDuration > 0 {
+                    transcriptionAudioUsage[modelName, default: TranscriptionAudioUsageAccumulator()].add(
+                        audioDuration: metric.audioDuration
+                    )
+                }
+            }
+
+            if let modelName = sample.enhancementModelName {
+                if let enhancementDuration = metric.enhancementDuration, enhancementDuration > 0 {
+                    enhancementPerformance[modelName, default: ModelPerformanceAccumulator()].add(
+                        processingDuration: enhancementDuration
+                    )
+                }
+                let tokens = max(metric.enhancementEstimatedTokenCount ?? 0, 0)
+                enhancementTokenUsage[modelName, default: EnhancementTokenUsageAccumulator()].add(
+                    tokens: tokens
+                )
+            }
+
+            peakHourBuckets[sample.hour, default: DashboardPeakHourAccumulator()].add(
+                words: metric.wordCount,
+                audioDuration: metric.audioDuration,
+                day: sample.day
+            )
+        }
+
+        var modelPerformance: [ModelPerformanceSummary] {
+            DashboardStatsLoader.modelPerformance(
+                transcription: transcriptionPerformance,
+                enhancement: enhancementPerformance
+            )
+        }
+
+        var modelUsage: ModelUsageSummary {
+            DashboardStatsLoader.modelUsage(
+                transcriptionAudio: transcriptionAudioUsage,
+                enhancementTokens: enhancementTokenUsage
+            )
+        }
+
+        var peakHours: DashboardPeakHoursSummary {
+            DashboardStatsLoader.peakHoursSummary(from: peakHourBuckets)
+        }
+    }
+}
+
+private extension DashboardMetricTotals {
+    mutating func add(_ metric: SessionMetric) {
+        count += 1
+        words += metric.wordCount
+        duration += metric.audioDuration
     }
 }
 
