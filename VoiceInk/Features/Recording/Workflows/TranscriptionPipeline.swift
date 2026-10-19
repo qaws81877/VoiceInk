@@ -26,7 +26,7 @@ class TranscriptionPipeline {
     private let serviceRegistry: TranscriptionServiceRegistry
     private let enhancementService: AIEnhancementService?
     private let delivery = TranscriptionDelivery()
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "TranscriptionPipeline")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "TranscriptionPipeline")
 
     init(
         modelContext: ModelContext,

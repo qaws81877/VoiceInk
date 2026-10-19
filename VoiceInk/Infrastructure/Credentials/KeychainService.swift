@@ -23,7 +23,7 @@ final class KeychainService {
         case unavailable(OSStatus)
     }
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "KeychainService")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "KeychainService")
     #if LOCAL_BUILD
         private let service = AppIdentity.keychainServiceLocalBuild
         private let defaults = UserDefaults.standard

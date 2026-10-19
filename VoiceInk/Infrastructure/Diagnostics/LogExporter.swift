@@ -4,7 +4,7 @@ import OSLog
 final class LogExporter {
     static let shared = LogExporter()
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "LogExporter")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "LogExporter")
     private let subsystem = AppIdentity.loggerSubsystem
     private let exportWindow: TimeInterval = 30 * 60
 

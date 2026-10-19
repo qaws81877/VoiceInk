@@ -6,7 +6,7 @@ import SwiftData
 final class TranscriptionAutoCleanupService {
     static let shared = TranscriptionAutoCleanupService()
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "TranscriptionAutoCleanupService")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "TranscriptionAutoCleanupService")
     private var modelContext: ModelContext?
 
     private var recordingsDirectory: URL {

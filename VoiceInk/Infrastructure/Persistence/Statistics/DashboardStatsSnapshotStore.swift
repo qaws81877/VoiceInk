@@ -36,7 +36,7 @@ final class DashboardStatsSnapshotStore: @unchecked Sendable {
 
     private static let currentVersion = 2
     private static let staleDefaultsKey = "dashboardStatsSnapshotStale"
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "DashboardStatsSnapshotStore")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "DashboardStatsSnapshotStore")
     private let fileManager: FileManager
     private let userDefaults: UserDefaults
     private let snapshotURL: URL

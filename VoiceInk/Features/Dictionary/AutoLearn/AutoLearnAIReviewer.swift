@@ -69,7 +69,7 @@ final class AutoLearnAIReviewer: @unchecked Sendable {
 
     private let enhancementService: AIEnhancementService
     private let logger = Logger(
-        subsystem: "com.qaws81877.sulsul",
+        subsystem: AppIdentity.loggerSubsystem,
         category: "AutoLearnAIReview"
     )
 

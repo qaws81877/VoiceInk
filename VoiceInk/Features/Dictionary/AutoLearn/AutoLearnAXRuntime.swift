@@ -14,7 +14,7 @@ final class AutoLearnAXRuntime: @unchecked Sendable {
 
     private let queue = DispatchQueue(label: "com.qaws81877.sulsul.auto-learn.accessibility")
     private let logger = Logger(
-        subsystem: "com.qaws81877.sulsul",
+        subsystem: AppIdentity.loggerSubsystem,
         category: "AutoLearnCapture"
     )
     private let textReader = AutoLearnAXTextReader()

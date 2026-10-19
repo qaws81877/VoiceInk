@@ -15,7 +15,7 @@ actor WhisperContext {
     private var prompt: String?
     private var promptCString: [CChar]?
     private var vadModelPath: String?
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "WhisperContext")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "WhisperContext")
 
     private init() {}
 

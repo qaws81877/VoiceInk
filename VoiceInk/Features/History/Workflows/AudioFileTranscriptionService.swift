@@ -16,7 +16,7 @@ class AudioTranscriptionService: ObservableObject {
 
     private let modelContext: ModelContext
     private let enhancementService: AIEnhancementService?
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "AudioTranscriptionService")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "AudioTranscriptionService")
     private let serviceRegistry: TranscriptionServiceRegistry
 
     enum TranscriptionError: Error {

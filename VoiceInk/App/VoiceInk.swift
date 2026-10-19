@@ -47,7 +47,7 @@ struct VoiceInkApp: App {
         AppAppearancePreference.applyStored()
         OnboardingV2Migration.prepareIfNeeded()
 
-        let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "Initialization")
+        let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "Initialization")
         // Keep existing model order stable; append new models after synced entities.
         let schema = Schema([
             Transcription.self,

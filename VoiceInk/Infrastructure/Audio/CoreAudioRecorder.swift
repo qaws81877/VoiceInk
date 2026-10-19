@@ -54,7 +54,7 @@ final class CoreAudioRecorder: @unchecked Sendable {
 
     // MARK: - Properties
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "CoreAudioRecorder")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "CoreAudioRecorder")
 
     private var audioUnit: AudioUnit?
     private var audioFile: ExtAudioFileRef?

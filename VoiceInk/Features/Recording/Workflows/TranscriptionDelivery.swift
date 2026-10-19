@@ -3,7 +3,7 @@ import os
 
 @MainActor
 final class TranscriptionDelivery {
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "TranscriptionDelivery")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "TranscriptionDelivery")
 
     struct Request {
         let transcription: Transcription

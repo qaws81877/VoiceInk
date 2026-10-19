@@ -61,7 +61,7 @@ final class StreamingTranscriptionSession: TranscriptionSession {
     private var streamingFailed = false
     private var startupTask: Task<Void, Never>?
     private var startupTaskID: UUID?
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "StreamingTranscriptionSession")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "StreamingTranscriptionSession")
 
     init(
         streamingService: StreamingTranscriptionService,

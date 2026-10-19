@@ -7,7 +7,7 @@ import os
 @MainActor
 class Recorder: NSObject, ObservableObject {
     var recorder: CoreAudioRecorder?
-    let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "Recorder")
+    let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "Recorder")
     let deviceManager = AudioDeviceManager.shared
     private var lifecycleCancellable: AnyCancellable?
     var recordingDeviceChangeObserver: NSObjectProtocol?

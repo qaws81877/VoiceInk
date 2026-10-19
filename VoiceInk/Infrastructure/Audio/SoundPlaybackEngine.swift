@@ -10,7 +10,7 @@ final class SoundPlaybackEngine: @unchecked Sendable {
     }
 
     private let queue = DispatchQueue(label: "com.qaws81877.sulsul.soundPlayback", qos: .userInitiated)
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "SoundPlaybackEngine")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "SoundPlaybackEngine")
 
     private var startSound: AVAudioPlayer?
     private var stopSound: AVAudioPlayer?

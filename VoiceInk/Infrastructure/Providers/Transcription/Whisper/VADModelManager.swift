@@ -3,7 +3,7 @@ import OSLog
 
 class VADModelManager {
     static let shared = VADModelManager()
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "ModelManagement")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "ModelManagement")
 
     private init() {}
 

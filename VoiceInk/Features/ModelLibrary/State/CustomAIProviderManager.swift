@@ -47,7 +47,7 @@ final class CustomAIProviderManager: ObservableObject {
 
     @Published private(set) var providers: [CustomAIProviderConfig] = []
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "CustomAIProviderManager")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "CustomAIProviderManager")
     private let providersKey = "customAIProviders"
     private let defaults = UserDefaults.standard
 

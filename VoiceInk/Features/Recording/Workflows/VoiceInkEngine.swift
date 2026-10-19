@@ -121,7 +121,7 @@ class VoiceInkEngine: NSObject, ObservableObject {
     let assistantChat: AssistantChatService?
     private let pipeline: TranscriptionPipeline
 
-    let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "VoiceInkEngine")
+    let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "VoiceInkEngine")
 
     init(
         modelContext: ModelContext,

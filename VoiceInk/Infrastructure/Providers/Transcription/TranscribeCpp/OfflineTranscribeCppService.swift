@@ -34,7 +34,7 @@ final class OfflineTranscribeCppService: TranscriptionService, @unchecked Sendab
     private var memoryPressureSource: DispatchSourceMemoryPressure?
     private let audioConverter = AudioConverter()
     private let logger = Logger(
-        subsystem: "com.qaws81877.sulsul",
+        subsystem: AppIdentity.loggerSubsystem,
         category: "OfflineTranscribeCppService"
     )
 

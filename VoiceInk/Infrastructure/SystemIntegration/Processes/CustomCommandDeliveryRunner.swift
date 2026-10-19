@@ -53,7 +53,7 @@ enum CustomCommandDeliveryError: Error, LocalizedError {
 
 enum CustomCommandDeliveryRunner {
     private static let logger = Logger(
-        subsystem: "com.qaws81877.sulsul", category: "CustomCommandDeliveryRunner")
+        subsystem: AppIdentity.loggerSubsystem, category: "CustomCommandDeliveryRunner")
 
     static func run(
         command: String,

@@ -5,7 +5,7 @@ import os
 final class APIKeyManager {
     static let shared = APIKeyManager()
 
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "APIKeyManager")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "APIKeyManager")
     private let keychain = KeychainService.shared
 
     /// Provider to Keychain identifier mapping. Keys stay on this Mac and are not iCloud-synced.

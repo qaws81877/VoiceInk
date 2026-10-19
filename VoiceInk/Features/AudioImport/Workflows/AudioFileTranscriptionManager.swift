@@ -19,7 +19,7 @@ class AudioTranscriptionManager: ObservableObject {
     private var processingTask: Task<Void, Never>?
     private var processingGeneration: UInt64 = 0
     private let audioProcessor = AudioProcessor()
-    private let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "AudioTranscriptionManager")
+    private let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "AudioTranscriptionManager")
 
     private init() {}
 

@@ -8,7 +8,7 @@ import os
 /// this throws so the caller pastes the raw transcript with a warning; a cancelled task throws
 /// `CancellationError` without falling back.
 enum KoreanCleanupClient {
-    private static let logger = Logger(subsystem: "com.qaws81877.sulsul", category: "KoreanCleanup")
+    private static let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "KoreanCleanup")
 
     static func clean(
         transcript: String,
