@@ -281,24 +281,9 @@ struct DashboardContent: View {
         Array(
             recentTranscriptionCandidates
                 .lazy
-                .filter(isRecentDashboardTranscription)
+                .filter(\.isDashboardDisplayable)
                 .prefix(5)
         )
-    }
-
-    private func isRecentDashboardTranscription(_ transcription: Transcription) -> Bool {
-        let text = transcription.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else {
-            return false
-        }
-
-        if transcription.transcriptionStatus == TranscriptionStatus.failed.rawValue
-            || transcription.transcriptionStatus == TranscriptionStatus.canceled.rawValue
-        {
-            return false
-        }
-
-        return text.range(of: "Transcription Failed:", options: [.caseInsensitive, .anchored]) == nil
     }
 
     private var selectedDailyActivityPoints: [DashboardProductivityPoint] {
@@ -503,9 +488,9 @@ struct DashboardContent: View {
     ) async {
         do {
             if allowSkipWhenFresh {
-                let shouldRefreshAutomatically =
-                    SessionMetricMigrationService.shared.isRunning
-                    || DashboardStatsCache.shared.shouldRefreshSnapshotAutomatically()
+                let shouldRefreshAutomatically = DashboardStatsCache.shared.shouldRefreshAutomatically(
+                    isMigrationRunning: SessionMetricMigrationService.shared.isRunning
+                )
 
                 guard shouldRefreshAutomatically else {
                     return
@@ -526,7 +511,10 @@ struct DashboardContent: View {
                 return
             }
 
-            let shouldAcceptSummary = summary.totalCount > 0 || !SessionMetricMigrationService.shared.isRunning
+            let shouldAcceptSummary = DashboardStatsCache.shared.shouldAccept(
+                summary,
+                isMigrationRunning: SessionMetricMigrationService.shared.isRunning
+            )
 
             await MainActor.run {
                 guard generation == dashboardStatsLoadGeneration, shouldAcceptSummary else {

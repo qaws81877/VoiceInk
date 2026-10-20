@@ -547,4 +547,17 @@ final class DashboardStatsCache: @unchecked Sendable {
 
         return !metadata.wasGeneratedInCurrentDashboardDay()
     }
+
+    /// A live migration always forces a refresh; otherwise refresh only when the
+    /// cached snapshot is missing, from another environment, or from an earlier day.
+    /// `isMigrationRunning` is read by the caller because the migration service is main-actor isolated.
+    func shouldRefreshAutomatically(isMigrationRunning: Bool) -> Bool {
+        isMigrationRunning || shouldRefreshSnapshotAutomatically()
+    }
+
+    /// An empty summary loaded while a migration is still filling metrics is a partial
+    /// result, so it is rejected to keep the previous summary on screen.
+    func shouldAccept(_ summary: DashboardStatsSummary, isMigrationRunning: Bool) -> Bool {
+        summary.totalCount > 0 || !isMigrationRunning
+    }
 }
