@@ -65,6 +65,8 @@ class AIService: ObservableObject {
         return false
     }
 
+    // Ollama's model list loads asynchronously and is empty until the server answers,
+    // so its saved selection is trusted instead of being reset to the default model.
     var currentModel: String {
         if let selectedModel = selectedModels[selectedProvider],
             !selectedModel.isEmpty,
@@ -214,6 +216,8 @@ class AIService: ObservableObject {
         )
     }
 
+    // Unlike currentModel there is no Ollama exception: the caller only offers Ollama once
+    // its model list is loaded, so the choice is checked against installed models.
     private func initialAutoLearnModel(for provider: AIProvider) -> String {
         let selectedModel = selectedModel(for: provider)
         let availableModels = availableModels(for: provider)
