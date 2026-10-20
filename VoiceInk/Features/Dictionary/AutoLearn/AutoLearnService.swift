@@ -136,26 +136,7 @@ actor AutoLearnService {
             uniquingKeysWith: { first, _ in first }
         ).values.map { $0 }
         let decisions = proposals.compactMap { proposal -> AutoLearnReviewDecision? in
-            guard let selection = selectionsByID[proposal.id] else { return nil }
-            let action: AutoLearnReviewAction
-            switch (selection.includesReplacement, selection.includesVocabulary) {
-            case (true, true):
-                action = .addReplacementAndVocabulary
-            case (true, false):
-                action = .addReplacementOnly
-            case (false, true):
-                action = .addVocabularyOnly
-            case (false, false):
-                return nil
-            }
-            return AutoLearnReviewDecision(
-                candidateID: proposal.candidateID,
-                learningAction: action,
-                incorrectTextToReplace: action == .addVocabularyOnly
-                    ? nil
-                    : selection.incorrectTextToReplace,
-                correctedVocabularyTerm: selection.correctedVocabularyTerm
-            )
+            selectionsByID[proposal.id]?.decision(candidateID: proposal.candidateID)
         }
         guard !decisions.isEmpty else { return .empty }
         let summary = try await replacementStore.apply(decisions, candidates: candidates)

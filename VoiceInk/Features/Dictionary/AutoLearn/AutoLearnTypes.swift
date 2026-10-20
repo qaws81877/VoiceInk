@@ -129,6 +129,28 @@ struct AutoLearnReviewSelection: Sendable {
     let includesVocabulary: Bool
     let incorrectTextToReplace: String?
     let correctedVocabularyTerm: String
+
+    /// `nil` when neither replacement nor vocabulary is selected.
+    var learningAction: AutoLearnReviewAction? {
+        switch (includesReplacement, includesVocabulary) {
+        case (true, true): .addReplacementAndVocabulary
+        case (true, false): .addReplacementOnly
+        case (false, true): .addVocabularyOnly
+        case (false, false): nil
+        }
+    }
+
+    func decision(candidateID: UUID) -> AutoLearnReviewDecision? {
+        guard let learningAction else { return nil }
+        return AutoLearnReviewDecision(
+            candidateID: candidateID,
+            learningAction: learningAction,
+            incorrectTextToReplace: learningAction == .addVocabularyOnly
+                ? nil
+                : incorrectTextToReplace,
+            correctedVocabularyTerm: correctedVocabularyTerm
+        )
+    }
 }
 
 struct AutoLearnMutationSummary: Sendable {
