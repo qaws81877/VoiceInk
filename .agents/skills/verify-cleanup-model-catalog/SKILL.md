@@ -12,14 +12,14 @@ description: Check that every Korean cleanup model constant is selectable in the
 | File | Purpose |
 |---|---|
 | VoiceInk/Features/Enhancement/KoreanCleanup/KoreanCleanupRequest.swift | `KoreanCleanupModels` constants |
-| VoiceInk/Features/Enhancement/State/AIService.swift | `AIProvider.availableModels` catalog |
+| VoiceInk/Features/Enhancement/Models/AIProvider.swift | `AIProvider.availableModels` catalog |
 | VoiceInk/Features/Enhancement/KoreanCleanup/KoreanCleanupAdoption.swift | adoption writes these models |
 | VoiceInk/Features/Modes/Templates/StarterModeFactory.swift | starter modes write these models |
 
 ## Workflow
 1. Check each cleanup model constant against the catalog:
    ```bash
-   for m in $(grep -oE 'static let (openAI|anthropic) = "[^"]+"' VoiceInk/Features/Enhancement/KoreanCleanup/KoreanCleanupRequest.swift | cut -d'"' -f2); do grep -q "\"$m\"," VoiceInk/Features/Enhancement/State/AIService.swift && echo "OK $m" || echo "MISSING $m"; done
+   for m in $(grep -oE 'static let (openAI|anthropic) = "[^"]+"' VoiceInk/Features/Enhancement/KoreanCleanup/KoreanCleanupRequest.swift | cut -d'"' -f2); do grep -q "\"$m\"," VoiceInk/Features/Enhancement/Models/AIProvider.swift && echo "OK $m" || echo "MISSING $m"; done
    ```
    - PASS: every line is `OK`.
    - FAIL: any `MISSING <model>`; add it to the matching `AIProvider` case list.
