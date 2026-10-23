@@ -4,8 +4,6 @@ import Foundation
 import os
 
 class CursorPaster {
-    private typealias ClipboardItemSnapshot = [(NSPasteboard.PasteboardType, Data)]
-    private typealias ClipboardSnapshot = [ClipboardItemSnapshot]
     private static let logger = Logger(subsystem: AppIdentity.loggerSubsystem, category: "CursorPaster")
 
     enum PasteResult: Equatable {
@@ -24,7 +22,6 @@ class CursorPaster {
 
     private static let prePasteDelay: TimeInterval = 0.10
     private static let pasteShortcutEventDelay: TimeInterval = 0.01
-    private static let minimumClipboardRestoreDelay: TimeInterval = 0.25
 
     static func pasteAtCursor(_ text: String) {
         Task {
@@ -45,59 +42,36 @@ class CursorPaster {
 
     @MainActor
     private static func performPasteSession(_ text: String) async -> PasteOutcome {
-        let pasteboard = NSPasteboard.general
         let shouldRestoreClipboard = UserDefaults.standard.bool(forKey: "restoreClipboardAfterPaste")
-        let savedContents = shouldRestoreClipboard ? snapshotClipboard(from: pasteboard) : []
-        let sessionID = UUID().uuidString
-
-        guard
-            ClipboardManager.setClipboard(
-                text,
-                transient: shouldRestoreClipboard,
-                sessionID: shouldRestoreClipboard ? sessionID : nil
-            )
-        else {
+        guard let clipboard = PasteClipboardSession.publish(text, restoreEnabled: shouldRestoreClipboard) else {
             logger.error("Failed to prepare clipboard for paste")
             return PasteOutcome(result: .commandNotPosted, autoLearnGeneration: nil)
         }
 
         await wait(prePasteDelay)
 
-        let pasteResult: PasteResult
+        let isAutoLearnEnabled = AutoLearnSettings.isEnabled
+        let targetProcessID = isAutoLearnEnabled ? NSWorkspace.shared.frontmostApplication?.processIdentifier : nil
+        let pasteKeyAttemptedAt = PasteClipboardSession.now()
+        let pasteResult = await postPasteCommand()
+        clipboard.pasteKeyFinished(posted: pasteResult.didPostPasteCommand, attemptedAt: pasteKeyAttemptedAt)
+        // Restore (and, later, the mode's submit key) waits for the destination's read.
+        Task { @MainActor in
+            await clipboard.settle()
+        }
+
         let autoLearnGeneration: UInt64?
-        if AutoLearnSettings.isEnabled {
-            let targetProcessID = NSWorkspace.shared.frontmostApplication?.processIdentifier
-            pasteResult = await postPasteCommand()
+        if isAutoLearnEnabled {
             autoLearnGeneration = await AutoLearnService.shared.pasteDidFinish(
                 text: text,
                 processID: targetProcessID,
                 commandPosted: pasteResult.didPostPasteCommand
             )
         } else {
-            pasteResult = await postPasteCommand()
             autoLearnGeneration = nil
-        }
-        if shouldRestoreClipboard {
-            scheduleClipboardRestore(
-                savedContents,
-                expectedText: text,
-                sessionID: sessionID,
-                on: pasteboard
-            )
         }
 
         return PasteOutcome(result: pasteResult, autoLearnGeneration: autoLearnGeneration)
-    }
-
-    private static func snapshotClipboard(from pasteboard: NSPasteboard) -> ClipboardSnapshot {
-        (pasteboard.pasteboardItems ?? []).map { item in
-            item.types.compactMap { type in
-                if let data = item.data(forType: type) {
-                    return (type, data)
-                }
-                return nil
-            }
-        }
     }
 
     @MainActor
@@ -106,49 +80,6 @@ class CursorPaster {
             return pasteUsingAppleScript() ? .commandPosted : .commandNotPosted
         } else {
             return await pasteFromClipboard()
-        }
-    }
-
-    private static func scheduleClipboardRestore(
-        _ savedContents: ClipboardSnapshot,
-        expectedText: String,
-        sessionID: String,
-        on pasteboard: NSPasteboard
-    ) {
-        let delay = max(
-            UserDefaults.standard.double(forKey: "clipboardRestoreDelay"),
-            minimumClipboardRestoreDelay
-        )
-
-        Task { @MainActor in
-            await wait(delay)
-            guard pasteboardStillOwnedByPasteSession(pasteboard, expectedText: expectedText, sessionID: sessionID)
-            else {
-                return
-            }
-            pasteboard.clearContents()
-            if !savedContents.isEmpty {
-                pasteboard.writeObjects(pasteboardItems(from: savedContents))
-            }
-        }
-    }
-
-    private static func pasteboardStillOwnedByPasteSession(
-        _ pasteboard: NSPasteboard,
-        expectedText: String,
-        sessionID: String
-    ) -> Bool {
-        pasteboard.string(forType: .string) == expectedText
-            && pasteboard.string(forType: ClipboardManager.pasteSessionType) == sessionID
-    }
-
-    private static func pasteboardItems(from snapshot: ClipboardSnapshot) -> [NSPasteboardItem] {
-        snapshot.map { itemSnapshot in
-            let item = NSPasteboardItem()
-            for (type, data) in itemSnapshot {
-                item.setData(data, forType: type)
-            }
-            return item
         }
     }
 

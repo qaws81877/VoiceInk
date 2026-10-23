@@ -16,7 +16,6 @@ struct SettingsView: View {
     @ObservedObject private var playbackController = PlaybackController.shared
     @AppStorage(OnboardingSettings.completedV2Key) private var hasCompletedOnboardingV2 = true
     @AppStorage("restoreClipboardAfterPaste") private var restoreClipboardAfterPaste = true
-    @AppStorage("clipboardRestoreDelay") private var clipboardRestoreDelay = 2.0
     @AppStorage(PasteMethod.userDefaultsKey) private var pasteMethodRawValue = PasteMethod.standard.rawValue
     @AppStorage(AppAppearancePreference.userDefaultsKey) private var appAppearancePreference = AppAppearancePreference
         .system
@@ -28,8 +27,6 @@ struct SettingsView: View {
     @State private var showLanguageRestartAlert = false
     @State private var cancelRecordingShortcutRecorderResetID = 0
     @State private var isImportingSettings = false
-
-    @State private var isRestoreClipboardExpanded = false
 
     var body: some View {
         Form {
@@ -144,21 +141,12 @@ struct SettingsView: View {
                     }
                 }
 
-                ExpandableSettingsRow(
-                    isExpanded: $isRestoreClipboardExpanded,
-                    isEnabled: $restoreClipboardAfterPaste,
-                    label: "Keep Clipboard Content",
-                    infoMessage:
-                        "VoiceInk temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay. When disabled, the pasted transcription stays on your clipboard."
-                ) {
-                    Picker("Restore Delay", selection: $clipboardRestoreDelay) {
-                        Text("250ms").tag(0.25)
-                        Text("500ms").tag(0.5)
-                        Text("1s").tag(1.0)
-                        Text("2s").tag(2.0)
-                        Text("3s").tag(3.0)
-                        Text("4s").tag(4.0)
-                        Text("5s").tag(5.0)
+                Toggle(isOn: $restoreClipboardAfterPaste) {
+                    HStack(spacing: 4) {
+                        Text("Keep Clipboard Content")
+                        InfoTip(
+                            "VoiceInk temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content once the app you paste into has read the transcription, or after a few seconds if it never does. When disabled, the pasted transcription stays on your clipboard."
+                        )
                     }
                 }
 
