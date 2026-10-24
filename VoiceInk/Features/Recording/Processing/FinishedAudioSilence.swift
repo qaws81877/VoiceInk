@@ -6,14 +6,17 @@ import Foundation
 /// the recording's quiet level (10th percentile), capped at half its speech level (90th percentile),
 /// so the threshold follows the room noise of each recording instead of a fixed dBFS floor.
 enum FinishedAudioSilence {
-    static let windowCount = 1_600
+    static let samplesPerWindow = 1_600
     private static let absoluteSilence: Float = 0.000_1
 
-    static func ranges(in samples: [Float], windowCount: Int = FinishedAudioSilence.windowCount) -> [Range<Int>] {
-        guard !samples.isEmpty, windowCount > 0 else { return [] }
+    static func ranges(
+        in samples: [Float],
+        samplesPerWindow: Int = FinishedAudioSilence.samplesPerWindow
+    ) -> [Range<Int>] {
+        guard !samples.isEmpty, samplesPerWindow > 0 else { return [] }
 
-        let levels = stride(from: 0, to: samples.count, by: windowCount).map { start -> Float in
-            let end = min(start + windowCount, samples.count)
+        let levels = stride(from: 0, to: samples.count, by: samplesPerWindow).map { start -> Float in
+            let end = min(start + samplesPerWindow, samples.count)
             var sum: Float = 0
             for index in start..<end {
                 sum += samples[index] * samples[index]
@@ -29,7 +32,7 @@ enum FinishedAudioSilence {
         var ranges: [Range<Int>] = []
         var silentStart: Int?
         for (index, level) in levels.enumerated() {
-            let start = index * windowCount
+            let start = index * samplesPerWindow
             if level <= threshold {
                 if silentStart == nil { silentStart = start }
             } else if let open = silentStart {
