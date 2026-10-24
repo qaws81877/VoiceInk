@@ -10,8 +10,8 @@ final class MediaController: ObservableObject {
     private var mutedDevices: Set<AudioDeviceID> = []
     private var recordingSessionID = UUID()
 
-    @Published var isSystemMuteEnabled: Bool = UserDefaults.standard.bool(forKey: "isSystemMuteEnabled") {
-        didSet { UserDefaults.standard.set(isSystemMuteEnabled, forKey: "isSystemMuteEnabled") }
+    @Published var isSystemMuteEnabled: Bool = UserDefaults.standard.bool(forKey: OutputMutePlan.settingKey) {
+        didSet { UserDefaults.standard.set(isSystemMuteEnabled, forKey: OutputMutePlan.settingKey) }
     }
 
     @Published var audioResumptionDelay: Double = UserDefaults.standard.double(forKey: "audioResumptionDelay") {
@@ -21,23 +21,36 @@ final class MediaController: ObservableObject {
     private init() {}
 
     func beginRecordingSession(sessionID: UUID) {
-        // Invalidate delayed restoration before the recorder's 220 ms mute delay.
+        // Invalidate delayed restoration before the recorder's delayed mute.
         recordingSessionID = sessionID
     }
 
-    func muteSystemAudio(sessionID: UUID) -> Bool {
-        guard sessionID == recordingSessionID, !Task.isCancelled, isSystemMuteEnabled else { return false }
-        guard let deviceID = getDefaultOutputDevice(),
-            let currentlyMuted = isSystemAudioMuted(deviceID: deviceID) else {
+    /// Mutes the default output device for this recording session when `OutputMutePlan` says so.
+    /// Only the mute flag is written, never the volume. The result is informational:
+    /// a failed request must not stop recording.
+    @discardableResult
+    func muteSystemAudio(sessionID: UUID, isMicrophoneRecording: Bool) -> Bool {
+        guard sessionID == recordingSessionID, !Task.isCancelled else { return false }
+        let deviceID = getDefaultOutputDevice()
+        let start = OutputMutePlan.start(
+            isSettingEnabled: isSystemMuteEnabled,
+            isMicrophoneRecording: isMicrophoneRecording,
+            previousMuteFlag: deviceID.flatMap { isSystemAudioMuted(deviceID: $0) }
+        )
+        switch start {
+        case .leaveAlone:
             return false
+        case .keepUserMute:
+            // A device already muted by the user is never added to our ownership.
+            return true
+        case .requestMute:
+            guard let deviceID else { return false }
+            let succeeded = setSystemMuted(true, deviceID: deviceID)
+            if OutputMutePlan.end(after: start, muteRequestSucceeded: succeeded) == .restoreUnmuted {
+                mutedDevices.insert(deviceID)
+            }
+            return succeeded
         }
-        // A device already muted by the user is never added to our ownership.
-        guard !currentlyMuted else { return true }
-        guard setSystemMuted(true, deviceID: deviceID) else {
-            return false
-        }
-        mutedDevices.insert(deviceID)
-        return true
     }
 
     func unmuteSystemAudio(sessionID: UUID) async {
