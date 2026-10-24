@@ -24,6 +24,16 @@ final class SecureInputFallbackCoordinator {
     private var timer: Timer?
     private var heldSince: TimeInterval?
     private var notice: SecureInputMenuNotice?
+    private let isEnabled = SecureInputFallbackCoordinator.isEnabled(environment: ProcessInfo.processInfo.environment)
+
+    /// False in the XCTest host (same check as `KeychainService`), so tests never register Carbon hot keys.
+    nonisolated static func isEnabled(environment: [String: String]) -> Bool {
+        environment["XCTestConfigurationFilePath"] == nil
+    }
+
+    var isPolling: Bool {
+        timer != nil
+    }
 
     init(
         inputs: @escaping @MainActor () -> SecureInputShortcutInputs,
@@ -44,7 +54,7 @@ final class SecureInputFallbackCoordinator {
     }
 
     func start() {
-        guard timer == nil else { return }
+        guard isEnabled, timer == nil else { return }
         let timer = Timer(timeInterval: Self.pollInterval, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.evaluate()
@@ -64,6 +74,7 @@ final class SecureInputFallbackCoordinator {
 
     /// Re-applies the plan now, e.g. after shortcuts or the recording state changed.
     func evaluate() {
+        guard isEnabled else { return }
         let now = ProcessInfo.processInfo.systemUptime
         guard IsSecureEventInputEnabled() else {
             heldSince = nil
