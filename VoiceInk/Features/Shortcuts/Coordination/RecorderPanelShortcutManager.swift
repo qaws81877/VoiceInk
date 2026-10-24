@@ -135,7 +135,15 @@ final class RecorderPanelShortcutManager: ObservableObject {
         )
     }
 
-    private func handleRecorderPanelShortcut(_ action: ShortcutAction) async {
+    /// The cancel action in use: the stored Cancel Recording shortcut, or the default double Escape.
+    static var cancelShortcut: (action: ShortcutAction, shortcut: Shortcut) {
+        if let stored = ShortcutStore.shortcut(for: .cancelRecorder) {
+            return (.cancelRecorder, stored)
+        }
+        return (.recorderPanelEscape, .key(keyCode: UInt16(kVK_Escape), modifierFlags: []))
+    }
+
+    func handleRecorderPanelShortcut(_ action: ShortcutAction) async {
         guard recorderUIManager.isRecorderPanelVisible else { return }
 
         switch action {

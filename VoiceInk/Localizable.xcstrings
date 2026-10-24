@@ -2580,6 +2580,36 @@
         }
       }
     },
+    "Keyboard held by %@" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서 키보드를 잡고 있음"
+          }
+        }
+      }
+    },
+    "Keyboard held by an unknown app" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알 수 없는 앱에서 키보드를 잡고 있음"
+          }
+        }
+      }
+    },
+    "Shortcuts with fn stop working while another app holds the keyboard, and the fallback cannot cover them." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "fn이 들어간 단축키는 다른 앱이 키보드를 잡고 있는 동안 작동하지 않으며, 대체 등록으로도 살릴 수 없습니다."
+          }
+        }
+      }
+    },
     "••••••••" : {
       "localizations" : {
         "de" : {

@@ -64,13 +64,7 @@ class ModeShortcutManager {
 
     private func refreshModeShortcuts() {
         shortcutModeHandler.clearPendingModeDoubleTaps()
-        let shortcuts = ModeManager.shared.enabledConfigurations.reduce(into: [ShortcutAction: Shortcut]()) {
-            result, config in
-            let action = ShortcutAction.mode(config.id)
-            if let shortcut = ShortcutStore.shortcut(for: action) {
-                result[action] = shortcut
-            }
-        }
+        let shortcuts = monitoredShortcuts
         monitoredActions = Set(shortcuts.keys)
 
         shortcutMonitor.start(
@@ -121,6 +115,35 @@ class ModeShortcutManager {
                 }
             }
         )
+    }
+
+    var monitoredShortcuts: [ShortcutAction: Shortcut] {
+        ModeManager.shared.enabledConfigurations.reduce(into: [ShortcutAction: Shortcut]()) { result, config in
+            let action = ShortcutAction.mode(config.id)
+            if let shortcut = ShortcutStore.shortcut(for: action) {
+                result[action] = shortcut
+            }
+        }
+    }
+
+    /// Entry for presses that arrive outside the event tap (the secure input fallback).
+    func handleShortcut(action: ShortcutAction, isDown: Bool, eventTime: TimeInterval) async {
+        guard let modeId = modeId(for: action) else { return }
+        if isDown {
+            await shortcutModeHandler.handleShortcutDown(
+                action: action,
+                eventTime: eventTime,
+                mode: modeProvider(),
+                modeId: modeId
+            )
+        } else {
+            await shortcutModeHandler.handleShortcutUp(
+                action: action,
+                eventTime: eventTime,
+                mode: modeProvider(),
+                modeId: modeId
+            )
+        }
     }
 
     private var standaloneModifierActions: Set<ShortcutAction> {
