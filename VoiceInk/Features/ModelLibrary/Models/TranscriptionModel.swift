@@ -51,6 +51,9 @@ protocol TranscriptionModel: Identifiable, Hashable {
     var supportedLanguages: [String: String] { get }
 
     var supportsStreaming: Bool { get }
+    /// Whether long finished audio is cut into pieces before recognition. No default, so every
+    /// model type states it.
+    var finishedAudioKind: FinishedAudioModelKind { get }
 }
 
 extension TranscriptionModel {
@@ -80,6 +83,7 @@ struct NativeAppleModel: TranscriptionModel {
     let displayName: String
     let description: String
     let provider: ModelProvider = .nativeApple
+    let finishedAudioKind: FinishedAudioModelKind = .singlePiece
     let isMultilingualModel: Bool
     let supportedLanguages: [String: String]
 }
@@ -91,6 +95,7 @@ struct FluidAudioModel: TranscriptionModel {
     let displayName: String
     let description: String
     let provider: ModelProvider = .fluidAudio
+    let finishedAudioKind: FinishedAudioModelKind = .singlePiece
     let size: String
     let speed: Double
     let accuracy: Double
@@ -124,6 +129,7 @@ struct TranscribeCppModel: TranscriptionModel, Sendable {
     let displayName: String
     let description: String
     let provider: ModelProvider = .transcribeCpp
+    let finishedAudioKind: FinishedAudioModelKind = .shortWindowBatch
     let size: String
     let speed: Double
     let accuracy: Double
@@ -144,6 +150,9 @@ struct CloudModel: TranscriptionModel {
     let isMultilingualModel: Bool
     let supportsStreaming: Bool
     let supportedLanguages: [String: String]
+
+    /// A streaming-capable cloud model stays one piece even when the mode turns realtime off.
+    var finishedAudioKind: FinishedAudioModelKind { supportsStreaming ? .singlePiece : .shortWindowBatch }
 
     init(
         id: UUID = UUID(), name: String, displayName: String, description: String, provider: ModelProvider,
@@ -167,6 +176,7 @@ struct CustomCloudModel: TranscriptionModel, Codable {
     let displayName: String
     let description: String
     let provider: ModelProvider = .custom
+    var finishedAudioKind: FinishedAudioModelKind { .shortWindowBatch }
     let apiEndpoint: String
     let modelName: String
     let isMultilingualModel: Bool
@@ -237,6 +247,7 @@ struct WhisperModel: TranscriptionModel {
     let accuracy: Double
     let ramUsage: Double
     let provider: ModelProvider = .whisper
+    let finishedAudioKind: FinishedAudioModelKind = .singlePiece
 
     var downloadURL: String {
         "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/\(filename)"
@@ -258,6 +269,7 @@ struct ImportedWhisperModel: TranscriptionModel {
     let displayName: String
     let description: String
     let provider: ModelProvider = .whisper
+    let finishedAudioKind: FinishedAudioModelKind = .singlePiece
     let isMultilingualModel: Bool
     let supportedLanguages: [String: String]
 

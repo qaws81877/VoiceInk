@@ -1,29 +1,5 @@
 import Foundation
 
-/// Whether a model may receive finished audio in several pieces.
-enum FinishedAudioModelKind: Equatable {
-    /// Whisper, Apple Speech, Parakeet/FluidAudio and any streaming-capable model.
-    case singlePiece
-    /// SenseVoice, Cohere (transcribe.cpp) and non-streaming cloud models.
-    case shortWindowBatch
-
-    /// A model that has a streaming provider stays one piece even when the mode turns realtime off.
-    static func classify(provider: ModelProvider, supportsStreaming: Bool) -> FinishedAudioModelKind {
-        if supportsStreaming { return .singlePiece }
-        switch provider {
-        case .whisper, .nativeApple, .fluidAudio:
-            return .singlePiece
-        case .transcribeCpp, .groq, .elevenLabs, .deepgram, .mistral, .gemini, .soniox,
-            .speechmatics, .assemblyAI, .xai, .cartesia, .openRouter, .custom:
-            return .shortWindowBatch
-        }
-    }
-
-    static func classify(_ model: any TranscriptionModel) -> FinishedAudioModelKind {
-        classify(provider: model.provider, supportsStreaming: model.supportsStreaming)
-    }
-}
-
 /// Where finished audio is cut for a short-window batch model.
 ///
 /// Audio of 40 s or less is one piece. Longer audio is cut at the silence point nearest 30 s,

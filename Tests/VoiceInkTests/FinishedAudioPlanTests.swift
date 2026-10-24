@@ -10,36 +10,62 @@ final class FinishedAudioPlanTests: XCTestCase {
 
     // MARK: - Model kind
 
+    private let languages = ["en": "English", "ko": "Korean"]
+
     func testWhisperAppleSpeechAndParakeetStayOnePiece() {
-        for provider in [ModelProvider.whisper, .nativeApple, .fluidAudio] {
-            XCTAssertEqual(
-                FinishedAudioModelKind.classify(provider: provider, supportsStreaming: false),
-                .singlePiece,
-                "\(provider)"
-            )
+        let whisper = WhisperModel(
+            name: "w", displayName: "W", size: "1", supportedLanguages: languages, description: "",
+            speed: 1, accuracy: 1, ramUsage: 1
+        )
+        let imported = ImportedWhisperModel(fileBaseName: "imported")
+        let apple = NativeAppleModel(
+            name: "a", displayName: "A", description: "", isMultilingualModel: true, supportedLanguages: languages
+        )
+        let parakeet = FluidAudioModel(
+            name: "p", displayName: "P", description: "", size: "1", speed: 1, accuracy: 1, ramUsage: 1,
+            supportsStreaming: false, supportedLanguages: languages
+        )
+        let models: [any TranscriptionModel] = [whisper, imported, apple, parakeet]
+        for model in models {
+            XCTAssertEqual(model.finishedAudioKind, .singlePiece, model.name)
         }
     }
 
     func testTranscribeCppAndNonStreamingCloudModelsAreShortWindow() {
-        let shortWindowProviders: [ModelProvider] = [
-            .transcribeCpp, .groq, .elevenLabs, .deepgram, .mistral, .gemini, .soniox,
-            .speechmatics, .assemblyAI, .xai, .cartesia, .openRouter, .custom,
-        ]
-        for provider in shortWindowProviders {
-            XCTAssertEqual(
-                FinishedAudioModelKind.classify(provider: provider, supportsStreaming: false),
-                .shortWindowBatch,
-                "\(provider)"
-            )
+        let cohere = TranscribeCppModel(
+            name: "c", displayName: "C", description: "", size: "1", speed: 1, accuracy: 1, ramUsage: 1,
+            publisher: "", supportedLanguages: languages
+        )
+        let cloud = CloudModel(
+            name: "g", displayName: "G", description: "", provider: .groq, isMultilingual: true,
+            supportsStreaming: false, supportedLanguages: languages
+        )
+        let custom = CustomCloudModel(
+            name: "x", displayName: "X", description: "", apiEndpoint: "https://example.invalid", modelName: "m"
+        )
+        let models: [any TranscriptionModel] = [cohere, cloud, custom]
+        for model in models {
+            XCTAssertEqual(model.finishedAudioKind, .shortWindowBatch, model.name)
         }
     }
 
-    func testAnyStreamingCapableModelStaysOnePiece() {
-        for provider in ModelProvider.allCases {
+    func testStreamingCapableCloudModelStaysOnePiece() {
+        let cloud = CloudModel(
+            name: "d", displayName: "D", description: "", provider: .deepgram, isMultilingual: true,
+            supportsStreaming: true, supportedLanguages: languages
+        )
+        XCTAssertEqual(cloud.finishedAudioKind, .singlePiece)
+    }
+
+    func testBuiltInCloudModelsAreCutOnlyWhenTheyCannotStream() {
+        let cloudModels = CloudProviderRegistry.allProviders.flatMap { $0.models }
+        XCTAssertTrue(cloudModels.contains { $0.supportsStreaming })
+        XCTAssertTrue(cloudModels.contains { !$0.supportsStreaming })
+        for model in cloudModels {
             XCTAssertEqual(
-                FinishedAudioModelKind.classify(provider: provider, supportsStreaming: true),
-                .singlePiece,
-                "\(provider)"
+                model.finishedAudioKind,
+                model.supportsStreaming ? .singlePiece : .shortWindowBatch,
+                model.name
             )
         }
     }

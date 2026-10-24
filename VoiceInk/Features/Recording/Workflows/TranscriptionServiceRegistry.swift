@@ -60,7 +60,7 @@ class TranscriptionServiceRegistry {
         // Batch calls here only ever see finished audio; long audio on a short-window model is cut.
         return try await FinishedAudioTranscriber.transcribe(
             audioURL: audioURL,
-            kind: FinishedAudioModelKind.classify(model)
+            kind: model.finishedAudioKind
         ) { pieceURL in
             try await service.transcribe(audioURL: pieceURL, model: model, context: scopedContext)
         }
