@@ -42,6 +42,8 @@ class RecordingShortcutManager: ObservableObject {
     private var shortcutChangeObserver: NSObjectProtocol?
     private let shortcutModeHandler: RecordingShortcutModeHandler
     private let primaryRecordingShortcutModeSource: RecordingShortcutModeSource
+    private var secureInputFallback: SecureInputFallbackCoordinator?
+    @Published private(set) var secureInputMenuNotice: SecureInputMenuNotice?
 
     enum Mode: String, CaseIterable {
         case toggle = "toggle"
@@ -142,6 +144,66 @@ class RecordingShortcutManager: ObservableObject {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 100_000_000)
             self.refreshShortcutMonitoring()
+        }
+
+        let secureInputFallback = SecureInputFallbackCoordinator(
+            inputs: { [weak self] in
+                self?.secureInputShortcutInputs ?? SecureInputShortcutInputs(shortcuts: [:], isRecording: false)
+            },
+            onPress: { [weak self] action, isDown in
+                self?.handleSecureInputFallbackPress(action, isDown: isDown)
+            },
+            onNoticeChange: { [weak self] notice in
+                self?.secureInputMenuNotice = notice
+            }
+        )
+        self.secureInputFallback = secureInputFallback
+        secureInputFallback.start()
+    }
+
+    private var monitoredGlobalShortcuts: [ShortcutAction: Shortcut] {
+        var shortcuts = ShortcutStore.shortcuts(for: ShortcutAction.globalUtilityActions)
+        if primaryRecordingShortcut == .custom, let primary = ShortcutStore.shortcut(for: .primaryRecording) {
+            shortcuts[.primaryRecording] = primary
+        }
+        if secondaryRecordingShortcut == .custom, let secondary = ShortcutStore.shortcut(for: .secondaryRecording) {
+            shortcuts[.secondaryRecording] = secondary
+        }
+        return shortcuts
+    }
+
+    private var secureInputShortcutInputs: SecureInputShortcutInputs {
+        let shortcuts = monitoredGlobalShortcuts.merging(modeShortcutManager.monitoredShortcuts) { current, _ in
+            current
+        }
+        return SecureInputShortcutInputs(
+            shortcuts: shortcuts,
+            cancelShortcut: RecorderPanelShortcutManager.cancelShortcut,
+            isRecording: recorderUIManager.isActivelyRecording
+        )
+    }
+
+    private func handleSecureInputFallbackPress(_ action: ShortcutAction, isDown: Bool) {
+        let eventTime = ProcessInfo.processInfo.systemUptime
+        Task { @MainActor in
+            switch action {
+            case .mode:
+                await modeShortcutManager.handleShortcut(action: action, isDown: isDown, eventTime: eventTime)
+            case .cancelRecorder, .recorderPanelEscape:
+                if isDown {
+                    await recorderPanelShortcutManager.handleRecorderPanelShortcut(action)
+                }
+            default:
+                if let mode = recordingMode(for: action) {
+                    if isDown {
+                        await shortcutModeHandler.handleShortcutDown(action: action, eventTime: eventTime, mode: mode)
+                    } else {
+                        await shortcutModeHandler.handleShortcutUp(action: action, eventTime: eventTime, mode: mode)
+                    }
+                } else if !isDown {
+                    await handleGlobalShortcut(action)
+                }
+            }
         }
     }
 
@@ -285,6 +347,7 @@ class RecordingShortcutManager: ObservableObject {
 
         MainActor.assumeIsolated {
             removeAllMonitoring()
+            secureInputFallback?.stop()
         }
     }
 }

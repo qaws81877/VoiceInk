@@ -43,6 +43,13 @@ struct MenuBarView: View {
 
     private var completedOnboardingMenu: some View {
         Group {
+            if let secureInputNotice = recordingShortcutManager.secureInputMenuNotice {
+                Text(secureInputNotice.text)
+                    .foregroundColor(.secondary)
+
+                Divider()
+            }
+
             Button("Toggle Recorder") {
                 recorderUIManager.handleToggleRecorderPanelNotification()
             }

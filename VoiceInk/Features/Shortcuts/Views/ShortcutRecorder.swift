@@ -48,6 +48,15 @@ struct ShortcutRecorder: View {
             .accessibilityLabel(accessibilityLabel)
             .help(accessibilityLabel)
 
+            if !recorder.isRecording && SecureInputPlan.needsUncoveredNote(shortcut) {
+                let note = String(
+                    localized: "Shortcuts with fn stop working while another app holds the keyboard, and the fallback cannot cover them."
+                )
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(AppTheme.Status.warningStrong)
+                    .help(note)
+                    .accessibilityLabel(note)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: ShortcutStore.shortcutDidChange)) { notification in
             guard let changedAction = notification.object as? ShortcutAction, changedAction == action else { return }
