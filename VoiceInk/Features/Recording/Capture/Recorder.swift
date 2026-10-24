@@ -20,6 +20,9 @@ class Recorder: NSObject, ObservableObject {
     private var mediaPauseTask: Task<Void, Never>?
     private var audioRestorationTask: Task<Void, Never>?
     private var playbackSessionID: UUID?
+    /// True only between a successful hardware start and the next stop. Main-actor state,
+    /// so mute decisions never read CoreAudioRecorder internals or touch its realtime path.
+    private var isMicrophoneOpen = false
     private let smoothedValuesLock = NSLock()
     private var smoothedAverage: Float = 0
     private var smoothedPeak: Float = 0
@@ -58,6 +61,7 @@ class Recorder: NSObject, ObservableObject {
         }
 
         deviceManager.beginRecordingSetup(deviceID: deviceID)
+        let recordingStartedAt = ContinuousClock.now
 
         let playbackSessionID = playbackController.beginRecordingSession()
         self.playbackSessionID = playbackSessionID
@@ -65,7 +69,6 @@ class Recorder: NSObject, ObservableObject {
         audioRestorationTask?.cancel()
         audioRestorationTask = nil
         pauseMedia(sessionID: playbackSessionID)
-        muteSystemAudio(sessionID: playbackSessionID)
 
         let coreAudioRecorder = recorder ?? CoreAudioRecorder()
         coreAudioRecorder.onAudioChunk = onAudioChunk
@@ -90,6 +93,9 @@ class Recorder: NSObject, ObservableObject {
             }
 
             deviceManager.recordingDidStart(deviceID: deviceID)
+            isMicrophoneOpen = true
+            // Mute only once the microphone is open; the outcome never affects recording.
+            muteSystemAudio(sessionID: playbackSessionID, notBefore: recordingStartedAt)
             showRecordingDeviceNotification(for: deviceID, resolution: resolution)
             UserDefaults.standard.set(String(deviceID), forKey: "lastUsedMicrophoneDeviceID")
             resetAudioMeter()
@@ -104,6 +110,7 @@ class Recorder: NSObject, ObservableObject {
 
     func stopRecording() async {
         let playbackSessionID = self.playbackSessionID
+        isMicrophoneOpen = false
         audioMuteTask?.cancel()
         audioMuteTask = nil
         mediaPauseTask?.cancel()
@@ -132,13 +139,18 @@ class Recorder: NSObject, ObservableObject {
         deviceManager.recordingDidStop()
     }
 
-    private func muteSystemAudio(sessionID: UUID) {
+    /// Keeps the existing delay, measured from the start request, so the start cue
+    /// (played before recording starts) is not cut off by the mute.
+    private func muteSystemAudio(sessionID: UUID, notBefore startedAt: ContinuousClock.Instant) {
         audioMuteTask?.cancel()
+        let muteAt = startedAt + .nanoseconds(Int64(recordingAudioActionDelayNanoseconds))
         audioMuteTask = Task { [weak self] in
-            guard let self else { return }
-            try? await Task.sleep(nanoseconds: self.recordingAudioActionDelayNanoseconds)
-            guard !Task.isCancelled else { return }
-            _ = self.mediaController.muteSystemAudio(sessionID: sessionID)
+            try? await Task.sleep(until: muteAt, clock: .continuous)
+            guard let self, !Task.isCancelled else { return }
+            self.mediaController.muteSystemAudio(
+                sessionID: sessionID,
+                isMicrophoneRecording: self.isMicrophoneOpen
+            )
         }
     }
 
