@@ -4,7 +4,7 @@
         <title>술술</title>
         <!-- TODO: scripts/release.sh replaces this file after a signed release.
              Publish the generated appcast.xml on
-             https://github.com/qaws81877/VoiceInk/releases/latest/download/appcast.xml
+             https://github.com/qaws81877/sulsul/releases/latest/download/appcast.xml
              Sparkle stays off until SUPublicEDKey in VoiceInk/Info.plist is a real key. -->
     </channel>
 </rss>

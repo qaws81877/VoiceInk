@@ -32,7 +32,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
         super.init()
 
         // TODO: Updates stay off until SUPublicEDKey is replaced with this fork's Sparkle key.
-        // The feed URL already points at https://github.com/qaws81877/VoiceInk/releases.
+        // The feed URL already points at https://github.com/qaws81877/sulsul/releases.
         guard Self.isSparkleConfigured else {
             canCheckForUpdates = false
             return

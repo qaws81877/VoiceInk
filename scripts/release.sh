@@ -23,8 +23,8 @@ fi
 DEVELOPER_IDENTITY="${VOICEINK_DEVELOPER_IDENTITY:-}"
 NOTARY_PROFILE="${VOICEINK_NOTARY_PROFILE:-Sulsul-Notarization}"
 SPARKLE_ACCOUNT="${VOICEINK_SPARKLE_ACCOUNT:-Sulsul}"
-RELEASE_BASE_URL="${VOICEINK_RELEASE_BASE_URL:-https://github.com/qaws81877/VoiceInk/releases/download}"
-EXPECTED_FEED_URL="https://github.com/qaws81877/VoiceInk/releases/latest/download/appcast.xml"
+RELEASE_BASE_URL="${VOICEINK_RELEASE_BASE_URL:-https://github.com/qaws81877/sulsul/releases/download}"
+EXPECTED_FEED_URL="https://github.com/qaws81877/sulsul/releases/latest/download/appcast.xml"
 EXPECTED_BUNDLE_ID="com.qaws81877.sulsul"
 EXPECTED_MINIMUM_SYSTEM_VERSION="15.0"
 

@@ -88,7 +88,7 @@ generate_keys --account Sulsul
 5. Paste the printed public key over `REPLACE_WITH_SPARKLE_PUBLIC_KEY` in `VoiceInk/Info.plist` (`SUPublicEDKey`). Until that placeholder is replaced, the app does not start Sparkle and does not contact an update server.
 6. `make release NOTES=release-notes/<version>.html`
 
-The script writes a temporary export options file with your Team ID. It does not commit, tag, or upload. Upload `Sulsul.dmg` and the generated `appcast.xml` to [github.com/qaws81877/VoiceInk/releases](https://github.com/qaws81877/VoiceInk/releases). The feed URL baked into the app is `https://github.com/qaws81877/VoiceInk/releases/latest/download/appcast.xml`.
+The script writes a temporary export options file with your Team ID. It does not commit, tag, or upload. Upload `Sulsul.dmg` and the generated `appcast.xml` to [github.com/qaws81877/sulsul/releases](https://github.com/qaws81877/sulsul/releases). The feed URL baked into the app is `https://github.com/qaws81877/sulsul/releases/latest/download/appcast.xml`.
 
 ## App icon
 

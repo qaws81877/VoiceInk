@@ -80,7 +80,7 @@ out.append("""LICENSE AND THIRD-PARTY NOTICES
 
 Sulsul (술술) is a modified fork of VoiceInk and is licensed under the GNU General
 Public License v3.0 (full text in item 0 below, also LICENSE and NOTICE in the source
-repository, https://github.com/qaws81877/VoiceInk). It includes or links the third-party
+repository, https://github.com/qaws81877/sulsul). It includes or links the third-party
 components listed below. Each component remains under its own license, reproduced
 here in full as those licenses require. The GPL-3.0 does not change those terms.
 
@@ -97,7 +97,7 @@ out.append("""  --  Assets inherited from VoiceInk
 
 """)
 out.append(f"\n{bar}\n0. Sulsul (this program)\n{bar}\n")
-out.append("""Source  : https://github.com/qaws81877/VoiceInk
+out.append("""Source  : https://github.com/qaws81877/sulsul
 License : GNU General Public License v3.0 (full text below)
 
 Sulsul is a modified fork of VoiceInk by Prakash Joshi (Pax) and the VoiceInk

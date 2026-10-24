@@ -5,7 +5,7 @@ Upstream: https://github.com/Beingpax/VoiceInk
 License: GNU General Public License v3.0 (see LICENSE). Copyright notices in the
 source are kept. This fork does not grant any trademark rights in the VoiceInk name.
 
-Modified by the maintainer of https://github.com/qaws81877/VoiceInk (2026).
+Modified by the maintainer of https://github.com/qaws81877/sulsul (2026).
 
 Changes in this fork include:
 - Rebranded the app as 술술 (product name Sulsul) with its own bundle ID, data folder, and Keychain service so it does not share data with VoiceInk.
@@ -32,4 +32,4 @@ this program and is shipped inside the app at Contents/Resources/THIRD_PARTY_NOT
 
 Source code:
 The complete corresponding source of every release is in this repository,
-https://github.com/qaws81877/VoiceInk, at the tagged commit.
+https://github.com/qaws81877/sulsul, at the tagged commit.

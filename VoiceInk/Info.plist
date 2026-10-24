@@ -5,7 +5,7 @@
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://github.com/qaws81877/VoiceInk/releases/latest/download/appcast.xml</string>
+	<string>https://github.com/qaws81877/sulsul/releases/latest/download/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>REPLACE_WITH_SPARKLE_PUBLIC_KEY</string>
 	<key>LSUIElement</key>
