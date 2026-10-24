@@ -1,6 +1,6 @@
 술술 (Sulsul) is a modified fork of VoiceInk.
 
-Original work: VoiceInk by Prakash Joshi (Pax)
+Original work: VoiceInk by Prakash Joshi (Pax) and the VoiceInk contributors
 Upstream: https://github.com/Beingpax/VoiceInk
 License: GNU General Public License v3.0 (see LICENSE). Copyright notices in the
 source are kept. This fork does not grant any trademark rights in the VoiceInk name.
@@ -23,3 +23,13 @@ M2 additions:
 - API keys are stored in the local Keychain only. They are not iCloud-synced, and none are bundled.
 
 Each person enters their own API keys. No API keys are bundled.
+
+Third-party components:
+This app links or bundles third-party software and models under their own licenses
+(MIT, BSD, Apache-2.0 and others). Their copyright notices and license texts are in
+VoiceInk/Resources/THIRD_PARTY_NOTICES.txt, which also holds the full GPL-3.0 text of
+this program and is shipped inside the app at Contents/Resources/THIRD_PARTY_NOTICES.txt.
+
+Source code:
+The complete corresponding source of every release is in this repository,
+https://github.com/qaws81877/VoiceInk, at the tagged commit.

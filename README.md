@@ -44,21 +44,28 @@ GNU General Public License v3.0. The full text is in [LICENSE](LICENSE).
 
 ## Acknowledgments
 
+Full copyright notices and license texts are in [VoiceInk/Resources/THIRD_PARTY_NOTICES.txt](VoiceInk/Resources/THIRD_PARTY_NOTICES.txt); a copy ships inside the app.
+
 ### Core technology
 
-- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) — Whisper inference
-- [FluidAudio](https://github.com/FluidInference/FluidAudio) — Parakeet models
-- [TranscribeCpp for Swift](https://github.com/Beingpax/Transcribe-cpp-swift) — SwiftPM distribution of [transcribe.cpp](https://github.com/handy-computer/transcribe.cpp)
+- [whisper.cpp](https://github.com/ggml-org/whisper.cpp) — Whisper inference (MIT)
+- [FluidAudio](https://github.com/FluidInference/FluidAudio) — Parakeet models (Apache-2.0)
+- [TranscribeCpp for Swift](https://github.com/Beingpax/Transcribe-cpp-swift) — SwiftPM distribution of [transcribe.cpp](https://github.com/handy-computer/transcribe.cpp) (MIT)
+- [Silero VAD](https://github.com/snakers4/silero-vad) — voice activity detection model (MIT)
+
+### Models downloaded on demand
+
+- Whisper ggml models (MIT), NVIDIA Parakeet V2/V3/Ultra (CC-BY-4.0, attribution to NVIDIA), Parakeet Unified (NVIDIA Open Model License), Nemotron (OpenMDW-1.1, derived from an NVIDIA model), Cohere Transcribe (Apache-2.0)
 - [SenseVoice Small](https://huggingface.co/FunAudioLLM/SenseVoiceSmall) by FunAudioLLM / Alibaba, under the [FunASR Model Open Source License Agreement](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE)
 
 ### Dependencies
 
 - [Sparkle](https://github.com/sparkle-project/Sparkle)
-- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)
-- [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin)
-- [MediaRemoteAdapter](https://github.com/ejbills/mediaremote-adapter)
+- [LLMkit](https://github.com/Beingpax/LLMkit)
+- [MediaRemoteAdapter](https://github.com/ungive/mediaremote-adapter) (BSD-3-Clause, by Jonas van den Berg)
 - [Zip](https://github.com/marmelroy/Zip)
-- [SelectedTextKit](https://github.com/tisfeng/SelectedTextKit)
+- [SelectedTextKit](https://github.com/tisfeng/SelectedTextKit), [AXSwift](https://github.com/tisfeng/AXSwift), [KeySender](https://github.com/jordanbaird/KeySender)
+- [swift-markdown-ui](https://github.com/gonzalezreal/swift-markdown-ui), [NetworkImage](https://github.com/gonzalezreal/NetworkImage), [swift-cmark](https://github.com/swiftlang/swift-cmark)
 - [Swift Atomics](https://github.com/apple/swift-atomics)
 
 VoiceInk was made by Pax.
