@@ -114,34 +114,16 @@ final class OfflineTranscribeCppService: TranscriptionService, @unchecked Sendab
             language: language,
             keepSpecialTags: false
         )
-        let maximumChunkSeconds = effectiveMaximumChunkSeconds(
-            configuredMaximum: artifact.maximumChunkSeconds,
-            capabilitiesMaximumMilliseconds: nativeModel.capabilities.maxAudioMs
-        )
-        let chunks = samples.energyAwareChunks(
-            maximumCount: maximumChunkSeconds * 16_000,
-            boundarySearchCount: artifact.boundarySearchSeconds * 16_000,
-            energyWindowCount: artifact.boundaryEnergyWindowSamples
-        )
-
+        // Long audio arrives already cut by FinishedAudioPlan, so each call is one native run.
         let startedAt = ContinuousClock.now
-        var chunkTranscripts: [(text: String, language: String?)] = []
-        chunkTranscripts.reserveCapacity(chunks.count)
-
-        for chunk in chunks {
-            try Task.checkCancellation()
-            let session = try nativeModel.session()
-            let transcript = try await session.run(chunk, options: options)
-            let text = transcript.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !text.isEmpty {
-                chunkTranscripts.append((text: text, language: transcript.language ?? language))
-            }
-        }
+        try Task.checkCancellation()
+        let session = try nativeModel.session()
+        let transcript = try await session.run(samples, options: options)
 
         logger.notice(
             "\(transcribeCppModel.displayName, privacy: .public) completed in \(startedAt.duration(to: .now).formatted(.units(allowed: [.seconds], width: .narrow)), privacy: .public) for \(samples.count, privacy: .public) samples"
         )
-        return joinedText(from: chunkTranscripts)
+        return transcript.text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func cleanup() {
@@ -315,98 +297,11 @@ final class OfflineTranscribeCppService: TranscriptionService, @unchecked Sendab
         return compatibleLanguage.split(separator: "-").first.map(String.init)?.lowercased()
     }
 
-    private func effectiveMaximumChunkSeconds(
-        configuredMaximum: Int,
-        capabilitiesMaximumMilliseconds: Int64
-    ) -> Int {
-        guard capabilitiesMaximumMilliseconds > 0 else { return configuredMaximum }
-        let capabilitiesMaximum = Swift.max(1, Int(capabilitiesMaximumMilliseconds / 1_000))
-        return Swift.min(configuredMaximum, capabilitiesMaximum)
-    }
-
-    private func joinedText(from chunks: [(text: String, language: String?)]) -> String {
-        chunks.enumerated().reduce(into: "") { result, entry in
-            let (index, chunk) = entry
-            if index > 0, languageUsesSpaces(chunk.language) {
-                result.append(" ")
-            }
-            result.append(chunk.text)
-        }
-    }
-
-    private func languageUsesSpaces(_ language: String?) -> Bool {
-        guard let language else { return true }
-        return language != "ja" && language != "yue" && language != "zh"
-    }
-
     private static func initializeBackendsIfNeeded() throws {
         try backendInitializationLock.withLock {
             guard !backendsInitialized else { return }
             try Transcribe.initBackends()
             backendsInitialized = true
         }
-    }
-}
-
-private extension Array where Element == Float {
-    /// Splits long-form audio near low-energy boundaries without overlapping samples.
-    func energyAwareChunks(
-        maximumCount: Int,
-        boundarySearchCount: Int,
-        energyWindowCount: Int
-    ) -> [[Float]] {
-        guard maximumCount > 0, count > maximumCount else { return [self] }
-
-        let safeBoundarySearch = Swift.max(1, Swift.min(boundarySearchCount, maximumCount))
-        let safeEnergyWindow = Swift.max(1, energyWindowCount)
-        var chunks: [[Float]] = []
-        var start = 0
-
-        while start < count {
-            let maximumEnd = Swift.min(start + maximumCount, count)
-            if maximumEnd == count {
-                chunks.append(Array(self[start..<maximumEnd]))
-                break
-            }
-
-            let searchStart = Swift.max(start, maximumEnd - safeBoundarySearch)
-            let splitPoint = quietestWindowStart(
-                from: searchStart,
-                to: maximumEnd,
-                windowCount: safeEnergyWindow
-            )
-            let safeSplitPoint = Swift.max(start + 1, Swift.min(splitPoint, count))
-            chunks.append(Array(self[start..<safeSplitPoint]))
-            start = safeSplitPoint
-        }
-
-        return chunks
-    }
-
-    private func quietestWindowStart(from start: Int, to end: Int, windowCount: Int) -> Int {
-        guard end - start > windowCount else { return (start + end) / 2 }
-
-        var quietestStart = start
-        var lowestEnergy = Double.infinity
-        let finalWindowStart = end - windowCount
-        var candidateStarts = [Int](stride(from: start, through: finalWindowStart, by: windowCount))
-        if candidateStarts.last != finalWindowStart {
-            candidateStarts.append(finalWindowStart)
-        }
-
-        for windowStart in candidateStarts {
-            var squaredSampleSum = 0.0
-            for sample in self[windowStart..<(windowStart + windowCount)] {
-                let value = Double(sample)
-                squaredSampleSum += value * value
-            }
-            let meanSquaredEnergy = squaredSampleSum / Double(windowCount)
-            if meanSquaredEnergy < lowestEnergy {
-                lowestEnergy = meanSquaredEnergy
-                quietestStart = windowStart
-            }
-        }
-
-        return quietestStart
     }
 }

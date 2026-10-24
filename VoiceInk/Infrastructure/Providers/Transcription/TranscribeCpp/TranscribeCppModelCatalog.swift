@@ -9,9 +9,6 @@ struct TranscribeCppModelArtifact: Sendable {
     let expectedSHA256: String
     let architectureHint: String?
     let enablesInverseTextNormalization: Bool
-    let maximumChunkSeconds: Int
-    let boundarySearchSeconds: Int
-    let boundaryEnergyWindowSamples: Int
 
     var downloadURL: URL {
         URL(
@@ -73,10 +70,7 @@ enum TranscribeCppModelCatalog {
         expectedFileSize: 1_558_162_944,
         expectedSHA256: "0ea56826d8bd5d74b7143a4a04e022dc1bb75452cfae49d98b6acb0c1d16a1fb",
         architectureHint: "cohere",
-        enablesInverseTextNormalization: false,
-        maximumChunkSeconds: 35,
-        boundarySearchSeconds: 5,
-        boundaryEnergyWindowSamples: 1_600
+        enablesInverseTextNormalization: false
     )
 
     static let senseVoiceSmall = TranscribeCppModelArtifact(
@@ -87,10 +81,7 @@ enum TranscribeCppModelCatalog {
         expectedFileSize: 252_684_608,
         expectedSHA256: "6c759ee4c9748c9b3f7a5a60ca74f0f7e685fb9d45d1378fce7cfd62f59adf29",
         architectureHint: "sensevoice",
-        enablesInverseTextNormalization: true,
-        maximumChunkSeconds: 30,
-        boundarySearchSeconds: 3,
-        boundaryEnergyWindowSamples: 1_600
+        enablesInverseTextNormalization: true
     )
 
     private static let artifactsByModelName = [
