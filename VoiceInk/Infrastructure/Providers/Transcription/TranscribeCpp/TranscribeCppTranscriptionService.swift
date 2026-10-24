@@ -34,6 +34,13 @@ final class TranscribeCppTranscriptionService: TranscriptionService, @unchecked 
         )
     }
 
+    func maximumInputMilliseconds(for model: any TranscriptionModel) async throws -> Int64? {
+        guard let transcribeCppModel = model as? TranscribeCppModel,
+            TranscribeCppModelCatalog.artifact(for: transcribeCppModel.name) != nil
+        else { return nil }
+        return try await offlineService.maximumInputMilliseconds(for: transcribeCppModel)
+    }
+
     func cleanup() {
         offlineService.cleanup()
     }

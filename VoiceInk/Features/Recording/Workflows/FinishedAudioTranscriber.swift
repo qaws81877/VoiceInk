@@ -17,6 +17,7 @@ enum FinishedAudioTranscriber {
     static func transcribe(
         audioURL: URL,
         kind: FinishedAudioModelKind,
+        thresholds: FinishedAudioPlan.Thresholds = .default,
         transcribePiece: (URL) async throws -> String
     ) async throws -> String {
         guard kind == .shortWindowBatch else {
@@ -24,12 +25,12 @@ enum FinishedAudioTranscriber {
         }
 
         let duration = await AudioFileMetadata.duration(for: audioURL)
-        if duration > 0, duration <= TimeInterval(FinishedAudioPlan.singlePieceLimitSeconds) {
+        if duration > 0, duration <= thresholds.singlePieceSeconds {
             return try await transcribePiece(audioURL)
         }
 
         let prepared = try await Task.detached(priority: .userInitiated) {
-            try await preparePieces(of: audioURL, kind: kind)
+            try await preparePieces(of: audioURL, kind: kind, thresholds: thresholds)
         }.value
         guard let prepared else {
             return try await transcribePiece(audioURL)
@@ -47,7 +48,11 @@ enum FinishedAudioTranscriber {
     }
 
     /// Returns nil when the plan keeps the audio as one piece.
-    nonisolated private static func preparePieces(of audioURL: URL, kind: FinishedAudioModelKind) async throws
+    nonisolated private static func preparePieces(
+        of audioURL: URL,
+        kind: FinishedAudioModelKind,
+        thresholds: FinishedAudioPlan.Thresholds
+    ) async throws
         -> PreparedPieces?
     {
         let processor = AudioProcessor()
@@ -55,7 +60,8 @@ enum FinishedAudioTranscriber {
         let pieces = FinishedAudioPlan.pieces(
             kind: kind,
             sampleCount: samples.count,
-            silenceRanges: FinishedAudioSilence.ranges(in: samples)
+            silenceRanges: FinishedAudioSilence.ranges(in: samples),
+            thresholds: thresholds
         )
         guard pieces.count > 1 else { return nil }
 

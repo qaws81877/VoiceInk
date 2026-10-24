@@ -201,4 +201,80 @@ final class FinishedAudioPlanTests: XCTestCase {
             XCTAssertLessThanOrEqual(piece.count, seconds(45))
         }
     }
+
+    // MARK: - Model input limit
+
+    func testNoPublishedLimitKeepsTheDefaultThresholds() {
+        let thresholds = FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 0)
+        XCTAssertEqual(thresholds, .default)
+        XCTAssertEqual(thresholds.singlePieceSeconds, 40)
+        XCTAssertEqual(thresholds.preferredCutSeconds, 30)
+        XCTAssertEqual(thresholds.earliestCutSeconds, 20)
+        XCTAssertEqual(thresholds.hardCutSeconds, 45)
+    }
+
+    func testLimitAboveTheHardCutKeepsTheDefaultThresholds() {
+        XCTAssertEqual(FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 60_000), .default)
+    }
+
+    func testLimitBelowTheHardCutClampsBothCutsWithAMargin() {
+        let thresholds = FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 35_000)
+        XCTAssertEqual(thresholds.hardCutSeconds, 34)
+        XCTAssertEqual(thresholds.singlePieceSeconds, 34)
+        XCTAssertLessThan(thresholds.preferredCutSeconds, 34)
+        XCTAssertLessThan(thresholds.earliestCutSeconds, thresholds.preferredCutSeconds)
+    }
+
+    func testAudioJustOverTheClampedLimitIsCut() {
+        let pieces = FinishedAudioPlan.pieces(
+            kind: .shortWindowBatch,
+            sampleCount: seconds(36),
+            silenceRanges: [],
+            thresholds: FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 35_000)
+        )
+        XCTAssertEqual(pieces, [0..<seconds(34), seconds(34)..<seconds(36)])
+    }
+
+    func testClampedHardCutWithoutSilence() {
+        let pieces = FinishedAudioPlan.pieces(
+            kind: .shortWindowBatch,
+            sampleCount: seconds(100),
+            silenceRanges: [],
+            thresholds: FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 35_000)
+        )
+        XCTAssertEqual(pieces, [0..<seconds(34), seconds(34)..<seconds(68), seconds(68)..<seconds(100)])
+    }
+
+    func testClampedLimitPrefersSilenceBelowTheOldThirtySecondTarget() {
+        let pieces = FinishedAudioPlan.pieces(
+            kind: .shortWindowBatch,
+            sampleCount: seconds(50),
+            silenceRanges: [seconds(23)..<seconds(24), seconds(32)..<seconds(33)],
+            thresholds: FinishedAudioPlan.Thresholds(maximumInputMilliseconds: 35_000)
+        )
+        XCTAssertEqual(pieces, [0..<seconds(23), seconds(23)..<seconds(50)])
+    }
+
+    func testPiecesStayUnderAnySmallLimit() {
+        let silence = stride(from: 7.0, to: 300.0, by: 11.0).map { seconds($0)..<seconds($0 + 0.4) }
+        for limit: Int64 in [1_000, 10_000, 30_000, 35_000, 44_000, 45_500] {
+            let thresholds = FinishedAudioPlan.Thresholds(maximumInputMilliseconds: limit)
+            let total = seconds(300) + 77
+            let pieces = FinishedAudioPlan.pieces(
+                kind: .shortWindowBatch,
+                sampleCount: total,
+                silenceRanges: silence,
+                thresholds: thresholds
+            )
+            XCTAssertEqual(pieces.first?.lowerBound, 0, "\(limit)")
+            XCTAssertEqual(pieces.last?.upperBound, total, "\(limit)")
+            for (left, right) in zip(pieces, pieces.dropFirst()) {
+                XCTAssertEqual(left.upperBound, right.lowerBound, "\(limit)")
+            }
+            for piece in pieces {
+                XCTAssertFalse(piece.isEmpty, "\(limit)")
+                XCTAssertLessThan(piece.count, Int(limit) * rate / 1_000, "\(limit)")
+            }
+        }
+    }
 }

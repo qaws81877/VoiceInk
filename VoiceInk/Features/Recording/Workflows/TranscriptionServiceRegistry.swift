@@ -57,10 +57,19 @@ class TranscriptionServiceRegistry {
             "Transcribing with \(model.displayName, privacy: .public) using \(String(describing: type(of: service)), privacy: .public)"
         )
         let scopedContext = context.scoped(to: model)
-        // Batch calls here only ever see finished audio; long audio on a short-window model is cut.
+        // Batch calls here only ever see finished audio; long audio on a short-window model is cut,
+        // below the engine's own input limit when it publishes one.
+        let kind = model.finishedAudioKind
+        let thresholds: FinishedAudioPlan.Thresholds
+        if kind == .shortWindowBatch, let limit = try await service.maximumInputMilliseconds(for: model) {
+            thresholds = FinishedAudioPlan.Thresholds(maximumInputMilliseconds: limit)
+        } else {
+            thresholds = .default
+        }
         return try await FinishedAudioTranscriber.transcribe(
             audioURL: audioURL,
-            kind: model.finishedAudioKind
+            kind: kind,
+            thresholds: thresholds
         ) { pieceURL in
             try await service.transcribe(audioURL: pieceURL, model: model, context: scopedContext)
         }

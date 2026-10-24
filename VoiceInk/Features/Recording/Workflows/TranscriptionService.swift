@@ -33,9 +33,17 @@ protocol TranscriptionService {
     /// - Throws: An error if the transcription fails.
     func transcribe(audioURL: URL, model: any TranscriptionModel, context: TranscriptionRequestContext) async throws
         -> String
+
+    /// The longest audio, in milliseconds, one `transcribe` call accepts for this model, or nil when
+    /// the engine publishes no limit. `FinishedAudioPlan` keeps pieces below it.
+    func maximumInputMilliseconds(for model: any TranscriptionModel) async throws -> Int64?
 }
 
 extension TranscriptionService {
+    func maximumInputMilliseconds(for model: any TranscriptionModel) async throws -> Int64? {
+        nil
+    }
+
     func transcribe(audioURL: URL, model: any TranscriptionModel) async throws -> String {
         let context = TranscriptionRequestContext.currentDefaults.scoped(to: model)
         return try await transcribe(audioURL: audioURL, model: model, context: context)

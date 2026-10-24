@@ -126,6 +126,19 @@ final class OfflineTranscribeCppService: TranscriptionService, @unchecked Sendab
         return transcript.text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    /// The input limit `session.run` enforces with `TRANSCRIBE_ERR_INPUT_TOO_LONG`: the smaller nonzero
+    /// value of the model's `max_audio_ms` and the session's `effective_max_audio_ms`. Loads the model.
+    func maximumInputMilliseconds(for model: TranscribeCppModel) async throws -> Int64? {
+        let artifact = try resolveArtifact(for: model)
+        let nativeModel = try await getOrLoadModel(for: model, artifact: artifact)
+        retainModel(nativeModel, named: model.name)
+        defer { releaseModel(named: model.name) }
+
+        let limits = [nativeModel.capabilities.maxAudioMs, try nativeModel.session().limits.effectiveMaxAudioMs]
+            .filter { $0 > 0 }
+        return limits.min()
+    }
+
     func cleanup() {
         unloadModel()
     }
