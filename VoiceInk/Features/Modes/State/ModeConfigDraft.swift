@@ -19,6 +19,7 @@ struct ModeConfigDraft {
     var useScreenCapture: Bool
     var selectedAIProvider: String?
     var selectedAIModel: String?
+    var anthropicEffort: AnthropicEffort?
     var outputMode: ModeOutputMode
     var customCommand: String
     var submitKey: ModeSubmitKey
@@ -50,6 +51,7 @@ struct ModeConfigDraft {
             useScreenCapture = true
             selectedAIProvider = inheritedConfig?.selectedAIProvider
             selectedAIModel = inheritedConfig?.selectedAIModel
+            anthropicEffort = inheritedConfig?.anthropicEffort
             outputMode = .paste
             customCommand = inheritedConfig?.customCommand?.command ?? ""
             submitKey = .off
@@ -77,6 +79,7 @@ struct ModeConfigDraft {
             useScreenCapture = latestConfig.useScreenCapture
             selectedAIProvider = latestConfig.selectedAIProvider
             selectedAIModel = latestConfig.selectedAIModel
+            anthropicEffort = latestConfig.anthropicEffort
             outputMode = latestConfig.outputMode
             customCommand = latestConfig.customCommand?.command ?? ""
             submitKey = latestConfig.submitKey
@@ -174,6 +177,7 @@ struct ModeConfigDraft {
                 isTextFormattingEnabled: isTextFormattingEnabled,
                 selectedAIProvider: selectedAIProvider,
                 selectedAIModel: selectedAIModel,
+                anthropicEffort: anthropicEffort,
                 outputMode: outputMode,
                 customCommand: savedCustomCommand,
                 submitKey: submitKey,
@@ -199,6 +203,7 @@ struct ModeConfigDraft {
             updatedConfig.useScreenCapture = useScreenCapture
             updatedConfig.selectedAIProvider = selectedAIProvider
             updatedConfig.selectedAIModel = selectedAIModel
+            updatedConfig.anthropicEffort = anthropicEffort
             updatedConfig.outputMode = outputMode
             updatedConfig.customCommand = savedCustomCommand
             // Saved for every output so switching back to paste brings the choice back.

@@ -15,11 +15,16 @@ enum KoreanCleanupClient {
         systemPrompt: String,
         credentials: KoreanCleanupCredentials,
         selectedProvider: String? = nil,
-        selectedModel: String? = nil
+        selectedModel: String? = nil,
+        anthropicEffort: AnthropicEffort? = nil
     ) async throws -> String {
         let keys = credentials.keys
         let budget = KoreanCleanupBudget.forTranscript(transcript)
-        let models = KoreanCleanupPolicy.models(selectedProvider: selectedProvider, selectedModel: selectedModel)
+        let models = KoreanCleanupPolicy.models(
+            selectedProvider: selectedProvider,
+            selectedModel: selectedModel,
+            anthropicEffort: anthropicEffort
+        )
         switch KoreanCleanupPolicy.route(keys: keys, selectedProvider: selectedProvider) {
         case .pasteTranscript:
             throw KoreanCleanupFallbackReason.requestFailed
@@ -177,7 +182,8 @@ enum KoreanCleanupClient {
                 systemPrompt: systemPrompt,
                 transcript: transcript,
                 maxTokens: budget.maxTokens,
-                model: models.anthropic
+                model: models.anthropic,
+                effort: models.anthropicEffort
             )
         } catch {
             return .failure(.requestFailed)

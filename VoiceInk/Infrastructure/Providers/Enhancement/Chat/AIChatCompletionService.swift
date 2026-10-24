@@ -13,7 +13,8 @@ extension AIService {
         messages: [ChatMessage],
         systemPrompt: String? = nil,
         localUserPrompt: String? = nil,
-        timeout: TimeInterval = 30
+        timeout: TimeInterval = 30,
+        anthropicEffort: AnthropicEffort? = nil
     ) async throws -> AIChatCompletionResult {
         let resolvedModel = modelName?.isEmpty == false ? modelName! : selectedModel(for: provider)
 
@@ -31,9 +32,11 @@ extension AIService {
                 timeout: timeout
             )
         case .anthropic:
-            if resolvedModel == KoreanCleanupModels.anthropic {
-                result = try await completeAnthropicHaiku(
+            if AnthropicReasoningPolicy.usesDirectRequest(resolvedModel) {
+                result = try await completeAnthropicDirect(
                     apiKey: try chatAPIKey(for: provider, modelName: resolvedModel),
+                    model: resolvedModel,
+                    effort: anthropicEffort,
                     messages: messages,
                     systemPrompt: systemPrompt,
                     timeout: timeout
@@ -149,7 +152,7 @@ extension AIService {
     }
 
     /// LLMkit's Anthropic client defaults to 8192. The Korean cleanup path keeps its own 600-token cap.
-    private static let anthropicHaikuMaxTokens = 8192
+    private static let anthropicDirectMaxTokens = 8192
 
     private struct AnthropicHaikuResponse: Decodable {
         struct Block: Decodable {
@@ -166,11 +169,13 @@ extension AIService {
         }
     }
 
-    /// Manual `claude-haiku-5-5` selections bypass LLMkit. That client omits
-    /// `thinking` and `output_config`, which Haiku 5.5 needs, and this path
-    /// must not send `temperature`.
-    private func completeAnthropicHaiku(
+    /// Manual `claude-haiku-5-5` and `claude-sonnet-5-5` selections bypass LLMkit. That client omits
+    /// `thinking` and `output_config`, which these models need, and this path
+    /// must not send `temperature`. `effort` applies only to models with a selectable level.
+    private func completeAnthropicDirect(
         apiKey: String,
+        model: String,
+        effort: AnthropicEffort?,
         messages: [ChatMessage],
         systemPrompt: String?,
         timeout: TimeInterval
@@ -187,13 +192,14 @@ extension AIService {
         }
 
         let body = KoreanCleanupRequestBuilder.anthropicMessagesBody(
-            model: KoreanCleanupModels.anthropic,
+            model: model,
             systemPrompt: system,
             messages: conversation.map {
                 KoreanCleanupRequestBuilder.ChatMessage(role: $0.role, content: $0.content)
             },
-            maxTokens: Self.anthropicHaikuMaxTokens,
-            stream: false
+            maxTokens: Self.anthropicDirectMaxTokens,
+            stream: false,
+            effort: effort
         )
 
         let payload: Data

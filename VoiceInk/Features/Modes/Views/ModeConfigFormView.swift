@@ -459,6 +459,10 @@ struct ModeConfigFormView: View {
                     }
                 }
 
+                if provider == .anthropic, AnthropicReasoningPolicy.supportsEffortSelection(modelBinding.wrappedValue) {
+                    anthropicEffortPicker
+                }
+
                 if provider == .openRouter {
                     Button("Refresh Models") {
                         Task { await aiService.fetchOpenRouterModels() }
@@ -467,6 +471,24 @@ struct ModeConfigFormView: View {
                 }
             }
         }
+    }
+
+    /// Thinking cannot be turned off on these models, so the lowest level is the default and the
+    /// note under the picker tells the user that raising it can slow cleanup down.
+    @ViewBuilder
+    private var anthropicEffortPicker: some View {
+        let effortBinding = Binding<AnthropicEffort>(
+            get: { draft.anthropicEffort ?? .default },
+            set: { draft.anthropicEffort = $0 }
+        )
+        Picker("Reasoning Level", selection: effortBinding) {
+            ForEach(AnthropicEffort.allCases) { effort in
+                Text(effort.title).tag(effort)
+            }
+        }
+        Text("A higher reasoning level can make cleanup take longer.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
     }
 
     private func aiModelOptions(for provider: AIProvider) -> [String] {

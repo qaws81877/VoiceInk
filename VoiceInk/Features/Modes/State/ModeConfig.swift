@@ -58,6 +58,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     var useScreenCapture: Bool
     var selectedAIProvider: String?
     var selectedAIModel: String?
+    /// Reasoning level for Anthropic models that cannot run with thinking off. Nil means `AnthropicEffort.default`.
+    var anthropicEffort: AnthropicEffort?
     var outputMode: ModeOutputMode = .paste
     var customCommand: ModeCustomCommand?
     /// Kept when the output is not paste; only paste output sends it.
@@ -69,7 +71,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         case id, name, icon, appConfigs, urlConfigs, triggerGroups, triggerWords, isAIEnhancementEnabled,
             selectedPrompt, isRealtimeTranscriptionEnabled, selectedLanguage, isTextFormattingEnabled,
             useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
-            outputMode, customCommand, submitKey, isEnabled, isDefault
+            anthropicEffort, outputMode, customCommand, submitKey, isEnabled, isDefault
         case legacyEmoji = "emoji"
         case selectedWhisperModel
         case selectedTranscriptionModelName
@@ -83,6 +85,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedLanguage: String? = nil, useClipboardContext: Bool = false, useSelectedTextContext: Bool = true,
         useScreenCapture: Bool = false,
         isTextFormattingEnabled: Bool = false, selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
+        anthropicEffort: AnthropicEffort? = nil,
         outputMode: ModeOutputMode = .paste, customCommand: ModeCustomCommand? = nil,
         submitKey: ModeSubmitKey = .off,
         isEnabled: Bool = true, isDefault: Bool = false
@@ -104,6 +107,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.submitKey = submitKey
         self.selectedAIProvider = selectedAIProvider
         self.selectedAIModel = selectedAIModel
+        self.anthropicEffort = anthropicEffort
         self.selectedTranscriptionModelName = selectedTranscriptionModelName
         self.isRealtimeTranscriptionEnabled = isRealtimeTranscriptionEnabled
         self.selectedLanguage = selectedLanguage ?? "ko"
@@ -162,6 +166,11 @@ struct ModeConfig: Codable, Identifiable, Equatable {
             ?? UserDefaults.standard.bool(forKey: "useScreenCaptureContext")
         selectedAIProvider = try container.decodeIfPresent(String.self, forKey: .selectedAIProvider)
         selectedAIModel = try container.decodeIfPresent(String.self, forKey: .selectedAIModel)
+        // Missing (older modes and backups) or unknown raw values load as unset instead of failing the mode.
+        anthropicEffort =
+            (try? container.decodeIfPresent(String.self, forKey: .anthropicEffort))
+            .flatMap { $0 }
+            .flatMap(AnthropicEffort.init(rawValue:))
         outputMode = try container.decodeIfPresent(ModeOutputMode.self, forKey: .outputMode) ?? .paste
         customCommand = try container.decodeIfPresent(ModeCustomCommand.self, forKey: .customCommand)
         // Missing (older modes and backups) or unknown raw values load as off instead of failing the mode.
@@ -200,6 +209,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         try container.encode(useScreenCapture, forKey: .useScreenCapture)
         try container.encodeIfPresent(selectedAIProvider, forKey: .selectedAIProvider)
         try container.encodeIfPresent(selectedAIModel, forKey: .selectedAIModel)
+        try container.encodeIfPresent(anthropicEffort, forKey: .anthropicEffort)
         try container.encode(outputMode, forKey: .outputMode)
         try container.encodeIfPresent(customCommand, forKey: .customCommand)
         try container.encode(submitKey, forKey: .submitKey)

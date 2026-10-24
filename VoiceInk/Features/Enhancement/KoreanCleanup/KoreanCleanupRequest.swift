@@ -96,6 +96,8 @@ struct KoreanCleanupModelChoice: Equatable {
 
     let openAI: String
     let anthropic: String
+    /// Used only when `anthropic` is a model with a selectable reasoning level.
+    var anthropicEffort: AnthropicEffort? = nil
 }
 
 enum KoreanCleanupRoute: Equatable {
@@ -214,13 +216,18 @@ enum KoreanCleanupPolicy {
     }
 
     /// The mode's model for the provider that is called first, or the default model when unset.
-    static func models(selectedProvider: String?, selectedModel: String?) -> KoreanCleanupModelChoice {
+    static func models(
+        selectedProvider: String?,
+        selectedModel: String?,
+        anthropicEffort: AnthropicEffort? = nil
+    ) -> KoreanCleanupModelChoice {
         let model = selectedModel?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         switch selectedProvider {
         case AIProvider.anthropic.rawValue:
             return KoreanCleanupModelChoice(
                 openAI: KoreanCleanupModels.openAI,
-                anthropic: model.isEmpty ? KoreanCleanupModels.anthropic : model
+                anthropic: model.isEmpty ? KoreanCleanupModels.anthropic : model,
+                anthropicEffort: anthropicEffort
             )
         case AIProvider.openAI.rawValue:
             return KoreanCleanupModelChoice(
@@ -431,21 +438,25 @@ enum KoreanCleanupRequestBuilder {
     }
 
     /// Shared Anthropic body. `temperature` is not a field, so it cannot be encoded.
-    /// `thinking` and `output_config` always come from `KoreanCleanupModels`.
+    /// `thinking` and `output_config` come from `AnthropicReasoningPolicy`: thinking off at the lowest
+    /// effort, except for models that cannot run without thinking, which think adaptively at `effort`
+    /// (default low) and get room in `max_tokens` for it.
     static func anthropicMessagesBody(
         model: String,
         systemPrompt: String?,
         messages: [ChatMessage],
         maxTokens: Int,
-        stream: Bool
+        stream: Bool,
+        effort: AnthropicEffort? = nil
     ) -> AnthropicBody {
-        AnthropicBody(
+        let reasoning = AnthropicReasoningPolicy.settings(model: model, effort: effort)
+        return AnthropicBody(
             model: model,
-            maxTokens: maxTokens,
+            maxTokens: maxTokens + reasoning.maxTokensHeadroom,
             system: systemPrompt,
             stream: stream,
-            thinking: AnthropicBody.Thinking(type: KoreanCleanupModels.anthropicThinkingType),
-            outputConfig: AnthropicBody.OutputConfig(effort: KoreanCleanupModels.anthropicOutputEffort),
+            thinking: AnthropicBody.Thinking(type: reasoning.thinkingType),
+            outputConfig: AnthropicBody.OutputConfig(effort: reasoning.effort),
             messages: messages
         )
     }
@@ -454,7 +465,8 @@ enum KoreanCleanupRequestBuilder {
         systemPrompt: String,
         transcript: String,
         maxTokens: Int = KoreanCleanupModels.maxTokens,
-        model: String = KoreanCleanupModels.anthropic
+        model: String = KoreanCleanupModels.anthropic,
+        effort: AnthropicEffort? = nil
     ) -> AnthropicBody {
         anthropicMessagesBody(
             model: model,
@@ -463,7 +475,8 @@ enum KoreanCleanupRequestBuilder {
                 ChatMessage(role: "user", content: userMessage(transcript: transcript))
             ],
             maxTokens: maxTokens,
-            stream: true
+            stream: true,
+            effort: effort
         )
     }
 
@@ -482,10 +495,17 @@ enum KoreanCleanupRequestBuilder {
         systemPrompt: String,
         transcript: String,
         maxTokens: Int = KoreanCleanupModels.maxTokens,
-        model: String = KoreanCleanupModels.anthropic
+        model: String = KoreanCleanupModels.anthropic,
+        effort: AnthropicEffort? = nil
     ) throws -> Data {
         try JSONEncoder().encode(
-            anthropicBody(systemPrompt: systemPrompt, transcript: transcript, maxTokens: maxTokens, model: model)
+            anthropicBody(
+                systemPrompt: systemPrompt,
+                transcript: transcript,
+                maxTokens: maxTokens,
+                model: model,
+                effort: effort
+            )
         )
     }
 }

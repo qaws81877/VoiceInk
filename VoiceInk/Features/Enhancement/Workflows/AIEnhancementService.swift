@@ -231,7 +231,8 @@ class AIEnhancementService: ObservableObject {
                     systemPrompt: systemPrompt,
                     credentials: credentials,
                     selectedProvider: configuration.mode?.selectedAIProvider ?? configuration.provider?.rawValue,
-                    selectedModel: configuration.mode?.selectedAIModel ?? configuration.modelName
+                    selectedModel: configuration.mode?.selectedAIModel ?? configuration.modelName,
+                    anthropicEffort: configuration.mode?.anthropicEffort
                 )
             } catch let reason as KoreanCleanupFallbackReason {
                 throw KoreanCleanupPolicy.enhancementError(for: reason)
@@ -266,7 +267,8 @@ class AIEnhancementService: ObservableObject {
                 messages: [.user(formattedText)],
                 systemPrompt: systemMessage,
                 localUserPrompt: formattedText,
-                timeout: EnhancementRequestSettings.timeout(forCharacters: text.count)
+                timeout: EnhancementRequestSettings.timeout(forCharacters: text.count),
+                anthropicEffort: configuration.mode?.anthropicEffort
             )
             if let openRouterCompletion = completion.openRouterCompletion {
                 let routedProvider = openRouterCompletion.provider ?? "unknown"
