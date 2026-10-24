@@ -56,7 +56,14 @@ class TranscriptionServiceRegistry {
         logger.debug(
             "Transcribing with \(model.displayName, privacy: .public) using \(String(describing: type(of: service)), privacy: .public)"
         )
-        return try await service.transcribe(audioURL: audioURL, model: model, context: context.scoped(to: model))
+        let scopedContext = context.scoped(to: model)
+        // Batch calls here only ever see finished audio; long audio on a short-window model is cut.
+        return try await FinishedAudioTranscriber.transcribe(
+            audioURL: audioURL,
+            kind: FinishedAudioModelKind.classify(model)
+        ) { pieceURL in
+            try await service.transcribe(audioURL: pieceURL, model: model, context: scopedContext)
+        }
     }
 
     /// Creates a streaming or file-based session for the resolved transcription configuration.
