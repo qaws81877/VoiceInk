@@ -110,6 +110,12 @@ final class LatinSpellingCorrectionTests: XCTestCase {
         XCTAssertEqual(correct("Claud and Cluade", vocabulary: ["Claude"], protectedPhrases: ["Claud"]), "Claud and Claude")
     }
 
+    func testProtectionCoversOnlyWholeTokenSpans() {
+        XCTAssertEqual(correct("my notebok", vocabulary: ["Notebook"], protectedPhrases: ["ok"]), "my Notebook")
+        XCTAssertEqual(correct("my notebok", vocabulary: ["Notebook"], protectedPhrases: ["notebok"]), "my notebok")
+        XCTAssertEqual(correct("Claud가 말했다", vocabulary: ["Claude"], protectedPhrases: ["Claud"]), "Claud가 말했다")
+    }
+
     func testNoVocabularyLeavesTextUnchanged() {
         XCTAssertEqual(correct("Cluade", vocabulary: []), "Cluade")
     }

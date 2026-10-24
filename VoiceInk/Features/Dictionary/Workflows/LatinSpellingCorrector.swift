@@ -25,7 +25,14 @@ enum LatinSpellingCorrector {
         let tokens = latinTokens(in: text)
         guard !tokens.isEmpty else { return text }
 
-        let protectedRanges = ranges(of: protectedPhrases, in: text)
+        let protectedRanges = ranges(of: protectedPhrases, in: text).filter { range in
+            // Only whole-token spans count: an occurrence that cuts into a
+            // token (rule output "OK" inside "BOOK") protects nothing.
+            !tokens.contains { token in
+                (token.range.lowerBound < range.lowerBound && range.lowerBound < token.range.upperBound)
+                    || (token.range.lowerBound < range.upperBound && range.upperBound < token.range.upperBound)
+            }
+        }
         let maxParts = sources.map(\.partCount).max() ?? 1
         let maxWindow = min(maxParts + 1, 4)
 
