@@ -184,7 +184,7 @@ class AudioTranscriptionManager: ObservableObject {
                 text = ParagraphFormatter.format(text)
             }
 
-            text = WordReplacementService.shared.applyReplacements(to: text, using: modelContext)
+            text = TranscriptDictionaryStep.apply(to: text, using: modelContext)
             let cleanedText = text
             try Task.checkCancellation()
 

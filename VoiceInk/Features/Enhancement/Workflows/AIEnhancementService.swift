@@ -457,7 +457,7 @@ class AIEnhancementService: ObservableObject {
     }
 
     func captureClipboardContext() {
-        lastCapturedClipboard = NSPasteboard.general.string(forType: .string)
+        lastCapturedClipboard = ClipboardManager.getClipboardContent()
     }
 
     func clearCapturedContexts() {
