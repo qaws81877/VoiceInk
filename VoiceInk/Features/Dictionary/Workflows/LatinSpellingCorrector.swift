@@ -94,9 +94,7 @@ enum LatinSpellingCorrector {
     /// True when the text contains a Hangul syllable or Jamo in any block,
     /// including decomposed (NFD) and compatibility forms.
     static func containsHangul(_ text: String) -> Bool {
-        text.unicodeScalars.contains { scalar in
-            hangulRanges.contains { $0.contains(scalar.value) }
-        }
+        TextScript.containsHangul(text)
     }
 
     // MARK: - Matching
@@ -237,36 +235,46 @@ enum LatinSpellingCorrector {
 
     // MARK: - Text scanning
 
-    private static let hangulRanges: [ClosedRange<UInt32>] = [
-        0x1100...0x11FF,  // Hangul Jamo
-        0x302E...0x302F,  // Hangul tone marks
-        0x3130...0x318F,  // Hangul Compatibility Jamo
-        0x3200...0x321E,  // Parenthesized Hangul
-        0x3260...0x327E,  // Circled Hangul
-        0xA960...0xA97F,  // Hangul Jamo Extended-A
-        0xAC00...0xD7AF,  // Hangul Syllables
-        0xD7B0...0xD7FF,  // Hangul Jamo Extended-B
-        0xFFA0...0xFFDC,  // Halfwidth Hangul
-    ]
-
     /// A token is a run of Latin letters and decimal digits, with their
-    /// non-Hangul combining marks.
-    private static let tokenRegex: NSRegularExpression = {
-        let unit = "[\\p{scx=Latin}\\p{Nd}][[\\p{M}]-[\\p{scx=Hangul}]]*"
-        // The pattern is a compile-time constant.
-        return try! NSRegularExpression(pattern: "(?:\(unit))+")
-    }()
-
+    /// non-Hangul combining marks: it starts at a Latin scalar or digit and
+    /// continues through Latin scalars, digits and marks that are not Hangul.
     private static func latinTokens(in text: String) -> [Token] {
-        let fullRange = NSRange(text.startIndex..., in: text)
-        return tokenRegex.matches(in: text, range: fullRange).compactMap { match in
-            guard let range = Range(match.range, in: text) else { return nil }
+        func startsToken(_ scalar: Unicode.Scalar) -> Bool {
+            TextScript.isLatin(scalar) || scalar.properties.generalCategory == .decimalNumber
+        }
+        func continuesToken(_ scalar: Unicode.Scalar) -> Bool {
+            if startsToken(scalar) { return true }
+            switch scalar.properties.generalCategory {
+            case .nonspacingMark, .spacingMark, .enclosingMark:
+                return !TextScript.isHangul(scalar)
+            default:
+                return false
+            }
+        }
+
+        let scalars = text.unicodeScalars
+        var tokens: [Token] = []
+        var index = scalars.startIndex
+        while index < scalars.endIndex {
+            guard startsToken(scalars[index]) else {
+                index = scalars.index(after: index)
+                continue
+            }
+            let start = index
+            index = scalars.index(after: index)
+            while index < scalars.endIndex, continuesToken(scalars[index]) {
+                index = scalars.index(after: index)
+            }
+            let range = start..<index
             let key = String(text[range])
                 .precomposedStringWithCanonicalMapping
                 .lowercased()
                 .filter { $0.isLetter || $0.isNumber }
-            return key.isEmpty ? nil : Token(range: range, key: key)
+            if !key.isEmpty {
+                tokens.append(Token(range: range, key: key))
+            }
         }
+        return tokens
     }
 
     private static func isJoiner(_ separator: Substring) -> Bool {
