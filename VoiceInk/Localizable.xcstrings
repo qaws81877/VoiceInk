@@ -29951,6 +29951,34 @@
         }
       }
     },
+    "Sent once the app has read the pasted text, for example to send a chat message." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesendet, sobald die App den eingefügten Text gelesen hat, zum Beispiel um eine Chatnachricht abzuschicken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyée dès que l'app a lu le texte collé, par exemple pour envoyer un message de discussion."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在应用读取粘贴的文本后发送，例如用于发送聊天消息。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 붙여 넣은 텍스트를 읽은 뒤 보냅니다. 예를 들어 채팅 메시지를 보낼 때 씁니다."
+          }
+        }
+      }
+    },
     "Separate multiple originals with commas:" : {
       "localizations" : {
         "de" : {
@@ -31641,6 +31669,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "스트리밍 받아쓰기가 최종 결과를 기다리다 시간 초과되었습니다"
+          }
+        }
+      }
+    },
+    "Submit Key" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendetaste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche d'envoi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送键"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전송 키"
           }
         }
       }
@@ -39611,6 +39667,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "추임새 제거"
+          }
+        }
+      }
+    },
+    "Off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactivé"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끔"
           }
         }
       }

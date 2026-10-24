@@ -16,7 +16,8 @@ struct PasteTransaction: Equatable {
         case notPosted
     }
 
-    /// Key sent once the destination's read has settled. Not persisted.
+    /// Key sent once the destination's read has settled. Not persisted; a mode stores its
+    /// choice as `ModeSubmitKey`.
     enum SubmitKey: Equatable {
         case none
         case enter
@@ -58,6 +59,9 @@ struct PasteTransaction: Equatable {
 
     func decision(at now: TimeInterval) -> Decision {
         if ownershipTaken {
+            // Narrower reading of "the user copied during the wait": no submit key either, even if
+            // the destination had already read the transcript, because the copy may mean the user
+            // moved on and Return would land somewhere unintended.
             return .finish(clipboard: .leaveUserCopy, submitKey: .none)
         }
         guard needsReadObservation else {

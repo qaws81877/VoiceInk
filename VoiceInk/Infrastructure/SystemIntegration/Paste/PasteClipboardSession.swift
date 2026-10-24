@@ -141,7 +141,7 @@ final class PasteClipboardSession {
     }
 
     /// Waits for the transaction to finish, applies the clipboard action and returns the
-    /// submit key to send (always `.none` until a mode can choose one).
+    /// submit key to send (the mode's key at a settled read, otherwise `.none`).
     @discardableResult
     func settle() async -> PasteTransaction.SubmitKey {
         while true {

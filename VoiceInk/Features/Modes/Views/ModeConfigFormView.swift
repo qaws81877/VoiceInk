@@ -587,6 +587,19 @@ struct ModeConfigFormView: View {
                 applyOutputRules()
             }
 
+            if draft.outputMode == .paste {
+                Picker(selection: $draft.submitKey) {
+                    ForEach(ModeSubmitKey.allCases, id: \.self) { key in
+                        Text(key.displayName).tag(key)
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Submit Key")
+                        InfoTip("Sent once the app has read the pasted text, for example to send a chat message.")
+                    }
+                }
+            }
+
             if draft.outputMode != .respond {
                 Toggle(isOn: $draft.isDefault) {
                     HStack(spacing: 6) {

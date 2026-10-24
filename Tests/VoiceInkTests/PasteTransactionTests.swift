@@ -124,6 +124,36 @@ final class PasteTransactionTests: XCTestCase {
         )
     }
 
+    // MARK: - Which submit key goes out (mode key vs global Auto Send)
+
+    func testModeSubmitKeyIsSentAtTheSettledReadAndSuppressesAutoSend() {
+        XCTAssertEqual(
+            PasteSubmitPlan.resolve(modeSubmitKey: .enter, sendAfterPaste: true, autoSendKey: .shiftEnter),
+            PasteSubmitPlan(settledReadKey: .enter, autoSendKey: .none)
+        )
+        XCTAssertEqual(
+            PasteSubmitPlan.resolve(modeSubmitKey: .commandEnter, sendAfterPaste: false, autoSendKey: .enter),
+            PasteSubmitPlan(settledReadKey: .commandEnter, autoSendKey: .none)
+        )
+    }
+
+    func testWithoutAModeSubmitKeyAutoSendBehavesAsBefore() {
+        XCTAssertEqual(
+            PasteSubmitPlan.resolve(modeSubmitKey: .off, sendAfterPaste: true, autoSendKey: .shiftEnter),
+            PasteSubmitPlan(settledReadKey: .none, autoSendKey: .shiftEnter)
+        )
+        XCTAssertEqual(
+            PasteSubmitPlan.resolve(modeSubmitKey: .off, sendAfterPaste: false, autoSendKey: .enter),
+            PasteSubmitPlan(settledReadKey: .none, autoSendKey: .none)
+        )
+    }
+
+    func testSettledReadKeyIsPostedAsTheMatchingReturnKey() {
+        XCTAssertEqual(PasteSubmitPlan.sendKey(for: .enter), .enter)
+        XCTAssertEqual(PasteSubmitPlan.sendKey(for: .commandEnter), .commandEnter)
+        XCTAssertEqual(PasteSubmitPlan.sendKey(for: .none), .none)
+    }
+
     // MARK: - Sulsul's own clipboard reads
 
     func testOwnReadWhileTranscriptIsPublishedIsAnsweredFromMemory() {

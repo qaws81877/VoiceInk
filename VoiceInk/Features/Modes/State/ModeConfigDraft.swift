@@ -21,6 +21,7 @@ struct ModeConfigDraft {
     var selectedAIModel: String?
     var outputMode: ModeOutputMode
     var customCommand: String
+    var submitKey: ModeSubmitKey
     var isDefault: Bool
     var isTranscriptionFormattingExpanded: Bool
 
@@ -51,6 +52,7 @@ struct ModeConfigDraft {
             selectedAIModel = inheritedConfig?.selectedAIModel
             outputMode = .paste
             customCommand = inheritedConfig?.customCommand?.command ?? ""
+            submitKey = .off
             isDefault = false
             isTranscriptionFormattingExpanded = false
             sourceConfig = nil
@@ -77,6 +79,7 @@ struct ModeConfigDraft {
             selectedAIModel = latestConfig.selectedAIModel
             outputMode = latestConfig.outputMode
             customCommand = latestConfig.customCommand?.command ?? ""
+            submitKey = latestConfig.submitKey
             isDefault = latestConfig.isDefault
             isTranscriptionFormattingExpanded = false
             sourceConfig = latestConfig
@@ -173,6 +176,7 @@ struct ModeConfigDraft {
                 selectedAIModel: selectedAIModel,
                 outputMode: outputMode,
                 customCommand: savedCustomCommand,
+                submitKey: submitKey,
                 isDefault: savedIsDefault
             )
 
@@ -197,6 +201,8 @@ struct ModeConfigDraft {
             updatedConfig.selectedAIModel = selectedAIModel
             updatedConfig.outputMode = outputMode
             updatedConfig.customCommand = savedCustomCommand
+            // Saved for every output so switching back to paste brings the choice back.
+            updatedConfig.submitKey = submitKey
             updatedConfig.isDefault = savedIsDefault
             return updatedConfig
         }

@@ -69,6 +69,8 @@ struct OutputRuntimeConfiguration {
     let mode: ModeConfig?
     let outputMode: ModeOutputMode
     let customCommand: ModeCustomCommand?
+    /// Submit key to send after a paste; `.off` unless the output is paste.
+    let submitKey: ModeSubmitKey
 }
 
 enum ModeTranscriptionModelResolution {
@@ -197,7 +199,8 @@ enum ModeRuntimeResolver {
         return OutputRuntimeConfiguration(
             mode: mode,
             outputMode: mode?.outputMode ?? .paste,
-            customCommand: mode?.customCommand
+            customCommand: mode?.customCommand,
+            submitKey: (mode?.submitKey ?? .off).effective(for: mode?.outputMode ?? .paste)
         )
     }
 

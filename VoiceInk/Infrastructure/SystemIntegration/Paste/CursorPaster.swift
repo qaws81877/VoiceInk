@@ -18,6 +18,9 @@ class CursorPaster {
     struct PasteOutcome {
         let result: PasteResult
         let autoLearnGeneration: UInt64?
+        /// Finishes when the paste transaction settles, with the submit key it decided to send
+        /// (`.none` when the paste was not read, the key never went out, or the user copied).
+        let settledSubmitKey: Task<PasteTransaction.SubmitKey, Never>
     }
 
     private static let prePasteDelay: TimeInterval = 0.10
@@ -34,18 +37,25 @@ class CursorPaster {
 
     @MainActor
     @discardableResult
-    static func startPasteAtCursor(_ text: String) -> Task<PasteOutcome, Never> {
+    static func startPasteAtCursor(
+        _ text: String,
+        submitKey: PasteTransaction.SubmitKey = .none
+    ) -> Task<PasteOutcome, Never> {
         Task { @MainActor in
-            await performPasteSession(text)
+            await performPasteSession(text, submitKey: submitKey)
         }
     }
 
     @MainActor
-    private static func performPasteSession(_ text: String) async -> PasteOutcome {
+    private static func performPasteSession(_ text: String, submitKey: PasteTransaction.SubmitKey) async -> PasteOutcome {
         let shouldRestoreClipboard = UserDefaults.standard.bool(forKey: "restoreClipboardAfterPaste")
-        guard let clipboard = PasteClipboardSession.publish(text, restoreEnabled: shouldRestoreClipboard) else {
+        guard
+            let clipboard = PasteClipboardSession.publish(
+                text, restoreEnabled: shouldRestoreClipboard, submitKey: submitKey)
+        else {
             logger.error("Failed to prepare clipboard for paste")
-            return PasteOutcome(result: .commandNotPosted, autoLearnGeneration: nil)
+            return PasteOutcome(
+                result: .commandNotPosted, autoLearnGeneration: nil, settledSubmitKey: Task { .none })
         }
 
         await wait(prePasteDelay)
@@ -55,8 +65,8 @@ class CursorPaster {
         let pasteKeyAttemptedAt = PasteClipboardSession.now()
         let pasteResult = await postPasteCommand()
         clipboard.pasteKeyFinished(posted: pasteResult.didPostPasteCommand, attemptedAt: pasteKeyAttemptedAt)
-        // Restore (and, later, the mode's submit key) waits for the destination's read.
-        Task { @MainActor in
+        // Restore and the mode's submit key both wait for the destination's read to settle.
+        let settledSubmitKey = Task { @MainActor in
             await clipboard.settle()
         }
 
@@ -71,7 +81,8 @@ class CursorPaster {
             autoLearnGeneration = nil
         }
 
-        return PasteOutcome(result: pasteResult, autoLearnGeneration: autoLearnGeneration)
+        return PasteOutcome(
+            result: pasteResult, autoLearnGeneration: autoLearnGeneration, settledSubmitKey: settledSubmitKey)
     }
 
     @MainActor
