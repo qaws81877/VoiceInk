@@ -189,9 +189,8 @@ enum BackupImporter {
         if let restoreClipboard = general.restoreClipboardAfterPaste {
             UserDefaults.standard.set(restoreClipboard, forKey: "restoreClipboardAfterPaste")
         }
-        if let clipboardDelay = general.clipboardRestoreDelay {
-            UserDefaults.standard.set(clipboardDelay, forKey: "clipboardRestoreDelay")
-        }
+        // clipboardRestoreDelay stays in backups for older builds but no longer drives the paste;
+        // the clipboard is restored once the target app has read it.
         if let finishAndSendKey = general.finishAndSendKey.flatMap(FinishAndSendKey.init(rawValue:)) {
             UserDefaults.standard.set(finishAndSendKey.rawValue, forKey: FinishAndSendSettings.key)
         }
