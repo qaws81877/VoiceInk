@@ -97,6 +97,8 @@ final class OutputMutePlanTests: XCTestCase {
     // MARK: - Setting default
 
     func testMuteSettingIsRegisteredOffByDefault() {
+        // The persisted key name must never change.
+        XCTAssertEqual(OutputMutePlan.settingKey, "isSystemMuteEnabled")
         AppDefaults.registerDefaults()
         let registered = UserDefaults.standard.volatileDomain(forName: UserDefaults.registrationDomain)
         XCTAssertEqual(registered[OutputMutePlan.settingKey] as? Bool, false)
