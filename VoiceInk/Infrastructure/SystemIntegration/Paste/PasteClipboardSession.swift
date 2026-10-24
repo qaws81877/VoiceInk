@@ -8,6 +8,14 @@ import os
 /// callback is the only public hook that observes a read. The pasteboard server caches
 /// provided data, so only the first read of `.string` reaches the provider. For that reason
 /// this type never reads the transcript back, and ownership is checked with `changeCount`.
+///
+/// Known macOS limit: because of that cache, a second read by the destination after the first
+/// is not observable. The transaction settles 200 ms after the first observed read; an editor
+/// that reads again later than that receives the restored clipboard.
+///
+/// Sulsul's own reads must not count as the destination's read. String reads go through
+/// `ownClipboardString()` (answered from memory while the transcript is published); any other
+/// synchronous access runs inside `performOwnClipboardAccess`, whose reads the observer ignores.
 @MainActor
 final class PasteClipboardSession {
     private typealias ItemSnapshot = [(NSPasteboard.PasteboardType, Data)]
@@ -19,6 +27,10 @@ final class PasteClipboardSession {
     /// The session still waiting to restore, so a quick follow-up paste restores the
     /// clipboard from before the first paste instead of the first transcript.
     private static weak var pending: PasteClipboardSession?
+    /// The most recent session that published a lazily provided transcript.
+    private static weak var observing: PasteClipboardSession?
+    /// Nesting depth of `performOwnClipboardAccess`; reads inside it are Sulsul's own.
+    private(set) static var ownAccessDepth = 0
     /// Observers whose transcript stays on the clipboard after the transaction ends.
     private static var lingeringObservers: [TranscriptReadObserver] = []
 
@@ -31,6 +43,30 @@ final class PasteClipboardSession {
 
     static func now() -> TimeInterval {
         ProcessInfo.processInfo.systemUptime
+    }
+
+    /// Runs Sulsul's own synchronous pasteboard access; provider reads inside it are not counted.
+    static func performOwnClipboardAccess<T>(_ body: () throws -> T) rethrows -> T {
+        ownAccessDepth += 1
+        defer { ownAccessDepth -= 1 }
+        return try body()
+    }
+
+    /// The clipboard string for Sulsul's own use (context capture), without counting as,
+    /// or pre-empting, the destination's read of a published transcript.
+    static func ownClipboardString(on pasteboard: NSPasteboard = .general) -> String? {
+        let session = observing
+        let source = OwnClipboardReadSource.resolve(
+            publishedTranscript: session?.observer?.text,
+            publishedChangeCount: session?.publishedChangeCount,
+            currentChangeCount: pasteboard.changeCount
+        )
+        switch source {
+        case .transcript(let text):
+            return text
+        case .pasteboard:
+            return performOwnClipboardAccess { pasteboard.string(forType: .string) }
+        }
     }
 
     /// Puts `text` on the general pasteboard. Returns nil when the pasteboard rejected it.
@@ -77,6 +113,7 @@ final class PasteClipboardSession {
             changeCount: pasteboard.changeCount,
             transaction: transaction
         )
+        observing = session
         if restoreEnabled {
             pending = session
         }
@@ -160,9 +197,11 @@ final class PasteClipboardSession {
         {
             return saved
         }
-        return (pasteboard.pasteboardItems ?? []).map { item in
-            item.types.compactMap { type in
-                item.data(forType: type).map { (type, $0) }
+        return performOwnClipboardAccess {
+            (pasteboard.pasteboardItems ?? []).map { item in
+                item.types.compactMap { type in
+                    item.data(forType: type).map { (type, $0) }
+                }
             }
         }
     }
@@ -179,9 +218,10 @@ final class PasteClipboardSession {
 }
 
 /// Supplies the transcript when a consumer asks for it and records when that happened.
-/// AppKit calls the provider on the main thread.
+/// AppKit calls the provider on the main thread, synchronously inside the reading call when
+/// the reader is Sulsul itself, so `PasteClipboardSession.ownAccessDepth` identifies own reads.
 final class TranscriptReadObserver: NSObject, NSPasteboardItemDataProvider {
-    private let text: String
+    let text: String
     private(set) var readTimes: [TimeInterval] = []
     private(set) var isFinished = false
     var onFinished: (() -> Void)?
@@ -195,7 +235,10 @@ final class TranscriptReadObserver: NSObject, NSPasteboardItemDataProvider {
         item: NSPasteboardItem,
         provideDataForType type: NSPasteboard.PasteboardType
     ) {
-        readTimes.append(ProcessInfo.processInfo.systemUptime)
+        let isOwnRead = MainActor.assumeIsolated { PasteClipboardSession.ownAccessDepth > 0 }
+        if !isOwnRead {
+            readTimes.append(ProcessInfo.processInfo.systemUptime)
+        }
         item.setString(text, forType: type)
     }
 

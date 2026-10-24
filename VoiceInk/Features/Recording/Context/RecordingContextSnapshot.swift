@@ -36,7 +36,7 @@ enum RecordingContextCaptureService {
     static func startCapture(into store: RecordingContextSnapshotStore) -> [Task<Void, Never>] {
         [
             Task { @MainActor in
-                store.updateClipboardText(NSPasteboard.general.string(forType: .string))
+                store.updateClipboardText(ClipboardManager.getClipboardContent())
             },
             Task { @MainActor in
                 guard !Task.isCancelled else { return }

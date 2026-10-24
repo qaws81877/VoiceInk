@@ -94,3 +94,22 @@ struct PasteTransaction: Equatable {
         }
     }
 }
+
+/// Where Sulsul's own clipboard read gets its text. While a paste transcript is still the
+/// published clipboard, the answer comes from memory: reading the pasteboard would hand the
+/// lazily provided transcript over early, so the destination's later read could not be seen.
+enum OwnClipboardReadSource: Equatable {
+    case transcript(String)
+    case pasteboard
+
+    static func resolve(
+        publishedTranscript: String?,
+        publishedChangeCount: Int?,
+        currentChangeCount: Int
+    ) -> OwnClipboardReadSource {
+        guard let publishedTranscript, publishedChangeCount == currentChangeCount else {
+            return .pasteboard
+        }
+        return .transcript(publishedTranscript)
+    }
+}

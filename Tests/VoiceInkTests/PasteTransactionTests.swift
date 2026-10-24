@@ -1,3 +1,4 @@
+import AppKit
 import XCTest
 
 @testable import VoiceInk
@@ -122,4 +123,48 @@ final class PasteTransactionTests: XCTestCase {
             .finish(clipboard: .leaveUserCopy, submitKey: .none)
         )
     }
+
+    // MARK: - Sulsul's own clipboard reads
+
+    func testOwnReadWhileTranscriptIsPublishedIsAnsweredFromMemory() {
+        XCTAssertEqual(
+            OwnClipboardReadSource.resolve(
+                publishedTranscript: "안녕하세요 ",
+                publishedChangeCount: 41,
+                currentChangeCount: 41
+            ),
+            .transcript("안녕하세요 ")
+        )
+    }
+
+    func testOwnReadAfterSomeoneElseCopiedReadsThePasteboard() {
+        XCTAssertEqual(
+            OwnClipboardReadSource.resolve(
+                publishedTranscript: "hello",
+                publishedChangeCount: 41,
+                currentChangeCount: 42
+            ),
+            .pasteboard
+        )
+        XCTAssertEqual(
+            OwnClipboardReadSource.resolve(publishedTranscript: nil, publishedChangeCount: nil, currentChangeCount: 7),
+            .pasteboard
+        )
+    }
+
+    @MainActor
+    func testReadObserverIgnoresReadsMadeInsideOwnClipboardAccess() {
+        // A standalone item, not on any pasteboard: only the provider callback is exercised.
+        let observer = TranscriptReadObserver(text: "hello")
+        let item = NSPasteboardItem()
+
+        PasteClipboardSession.performOwnClipboardAccess {
+            observer.pasteboard(nil, item: item, provideDataForType: .string)
+        }
+        XCTAssertEqual(observer.readTimes, [])
+
+        observer.pasteboard(nil, item: item, provideDataForType: .string)
+        XCTAssertEqual(observer.readTimes.count, 1)
+    }
 }
+

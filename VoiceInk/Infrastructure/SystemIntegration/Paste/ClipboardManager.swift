@@ -32,6 +32,7 @@ struct ClipboardManager {
             return false
         }
 
+        // Reads back an eager write, so no lazily provided transcript is involved.
         return pasteboard.string(forType: .string) == text
     }
 
@@ -56,8 +57,11 @@ struct ClipboardManager {
         return setClipboard(text, transient: false)
     }
 
+    /// Sulsul's own read of the clipboard text. It must not count as a paste destination's
+    /// read, so it goes through the paste session.
+    @MainActor
     static func getClipboardContent() -> String? {
-        return NSPasteboard.general.string(forType: .string)
+        PasteClipboardSession.ownClipboardString()
     }
 }
 
