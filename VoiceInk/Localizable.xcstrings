@@ -29951,6 +29951,34 @@
         }
       }
     },
+    "Sent once the app has read the pasted text, for example to send a chat message." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesendet, sobald die App den eingefügten Text gelesen hat, zum Beispiel um eine Chatnachricht abzuschicken."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyée dès que l'app a lu le texte collé, par exemple pour envoyer un message de discussion."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在应用读取粘贴的文本后发送，例如用于发送聊天消息。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱이 붙여 넣은 텍스트를 읽은 뒤 보냅니다. 예를 들어 채팅 메시지를 보낼 때 씁니다."
+          }
+        }
+      }
+    },
     "Separate multiple originals with commas:" : {
       "localizations" : {
         "de" : {
@@ -31641,6 +31669,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "스트리밍 받아쓰기가 최종 결과를 기다리다 시간 초과되었습니다"
+          }
+        }
+      }
+    },
+    "Submit Key" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sendetaste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche d'envoi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送键"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전송 키"
           }
         }
       }
@@ -37855,36 +37911,36 @@
         }
       }
     },
-    "VoiceInk temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay. When disabled, the pasted transcription stays on your clipboard." : {
+    "VoiceInk temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content once the app you paste into has read the transcription, or after a few seconds if it never does. When disabled, the pasted transcription stays on your clipboard." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "술술 nutzt die Zwischenablage vorübergehend zum Einfügen der Transkription. Wenn aktiviert, wird der frühere Inhalt der Zwischenablage nach der gewählten Verzögerung wiederhergestellt. Wenn deaktiviert, bleibt die Transkription in der Zwischenablage."
+            "value" : "술술 nutzt die Zwischenablage vorübergehend zum Einfügen der Transkription. Wenn aktiviert, wird der frühere Inhalt der Zwischenablage wiederhergestellt, sobald die Ziel-App die Transkription gelesen hat, oder nach einigen Sekunden, falls sie das nie tut. Wenn deaktiviert, bleibt die Transkription in der Zwischenablage."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "술술 utilise temporairement le presse-papiers pour coller la transcription. Lorsqu'il est activé, il restaure le contenu précédent de votre presse-papiers après le délai sélectionné. Lorsqu'elle est désactivée, la transcription collée reste dans votre presse-papiers."
+            "value" : "술술 utilise temporairement le presse-papiers pour coller la transcription. Lorsqu'il est activé, il restaure le contenu précédent de votre presse-papiers dès que l'app de destination a lu la transcription, ou après quelques secondes si elle ne la lit jamais. Lorsqu'elle est désactivée, la transcription collée reste dans votre presse-papiers."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "술술 会临时使用剪贴板来粘贴转写内容。打开后，它会在所选延迟后恢复你之前的剪贴板内容。关闭后，粘贴的转写内容会保留在剪贴板中。"
+            "value" : "술술 会临时使用剪贴板来粘贴转写内容。打开后，它会在目标应用读取转写内容后恢复你之前的剪贴板内容；如果目标应用一直没有读取，则在几秒后恢复。关闭后，粘贴的转写内容会保留在剪贴板中。"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sulsul temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content after the selected delay. When disabled, the pasted transcription stays on your clipboard."
+            "value" : "Sulsul temporarily uses the clipboard to paste transcription. When enabled, it restores your previous clipboard content once the app you paste into has read the transcription, or after a few seconds if it never does. When disabled, the pasted transcription stays on your clipboard."
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "술술은 받아쓰기를 붙여넣기 위해 클립보드를 잠시 사용합니다. 켜면 선택한 지연 뒤에 이전 클립보드 내용을 되돌립니다. 끄면 붙여넣은 받아쓰기가 클립보드에 남습니다."
+            "value" : "술술은 받아쓰기를 붙여넣기 위해 클립보드를 잠시 사용합니다. 켜면 붙여넣은 앱이 받아쓰기를 읽은 뒤 이전 클립보드 내용을 되돌리고, 읽지 않으면 몇 초 뒤에 되돌립니다. 끄면 붙여넣은 받아쓰기가 클립보드에 남습니다."
           }
         }
       }
@@ -39611,6 +39667,34 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "추임새 제거"
+          }
+        }
+      }
+    },
+    "Off" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désactivé"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끔"
           }
         }
       }

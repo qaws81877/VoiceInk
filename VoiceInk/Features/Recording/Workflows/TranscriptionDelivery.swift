@@ -47,7 +47,7 @@ final class TranscriptionDelivery {
         }
 
         if let text = request.text {
-            await paste(text, sendAfterPaste: request.sendAfterPaste, actions: actions)
+            await paste(text, output: request.output, sendAfterPaste: request.sendAfterPaste, actions: actions)
         } else {
             await actions.dismiss()
         }
@@ -162,19 +162,38 @@ final class TranscriptionDelivery {
         String(format: "%.3f", duration)
     }
 
-    private func paste(_ text: String, sendAfterPaste: Bool, actions: Actions) async {
+    private func paste(
+        _ text: String,
+        output: OutputRuntimeConfiguration,
+        sendAfterPaste: Bool,
+        actions: Actions
+    ) async {
         let textToPaste = deliverableText(from: text)
         let appendSpace = UserDefaults.standard.bool(forKey: "AppendTrailingSpace")
         let pastedText = textToPaste + (appendSpace ? " " : "")
         SoundManager.shared.playStopSound()
         await actions.dismiss()
 
-        let pasteTask = CursorPaster.startPasteAtCursor(pastedText)
+        let submitPlan = PasteSubmitPlan.resolve(
+            modeSubmitKey: output.submitKey,
+            sendAfterPaste: sendAfterPaste,
+            autoSendKey: FinishAndSendSettings.selectedKey
+        )
+        let pasteTask = CursorPaster.startPasteAtCursor(pastedText, submitKey: submitPlan.settledReadKey)
 
-        let selectedKey = FinishAndSendSettings.selectedKey
-        let finishAndSendKey: FinishAndSendKey = sendAfterPaste ? selectedKey : .none
+        let finishAndSendKey = submitPlan.autoSendKey
         Task { @MainActor in
             let pasteOutcome = await pasteTask.value
+
+            if submitPlan.settledReadKey != .none {
+                let settledKey = await pasteOutcome.settledSubmitKey.value
+                guard settledKey != .none else { return }
+                if let generation = pasteOutcome.autoLearnGeneration {
+                    await AutoLearnService.shared.cancelForAutoSend(generation: generation)
+                }
+                CursorPaster.performSendKey(PasteSubmitPlan.sendKey(for: settledKey))
+                return
+            }
 
             if finishAndSendKey.isEnabled && pasteOutcome.result.didPostPasteCommand {
                 try? await Task.sleep(nanoseconds: 150_000_000)

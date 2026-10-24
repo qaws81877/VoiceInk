@@ -60,6 +60,8 @@ struct ModeConfig: Codable, Identifiable, Equatable {
     var selectedAIModel: String?
     var outputMode: ModeOutputMode = .paste
     var customCommand: ModeCustomCommand?
+    /// Kept when the output is not paste; only paste output sends it.
+    var submitKey: ModeSubmitKey = .off
     var isEnabled: Bool = true
     var isDefault: Bool = false
 
@@ -67,7 +69,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         case id, name, icon, appConfigs, urlConfigs, triggerGroups, triggerWords, isAIEnhancementEnabled,
             selectedPrompt, isRealtimeTranscriptionEnabled, selectedLanguage, isTextFormattingEnabled,
             useClipboardContext, useSelectedTextContext, useScreenCapture, selectedAIProvider, selectedAIModel,
-            outputMode, customCommand, isEnabled, isDefault
+            outputMode, customCommand, submitKey, isEnabled, isDefault
         case legacyEmoji = "emoji"
         case selectedWhisperModel
         case selectedTranscriptionModelName
@@ -82,6 +84,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         useScreenCapture: Bool = false,
         isTextFormattingEnabled: Bool = false, selectedAIProvider: String? = nil, selectedAIModel: String? = nil,
         outputMode: ModeOutputMode = .paste, customCommand: ModeCustomCommand? = nil,
+        submitKey: ModeSubmitKey = .off,
         isEnabled: Bool = true, isDefault: Bool = false
     ) {
         self.id = id
@@ -98,6 +101,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         self.useScreenCapture = useScreenCapture
         self.outputMode = outputMode
         self.customCommand = customCommand
+        self.submitKey = submitKey
         self.selectedAIProvider = selectedAIProvider
         self.selectedAIModel = selectedAIModel
         self.selectedTranscriptionModelName = selectedTranscriptionModelName
@@ -160,6 +164,11 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         selectedAIModel = try container.decodeIfPresent(String.self, forKey: .selectedAIModel)
         outputMode = try container.decodeIfPresent(ModeOutputMode.self, forKey: .outputMode) ?? .paste
         customCommand = try container.decodeIfPresent(ModeCustomCommand.self, forKey: .customCommand)
+        // Missing (older modes and backups) or unknown raw values load as off instead of failing the mode.
+        submitKey =
+            (try? container.decodeIfPresent(String.self, forKey: .submitKey))
+            .flatMap { $0 }
+            .flatMap(ModeSubmitKey.init(rawValue:)) ?? .off
         isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
         isDefault = try container.decodeIfPresent(Bool.self, forKey: .isDefault) ?? false
 
@@ -193,6 +202,7 @@ struct ModeConfig: Codable, Identifiable, Equatable {
         try container.encodeIfPresent(selectedAIModel, forKey: .selectedAIModel)
         try container.encode(outputMode, forKey: .outputMode)
         try container.encodeIfPresent(customCommand, forKey: .customCommand)
+        try container.encode(submitKey, forKey: .submitKey)
         try container.encodeIfPresent(selectedTranscriptionModelName, forKey: .selectedTranscriptionModelName)
         try container.encode(isEnabled, forKey: .isEnabled)
         try container.encode(isDefault, forKey: .isDefault)

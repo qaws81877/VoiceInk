@@ -134,7 +134,7 @@ enum AppDefaults {
             "useAppleScriptPaste": false,
 
             // Audio & Media
-            "isSystemMuteEnabled": true,
+            OutputMutePlan.settingKey: false,
             "audioResumptionDelay": 0.0,
             "isPauseMediaEnabled": false,
             CustomSoundManager.SoundType.start.builtInSoundKey: CustomSoundManager.SoundType.start.defaultBuiltInSound
